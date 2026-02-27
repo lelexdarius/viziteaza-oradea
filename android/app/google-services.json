@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "751108742545",
+    "project_id": "viziteaza-oradea",
+    "storage_bucket": "viziteaza-oradea.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:751108742545:android:20334bbc59eff17d2b4e30",
+        "android_client_info": {
+          "package_name": "ro.viziteaza.oradea"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxwp_gEo3Qj8q8I2CRPy-Nb8Vb7mxy2gQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

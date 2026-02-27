@@ -1,0 +1,191 @@
+name: viziteaza_oradea
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+# In Windows, build-name is used as the major, minor, and patch parts
+# of the product and file versions while build-number is used as the build suffix.
+version: 1.0.1+15
+
+environment:
+  sdk: ^3.6.0
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.8
+  intl: ^0.20.2
+  url_launcher: ^6.3.2
+  change_app_package_name: ^1.5.0
+  firebase_core: ^3.4.0
+  cloud_firestore: ^5.4.4
+  firebase_storage: ^12.3.3
+  video_player: ^2.9.1
+  google_maps_flutter: ^2.7.0
+  geolocator: ^14.0.2
+  flutter_staggered_grid_view: ^0.7.0
+  cached_network_image: ^3.3.0
+  shared_preferences: ^2.2.2
+  in_app_purchase: ^3.2.3
+  
+  
+
+  
+
+  
+
+  
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.2
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/app_icon_logo.png"
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^5.0.0
+  
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+  
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+     - assets/images/teatru.jpg.webp
+     - assets/images/biserici_catolice.jpg.webp
+     - assets/images/biserici_neoprotestante.jpg.webp
+     - assets/images/biserici_ortodoxe.jpg.webp
+     - assets/images/istorie1.png.webp
+     - assets/images/oradea_moderna.jpeg.webp
+     - assets/icon/app_icon_logo.png
+     - assets/images/imagine_gri.jpg.webp
+     - assets/images/flag_ro.png.webp
+     - assets/images/flag_us.jpeg.webp
+     - assets/translations/
+     - assets/images/oradea_moderna.jpg.webp
+     - assets/icon/instagram.png
+     - assets/images/trasee.png.webp
+     - assets/images/trasee_oradea.png.webp
+     - assets/images/trasee_oradea_premium.png.webp
+     - assets/images/activities/trasee.png.webp
+     - assets/images/muzeu_trasee.png.webp
+     - assets/images/restaurant_rosecas_trasee.jpg.webp
+     - assets/images/jumping_house_trasee.jpg.webp
+     - assets/images/rivo_trasee.jpeg.webp
+     - assets/images/istorie1.jpg.webp
+     - assets/images/natura_si_distractie.jpg.webp
+     - assets/images/urban.jpg.webp
+     - assets/images/experiente_locale.jpg.webp
+     - assets/images/street_coffee_roasters_traseu.png.webp
+     - assets/images/palatul_vulturul_traseu.png.webp
+     - assets/images/premium_unlock1.png.webp
+     - assets/images/premium_unlock2.png.webp
+     - assets/images/premium_unlock3.png.webp
+     - assets/images/premium_unlock4.png.webp
+     - assets/images/black_eagle_traseu.png.webp
+     - assets/images/piata_unirii_traseu.png.webp
+     - assets/images/calea_republicii_traseu.png.webp
+     - assets/images/the_sip_traseu.png.webp
+     - assets/images/cetatea_oradea_traseu.png.webp   
+     - assets/images/meridian_zero_traseu.png.webp 
+     - assets/images/madal_coffee_traseu.png.webp
+     - assets/images/gradina_zoologica_traseu.png.webp
+     - assets/images/rivo_restaurant_traseu.png.webp
+     - assets/images/aqua_park_traseu.png.webp
+     - assets/images/piata9_traseu.png.webp
+     - assets/images/ristrettoo_coffee_traseu.png.webp
+     - assets/images/muzeul_tarii_crisurilor_traseu.png.webp
+     - assets/images/rosecas_traseu.png.webp
+     - assets/images/casa_darvas_traseu.png.webp
+     - assets/images/allegria_traseu.png.webp
+     - assets/images/biserica_cu_luna_traseu.png.webp
+     - assets/images/templul_francmasoneriei_traseu.png.webp
+     - assets/images/semiramis_cafe_traseu.png.webp
+     - assets/images/turnul_primariei_traseu.jpg.webp
+     - assets/images/to_chefs_traseu.png.webp
+     - assets/images/dealul_ciuperca_traseu.png.webp
+     - assets/images/restaurantul_ciuperca_traseu.png.webp
+     - assets/images/enchante_rooftop_traseu.png.webp
+     - assets/images/dock_restaurant_traseu.png.webp
+     - assets/images/botanic_by_armonica_traseu.jpg.webp
+     - assets/images/malul_crisul_repede_traseu.png.webp
+     - assets/images/malul_crisul_repede_traseu.png.webp
+     - assets/images/lotus_mall_traseu.png.webp
+     - assets/images/rewine_bistro_traseu.png.webp
+     - assets/images/istorie11.jpg.webp
+     - assets/images/istorie2.jpg.webp
+     - assets/images/istorie3.jpg.webp
+     - assets/images/istorie4.jpg.webp
+     - assets/images/istorie5.jpg.webp
+     - assets/images/oradea_mod_1.jpg.webp
+     - assets/images/oradea_mod_2.jpg.webp
+     - assets/images/oradea_mod_4.jpg.webp
+     - assets/images/oradea_mod_5.jpg.webp
+     - assets/images/filarmonica_de_stat_oradea.jpg.webp
+     - assets/images/centrul_istoric.jpg.webp
+     - assets/images/arhitectura.jpg.webp
+
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/to/resolution-aware-images
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/to/asset-from-package
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/to/font-from-package
