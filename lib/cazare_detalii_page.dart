@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:viziteaza_oradea/cazari_page.dart'; // modelul Cazare
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class CazareDetaliiPage extends StatelessWidget {
   final Cazare cazare;
@@ -195,22 +196,12 @@ class CazareDetaliiPage extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: Image.network(
+              child: CachedNetworkImage(imageUrl: 
                 imageUrl,
                 fit: BoxFit.cover,
                 width: double.infinity,
-                loadingBuilder: (context, child, progress) {
-                  if (progress == null) return child;
-                  return Container(
-                    color: Colors.grey.shade300,
-                    child: const Center(
-                      child: CircularProgressIndicator(
-                        color: Color(0xFF004E64),
-                      ),
-                    ),
-                  );
-                },
-                errorBuilder: (context, error, stackTrace) {
+                placeholder: (_, __) => Container(color: const Color(0xFFE8F1F4)),
+                errorWidget: (context, error, stackTrace) {
                   debugPrint("❌ Eroare imagine în carusel: $error");
                   return Image.asset(
                     'assets/images/imagine_gri.webp',

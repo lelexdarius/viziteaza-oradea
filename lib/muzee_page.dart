@@ -4,6 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:ui';
 import 'muzeu_detalii_page.dart';
 import 'widgets/custom_footer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:viziteaza_oradea/widgets/category_map_preview.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Muzeu {
   final String title;
@@ -244,6 +247,23 @@ class _MuzeePageState extends State<MuzeePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      CategoryMapPreview(
+                        collection: 'muzee',
+                        markerColor: const Color(0xFF6A1B9A),
+                        markerIcon: Icons.museum,
+                        extractPoints: (data) {
+                          final lat = (data['latitude'] is num) ? (data['latitude'] as num).toDouble() : null;
+                          final lng = (data['longitude'] is num) ? (data['longitude'] as num).toDouble() : null;
+                          if (lat != null && lng != null) return [LatLng(lat, lng)];
+                          return [];
+                        },
+                        getTitle: (data) => data['title']?.toString() ?? 'Muzeu',
+                        onMarkerTap: (ctx, doc) {
+                          Navigator.push(ctx, MaterialPageRoute(
+                            builder: (_) => MuzeuDetaliiPage(muzeu: Muzeu.fromFirestore(doc)),
+                          ));
+                        },
+                      ),
                       ...muzee.map((m) => _buildCard(context, m)).toList(),
                       const SizedBox(height: 40),
                       const Center(
@@ -298,12 +318,12 @@ class _MuzeePageState extends State<MuzeePage> {
           children: [
             ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-              child: Image.network(
+              child: CachedNetworkImage(imageUrl: 
                 muzeu.imagePath,
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: 180,
-                errorBuilder: (context, error, stackTrace) {
+                errorWidget: (context, error, stackTrace) {
                   return Image.asset(
                     'assets/images/imagine_gri.jpg.webp',
                     fit: BoxFit.cover,

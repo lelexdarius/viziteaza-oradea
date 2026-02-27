@@ -8,6 +8,7 @@ import 'services/favorite_service.dart';
 
 // ✅ footer standard din app
 import 'widgets/custom_footer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class TeatruDetaliiPage extends StatefulWidget {
   final String title;
@@ -322,12 +323,12 @@ class _TeatruDetaliiPageState extends State<TeatruDetaliiPage> {
                     borderRadius: BorderRadius.circular(18),
                     child: widget.imageUrl.isNotEmpty &&
                             widget.imageUrl.startsWith("http")
-                        ? Image.network(
+                        ? CachedNetworkImage(imageUrl: 
                             widget.imageUrl,
                             width: double.infinity,
                             height: 230,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Image.asset(
+                            errorWidget: (_, __, ___) => Image.asset(
                               "assets/images/teatru.jpg.webp",
                               width: double.infinity,
                               height: 230,

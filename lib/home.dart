@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'dart:async';
 import 'dart:ui';
 
 // ✅ NEW: tutorial doar la prima deschidere
@@ -10,7 +12,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:viziteaza_oradea/biserici_page.dart';
 import 'package:viziteaza_oradea/cafenele_page.dart';
 import 'package:viziteaza_oradea/catedrale_page.dart';
-import 'package:viziteaza_oradea/cazari_page.dart';
 import 'package:viziteaza_oradea/distractii_page.dart';
 import 'package:viziteaza_oradea/faq_page.dart';
 import 'package:viziteaza_oradea/galerie_page.dart';
@@ -19,12 +20,8 @@ import 'package:viziteaza_oradea/restaurante_page.dart';
 import 'package:viziteaza_oradea/stranduri_page.dart';
 import 'package:viziteaza_oradea/fast_food_page.dart';
 import 'package:viziteaza_oradea/trasee_page.dart';
-import 'package:viziteaza_oradea/walk_detalii_page.dart';
 
 import 'evenimente_page.dart';
-import 'istorie_page.dart';
-import 'oradea_moderna_page.dart';
-import 'baile_felix_page.dart';
 import 'filarmonica_page.dart';
 import 'package:viziteaza_oradea/teatru_page.dart';
 import 'widgets/custom_footer.dart';
@@ -37,6 +34,14 @@ import 'package:viziteaza_oradea/termeni_page.dart';
 // ✅ premium
 import 'package:viziteaza_oradea/services/iap_service.dart';
 import 'package:viziteaza_oradea/traseu_multiday_page.dart';
+import 'package:viziteaza_oradea/models/restaurant_model.dart';
+import 'package:viziteaza_oradea/cafenea_detalii_page.dart';
+import 'package:viziteaza_oradea/restaurant_detalii_page.dart';
+import 'package:viziteaza_oradea/fast_food_detalii_page.dart';
+import 'package:viziteaza_oradea/muzeu_detalii_page.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:viziteaza_oradea/widgets/category_map_preview.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -527,70 +532,13 @@ class _HomePageState extends State<HomePage> {
 
                     const FirestoreHeaderImage(),
 
-                    const SizedBox(height: 10),
-
-                    // ✅ key pentru tutorial la pasul "Trasee"
-                    KeyedSubtree(
-                      key: _kTraseeCard,
-                      child: _ModernFeatureCard(
-                        height: 290,
-                        imagePath: "assets/images/trasee.png.webp",
-                        title: "Alege traseul potrivit",
-                        subtitle: "Ghid pe zile • hartă • bifare obiective",
-                        cta: "Începe",
-                        brandColor: kBrand,
-                        onTap: () => _openTraseePremium(context),
-                        badgeText: "Premium",
-                        badgeColor: const Color(0xFFFFC800),
-                      ),
-                    ),
-
-                    const SizedBox(height: 22),
-
-                    Text(
-                      "Oradea de astăzi este mai mult decât un oraș din nord-vestul României — este o poveste vie despre renaștere, viziune și oameni care au înțeles că frumusețea unui loc se construiește în timp, cu grijă și cu suflet. În ultimii ani, Oradea a devenit un model de dezvoltare urbană în România, un oraș care respiră ordine, eleganță și energie pozitivă. ",
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 14,
-                        color: Colors.black.withOpacity(0.84),
-                        height: 1.55,
-                      ),
-                    ),
-
-                    const SizedBox(height: 22),
-
-                    _ModernFeatureCard(
-                      height: 280,
-                      imagePath: "assets/images/istorie1.png.webp",
-                      title: "Descoperă povestea",
-                      subtitle: "Oradiei de altădată",
-                      cta: "Explorează",
-                      brandColor: kBrand,
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const IstoriePage()),
-                      ),
-                    ),
-
                     const SizedBox(height: 14),
 
-                    _ModernFeatureCard(
-                      height: 280,
-                      imagePath: "assets/images/oradea_moderna.jpg.webp",
-                      title: "Oradea de azi",
-                      subtitle: "Luminoasă, vie, modernă.",
-                      cta: "Vezi transformarea",
-                      brandColor: kBrand,
-                      lightCta: true,
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const OradeaModernaPage(),
-                        ),
-                      ),
-                    ),
+                    const _HomeMapSection(),
 
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 16),
+
+                    const SizedBox(height: 2),
 
                     Text(
                       "Cele mai accesate",
@@ -1439,6 +1387,552 @@ class _ModernFeatureCard extends StatelessWidget {
   }
 }
 
+// ===============================================================
+// Secțiunea hartă compactă + full-screen
+// ===============================================================
+class _HomeMapSection extends StatefulWidget {
+  const _HomeMapSection();
+
+  @override
+  State<_HomeMapSection> createState() => _HomeMapSectionState();
+}
+
+class _HomeMapSectionState extends State<_HomeMapSection> {
+  static const Color kBrand = Color(0xFF004E64);
+
+  Set<Marker> _markers = {};
+  BitmapDescriptor? _cafeIcon;
+  BitmapDescriptor? _restIcon;
+  BitmapDescriptor? _ffIcon;
+  BitmapDescriptor? _muzIcon;
+  bool _iconsReady = false;
+
+  List<QueryDocumentSnapshot> _cafeDocs = [];
+  List<QueryDocumentSnapshot> _restDocs = [];
+  List<QueryDocumentSnapshot> _ffDocs = [];
+  List<QueryDocumentSnapshot> _muzDocs = [];
+  final List<StreamSubscription<QuerySnapshot>> _subs = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _buildIconsThenSubscribe();
+  }
+
+  @override
+  void dispose() {
+    for (final s in _subs) s.cancel();
+    super.dispose();
+  }
+
+  Future<void> _buildIconsThenSubscribe() async {
+    _cafeIcon = await buildCircleMarkerIcon(Icons.local_cafe, const Color(0xFF1565C0), size: 80);
+    _restIcon = await buildCircleMarkerIcon(Icons.restaurant, const Color(0xFFD84315), size: 80);
+    _ffIcon   = await buildCircleMarkerIcon(Icons.fastfood, const Color(0xFFF57F17), size: 80);
+    _muzIcon  = await buildCircleMarkerIcon(Icons.museum, const Color(0xFF6A1B9A), size: 80);
+    if (!mounted) return;
+    setState(() => _iconsReady = true);
+    _subscribeToStreams();
+  }
+
+  void _subscribeToStreams() {
+    final db = FirebaseFirestore.instance;
+    _subs.add(db.collection('cafenele').snapshots().listen((snap) {
+      _cafeDocs = snap.docs;
+      _rebuildMarkers();
+    }));
+    _subs.add(db.collection('restaurante').snapshots().listen((snap) {
+      _restDocs = snap.docs;
+      _rebuildMarkers();
+    }));
+    _subs.add(db.collection('fast_food').snapshots().listen((snap) {
+      _ffDocs = snap.docs;
+      _rebuildMarkers();
+    }));
+    _subs.add(db.collection('muzee').snapshots().listen((snap) {
+      _muzDocs = snap.docs;
+      _rebuildMarkers();
+    }));
+  }
+
+  void _rebuildMarkers() {
+    if (!_iconsReady) return;
+    final markers = <Marker>{};
+    int id = 0;
+
+    // GeoPoint-based collections (cafenele, restaurante, fast_food)
+    void addGeoPointDocs(
+      List<QueryDocumentSnapshot> docs,
+      BitmapDescriptor icon,
+      String prefix,
+    ) {
+      for (final doc in docs) {
+        final data = doc.data() as Map<String, dynamic>;
+        final locs = data['locations'];
+        final title = data['title']?.toString() ?? '';
+        final List<LatLng> points = [];
+        if (locs is List) {
+          for (final l in locs) {
+            if (l is GeoPoint) points.add(LatLng(l.latitude, l.longitude));
+          }
+        } else if (locs is GeoPoint) {
+          points.add(LatLng(locs.latitude, locs.longitude));
+        }
+        for (final p in points) {
+          markers.add(Marker(
+            markerId: MarkerId('${prefix}_${id++}'),
+            position: p,
+            icon: icon,
+            infoWindow: InfoWindow(title: title),
+          ));
+        }
+      }
+    }
+
+    addGeoPointDocs(_cafeDocs, _cafeIcon!, 'cafe');
+    addGeoPointDocs(_restDocs, _restIcon!, 'rest');
+    addGeoPointDocs(_ffDocs, _ffIcon!, 'ff');
+
+    // Muzee use separate latitude/longitude numeric fields
+    for (final doc in _muzDocs) {
+      final data = doc.data() as Map<String, dynamic>;
+      final lat = (data['latitude'] is num) ? (data['latitude'] as num).toDouble() : null;
+      final lng = (data['longitude'] is num) ? (data['longitude'] as num).toDouble() : null;
+      if (lat != null && lng != null) {
+        markers.add(Marker(
+          markerId: MarkerId('muz_${id++}'),
+          position: LatLng(lat, lng),
+          icon: _muzIcon!,
+          infoWindow: InfoWindow(title: data['title']?.toString() ?? 'Muzeu'),
+        ));
+      }
+    }
+
+    if (mounted) setState(() => _markers = markers);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Harta orașului",
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 16,
+            fontWeight: FontWeight.w900,
+            color: Colors.black.withOpacity(0.86),
+          ),
+        ),
+        const SizedBox(height: 10),
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const _FullScreenMapPage(),
+                fullscreenDialog: true,
+              ),
+            );
+          },
+          child: Container(
+            height: 300,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.12),
+                  blurRadius: 16,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(18),
+              child: Stack(
+                children: [
+                  AbsorbPointer(
+                    child: GoogleMap(
+                      initialCameraPosition: const CameraPosition(
+                        target: LatLng(47.0722, 21.9217),
+                        zoom: 13,
+                      ),
+                      markers: _markers,
+                      zoomControlsEnabled: false,
+                      myLocationButtonEnabled: false,
+                      compassEnabled: false,
+                      mapToolbarEnabled: false,
+                    ),
+                  ),
+                  if (!_iconsReady)
+                    const Center(child: CircularProgressIndicator()),
+                  Positioned(
+                    bottom: 12,
+                    right: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: kBrand.withOpacity(0.90),
+                        borderRadius: BorderRadius.circular(999),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.18),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.fullscreen, color: Colors.white, size: 16),
+                          SizedBox(width: 6),
+                          Text(
+                            "Extinde harta",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _FullScreenMapPage extends StatefulWidget {
+  const _FullScreenMapPage();
+
+  @override
+  State<_FullScreenMapPage> createState() => _FullScreenMapPageState();
+}
+
+class _FullScreenMapPageState extends State<_FullScreenMapPage> {
+  static const Color kBrand = Color(0xFF004E64);
+  Set<Marker> _markers = {};
+  bool _iconsReady = false;
+  bool _isLoading = true;
+  Position? _userPosition;
+  bool _locationEnabled = false;
+
+  BitmapDescriptor? _cafeIcon;
+  BitmapDescriptor? _restIcon;
+  BitmapDescriptor? _ffIcon;
+  BitmapDescriptor? _muzIcon;
+
+  List<QueryDocumentSnapshot> _cafeDocs = [];
+  List<QueryDocumentSnapshot> _restDocs = [];
+  List<QueryDocumentSnapshot> _ffDocs = [];
+  List<QueryDocumentSnapshot> _muzDocs = [];
+  final List<StreamSubscription<QuerySnapshot>> _subs = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _initLocationAndMarkers();
+  }
+
+  @override
+  void dispose() {
+    for (final s in _subs) s.cancel();
+    super.dispose();
+  }
+
+  Future<void> _initLocationAndMarkers() async {
+    // Request location
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.whileInUse ||
+          permission == LocationPermission.always) {
+        final pos = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+          timeLimit: const Duration(seconds: 6),
+        );
+        if (mounted) {
+          setState(() {
+            _userPosition = pos;
+            _locationEnabled = true;
+          });
+        }
+      }
+    } catch (_) {}
+
+    // Build custom marker icons
+    _cafeIcon = await buildCircleMarkerIcon(Icons.local_cafe, const Color(0xFF1565C0), size: 96);
+    _restIcon = await buildCircleMarkerIcon(Icons.restaurant, const Color(0xFFD84315), size: 96);
+    _ffIcon   = await buildCircleMarkerIcon(Icons.fastfood, const Color(0xFFF57F17), size: 96);
+    _muzIcon  = await buildCircleMarkerIcon(Icons.museum, const Color(0xFF6A1B9A), size: 96);
+    if (!mounted) return;
+    setState(() { _iconsReady = true; _isLoading = false; });
+    _subscribeToStreams();
+  }
+
+  String _distanceSnippet(double lat, double lng) {
+    final pos = _userPosition;
+    if (pos == null) return 'Atinge pentru detalii';
+    final meters = Geolocator.distanceBetween(pos.latitude, pos.longitude, lat, lng);
+    return meters < 1000
+        ? '${meters.round()} m distanță • Atinge pentru detalii'
+        : '${(meters / 1000).toStringAsFixed(1)} km distanță • Atinge pentru detalii';
+  }
+
+  void _subscribeToStreams() {
+    final db = FirebaseFirestore.instance;
+    _subs.add(db.collection('cafenele').snapshots().listen((snap) {
+      _cafeDocs = snap.docs;
+      _rebuildAllMarkers();
+    }));
+    _subs.add(db.collection('restaurante').snapshots().listen((snap) {
+      _restDocs = snap.docs;
+      _rebuildAllMarkers();
+    }));
+    _subs.add(db.collection('fast_food').snapshots().listen((snap) {
+      _ffDocs = snap.docs;
+      _rebuildAllMarkers();
+    }));
+    _subs.add(db.collection('muzee').snapshots().listen((snap) {
+      _muzDocs = snap.docs;
+      _rebuildAllMarkers();
+    }));
+  }
+
+  void _rebuildAllMarkers() {
+    if (!_iconsReady) return;
+    final markers = <Marker>{};
+    int id = 0;
+
+    // ── Cafenele ──────────────────────────────────────────────────
+    for (final doc in _cafeDocs) {
+      final cafe = Cafenea.fromFirestore(doc);
+      for (final loc in cafe.locations ?? []) {
+        final mid = 'cafe_${id++}';
+        final snap = cafe;
+        markers.add(Marker(
+          markerId: MarkerId(mid),
+          position: LatLng(loc.latitude, loc.longitude),
+          icon: _cafeIcon!,
+          infoWindow: InfoWindow(
+            title: cafe.title,
+            snippet: _distanceSnippet(loc.latitude, loc.longitude),
+            onTap: () {
+              if (!mounted) return;
+              Navigator.push(context, MaterialPageRoute(
+                builder: (_) => CafeneaDetaliiPage(cafe: snap),
+              ));
+            },
+          ),
+        ));
+      }
+    }
+
+    // ── Restaurante ───────────────────────────────────────────────
+    for (final doc in _restDocs) {
+      final rest = Restaurant.fromFirestore(doc);
+      for (final loc in rest.locations ?? []) {
+        final mid = 'rest_${id++}';
+        final snap = rest;
+        markers.add(Marker(
+          markerId: MarkerId(mid),
+          position: LatLng(loc.latitude, loc.longitude),
+          icon: _restIcon!,
+          infoWindow: InfoWindow(
+            title: rest.title,
+            snippet: _distanceSnippet(loc.latitude, loc.longitude),
+            onTap: () {
+              if (!mounted) return;
+              Navigator.push(context, MaterialPageRoute(
+                builder: (_) => RestaurantDetaliiPage(restaurant: snap),
+              ));
+            },
+          ),
+        ));
+      }
+    }
+
+    // ── Fast Food ─────────────────────────────────────────────────
+    for (final doc in _ffDocs) {
+      final ff = FastFood.fromFirestore(doc);
+      for (final loc in ff.locations ?? []) {
+        final mid = 'ff_${id++}';
+        final snap = ff;
+        markers.add(Marker(
+          markerId: MarkerId(mid),
+          position: LatLng(loc.latitude, loc.longitude),
+          icon: _ffIcon!,
+          infoWindow: InfoWindow(
+            title: ff.title,
+            snippet: _distanceSnippet(loc.latitude, loc.longitude),
+            onTap: () {
+              if (!mounted) return;
+              Navigator.push(context, MaterialPageRoute(
+                builder: (_) => FastFoodDetaliiPage(fastfood: snap),
+              ));
+            },
+          ),
+        ));
+      }
+    }
+
+    // ── Muzee ─────────────────────────────────────────────────────
+    for (final doc in _muzDocs) {
+      final muz = Muzeu.fromFirestore(doc);
+      if (muz.latitude != null && muz.longitude != null) {
+        final mid = 'muz_${id++}';
+        final snap = muz;
+        markers.add(Marker(
+          markerId: MarkerId(mid),
+          position: LatLng(muz.latitude!, muz.longitude!),
+          icon: _muzIcon!,
+          infoWindow: InfoWindow(
+            title: muz.title,
+            snippet: _distanceSnippet(muz.latitude!, muz.longitude!),
+            onTap: () {
+              if (!mounted) return;
+              Navigator.push(context, MaterialPageRoute(
+                builder: (_) => MuzeuDetaliiPage(muzeu: snap),
+              ));
+            },
+          ),
+        ));
+      }
+    }
+
+    if (mounted) setState(() => _markers = markers);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final topPadding = MediaQuery.of(context).padding.top;
+    return Scaffold(
+      body: Stack(
+        children: [
+          GoogleMap(
+            initialCameraPosition: const CameraPosition(
+              target: LatLng(47.0722, 21.9217),
+              zoom: 14,
+            ),
+            markers: _markers,
+            myLocationEnabled: _locationEnabled,
+            myLocationButtonEnabled: _locationEnabled,
+            zoomControlsEnabled: true,
+            mapToolbarEnabled: false,
+          ),
+          if (_isLoading)
+            Container(
+              color: Colors.white.withOpacity(0.6),
+              child: const Center(
+                child: CircularProgressIndicator(color: kBrand),
+              ),
+            ),
+          // Buton X închidere
+          Positioned(
+            top: topPadding + 12,
+            right: 16,
+            child: GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.20),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: const Icon(Icons.close, color: Colors.black87, size: 22),
+              ),
+            ),
+          ),
+          // Legendă
+          Positioned(
+            top: topPadding + 12,
+            left: 16,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.12),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _LegendItem(color: Color(0xFF1565C0), icon: Icons.local_cafe, label: "Cafenele"),
+                  SizedBox(height: 6),
+                  _LegendItem(color: Color(0xFFD84315), icon: Icons.restaurant, label: "Restaurante"),
+                  SizedBox(height: 6),
+                  _LegendItem(color: Color(0xFFF57F17), icon: Icons.fastfood, label: "Fast Food"),
+                  SizedBox(height: 6),
+                  _LegendItem(color: Color(0xFF6A1B9A), icon: Icons.museum, label: "Muzee"),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LegendItem extends StatelessWidget {
+  final Color color;
+  final IconData icon;
+  final String label;
+
+  const _LegendItem({required this.color, required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 22,
+          height: 22,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          child: Icon(icon, color: Colors.white, size: 13),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 /// 🔹 Imagine principală din Firestore (înlocuiește caruselul)
 class FirestoreHeaderImage extends StatelessWidget {
   const FirestoreHeaderImage({super.key});
@@ -1492,23 +1986,13 @@ class FirestoreHeaderImage extends StatelessWidget {
 
               final url = snapshot.data!.docs.first['imageUrl'] as String? ?? '';
 
-              return Image.network(
+              return CachedNetworkImage(imageUrl: 
                 url,
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: 450,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return const SizedBox(
-                    height: 450,
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: _HomePageState.kBrand,
-                      ),
-                    ),
-                  );
-                },
-                errorBuilder: (_, __, ___) => const SizedBox(
+                placeholder: (_, __) => Container(color: const Color(0xFFE8F1F4)),
+                errorWidget: (_, __, ___) => const SizedBox(
                   height: 450,
                   child: Center(
                     child: Icon(

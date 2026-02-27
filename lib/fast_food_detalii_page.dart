@@ -9,6 +9,7 @@ import 'fast_food_page.dart'; // ✅ pentru modelul FastFood
 import 'widgets/custom_footer.dart';
 import 'package:viziteaza_oradea/services/favorite_service.dart';
 import 'package:viziteaza_oradea/models/favorite_item.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class FastFoodDetaliiPage extends StatefulWidget {
   final FastFood fastfood;
@@ -301,12 +302,12 @@ class _FastFoodDetaliiPageState extends State<FastFoodDetaliiPage> {
     if (path.trim().isEmpty) return fallback;
 
     if (path.startsWith('http')) {
-      return Image.network(
+      return CachedNetworkImage(imageUrl: 
         path,
         width: double.infinity,
         height: 250,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => fallback,
+        errorWidget: (_, __, ___) => fallback,
       );
     }
 
@@ -315,7 +316,6 @@ class _FastFoodDetaliiPageState extends State<FastFoodDetaliiPage> {
       width: double.infinity,
       height: 250,
       fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => fallback,
     );
   }
 

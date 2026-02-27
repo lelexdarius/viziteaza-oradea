@@ -5,6 +5,9 @@ import 'dart:ui';
 
 import 'cafenea_detalii_page.dart';
 import 'widgets/custom_footer.dart';
+import 'package:viziteaza_oradea/widgets/app_cached_image.dart';
+import 'package:viziteaza_oradea/widgets/category_map_preview.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 // =============================================================
 // MODEL
@@ -545,6 +548,25 @@ class _CafenelePageState extends State<CafenelePage> {
                     ),
                     child: Column(
                       children: [
+                        CategoryMapPreview(
+                          collection: 'cafenele',
+                          markerColor: const Color(0xFF1565C0),
+                          markerIcon: Icons.local_cafe,
+                          extractPoints: (data) {
+                            final locs = data['locations'];
+                            if (locs is GeoPoint) return [LatLng(locs.latitude, locs.longitude)];
+                            if (locs is List) {
+                              return locs.whereType<GeoPoint>().map((g) => LatLng(g.latitude, g.longitude)).toList();
+                            }
+                            return [];
+                          },
+                          getTitle: (data) => data['title']?.toString() ?? 'Cafenea',
+                          onMarkerTap: (ctx, doc) {
+                            Navigator.push(ctx, MaterialPageRoute(
+                              builder: (_) => CafeneaDetaliiPage(cafe: Cafenea.fromFirestore(doc)),
+                            ));
+                          },
+                        ),
                         // ✅ NOU: butoanele sus
                         _filterToggle(),
                         const SizedBox(height: 14),
@@ -665,9 +687,7 @@ class _CafenelePageState extends State<CafenelePage> {
           child: Stack(
             children: [
               Positioned.fill(
-                child: cafe.imagePath.startsWith('http')
-                    ? Image.network(cafe.imagePath, fit: BoxFit.cover)
-                    : Image.asset(cafe.imagePath, fit: BoxFit.cover),
+                child: AppCachedImage(url: cafe.imagePath, fit: BoxFit.cover),
               ),
               Positioned.fill(
                 child: DecoratedBox(

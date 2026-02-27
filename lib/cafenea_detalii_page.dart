@@ -9,6 +9,7 @@ import 'dart:io';
 import 'services/favorite_service.dart';
 import 'models/favorite_item.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class CafeneaDetaliiPage extends StatefulWidget {
   final Cafenea cafe;
@@ -151,23 +152,13 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(22),
                     child: cafe.imagePath.startsWith('http')
-                        ? Image.network(
+                        ? CachedNetworkImage(imageUrl: 
                             cafe.imagePath,
                             fit: BoxFit.cover,
                             width: double.infinity,
                             height: 250,
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return SizedBox(
-                                height: 250,
-                                child: Center(
-                                  child: CircularProgressIndicator(
-                                    color: kBrand.withOpacity(0.9),
-                                  ),
-                                ),
-                              );
-                            },
-                            errorBuilder: (context, error, stackTrace) {
+                            placeholder: (_, __) => Container(color: const Color(0xFFE8F1F4)),
+                            errorWidget: (context, error, stackTrace) {
                               return const SizedBox(
                                 height: 250,
                                 child: Center(

@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'teatru_detalii_page.dart';
 import 'widgets/custom_footer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class TeatruPage extends StatelessWidget {
   const TeatruPage({super.key});
@@ -332,12 +333,12 @@ class TeatruPage extends StatelessWidget {
 
     Widget imageWidget() {
       if (banner.isNotEmpty && banner.startsWith("http")) {
-        return Image.network(
+        return CachedNetworkImage(imageUrl: 
           banner,
           width: 96,
           height: 96,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => Image.asset(
+          errorWidget: (_, __, ___) => Image.asset(
             "assets/images/teatru.jpg.webp",
             width: 96,
             height: 96,

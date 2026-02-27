@@ -7,6 +7,7 @@ import 'biserici_ortodoxe_page.dart';
 import 'biserici_catolice_page.dart';
 import 'biserici_neoprotestante_page.dart';
 import 'widgets/custom_footer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 // === MODEL ===
 class BisericaCategorie {
@@ -280,12 +281,12 @@ class _BisericiPageState extends State<BisericiPage> {
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(16)),
               child: cat.imagePath.isNotEmpty
-                  ? Image.network(
+                  ? CachedNetworkImage(imageUrl: 
                       cat.imagePath,
                       fit: BoxFit.cover,
                       width: double.infinity,
                       height: 180,
-                      errorBuilder: (context, error, stackTrace) {
+                      errorWidget: (context, error, stackTrace) {
                         return Image.asset(
                           'assets/images/imagine_gri.jpg.webp',
                           fit: BoxFit.cover,

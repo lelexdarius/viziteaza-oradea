@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'models/favorite_item.dart';
 import 'services/favorite_service.dart';
 import 'widgets/custom_footer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class FilarmonicaDetaliiPage extends StatefulWidget {
   final String title;
@@ -433,12 +434,12 @@ class _FilarmonicaDetaliiPageState extends State<FilarmonicaDetaliiPage> {
   // 🔵 Imagine concert
   Widget _buildConcertImage(String imageUrl) {
     if (imageUrl.startsWith("http")) {
-      return Image.network(
+      return CachedNetworkImage(imageUrl: 
         imageUrl,
         fit: BoxFit.cover,
         height: 220,
         width: double.infinity,
-        errorBuilder: (_, __, ___) => Image.asset(
+        errorWidget: (_, __, ___) => Image.asset(
           'assets/images/filarmonica_de_stat_oradea.jpg.webp',
           height: 220,
           fit: BoxFit.cover,

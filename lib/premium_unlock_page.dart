@@ -7,6 +7,7 @@ import 'services/iap_service.dart';
 
 // ✅ pentru back -> Home (fără blank)
 import 'package:viziteaza_oradea/home.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class PremiumUnlockPage extends StatefulWidget {
   const PremiumUnlockPage({Key? key}) : super(key: key);
@@ -562,24 +563,14 @@ class _PremiumUnlockPageState extends State<PremiumUnlockPage> {
                     path.startsWith("http://") || path.startsWith("https://");
 
                 return isNetwork
-                    ? Image.network(
+                    ? CachedNetworkImage(imageUrl: 
                         path,
                         fit: BoxFit.cover,
                         width: double.infinity,
                         height: 250,
                         alignment: Alignment.center,
-                        loadingBuilder: (context, child, progress) {
-                          if (progress == null) return child;
-                          return Container(
-                            color: Colors.black.withOpacity(0.08),
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                color: kBrand.withOpacity(0.9),
-                              ),
-                            ),
-                          );
-                        },
-                        errorBuilder: (context, error, stack) {
+                        placeholder: (_, __) => Container(color: const Color(0xFFE8F1F4)),
+                        errorWidget: (context, error, stack) {
                           return Container(
                             color: Colors.black.withOpacity(0.08),
                             child: const Center(

@@ -11,6 +11,7 @@ import 'services/favorite_service.dart';
 
 import 'muzee_page.dart';
 import 'widgets/custom_footer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class MuzeuDetaliiPage extends StatefulWidget {
   final Muzeu muzeu;
@@ -409,10 +410,10 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
                         SizedBox(
                           height: 250,
                           width: double.infinity,
-                          child: Image.network(
+                          child: CachedNetworkImage(imageUrl: 
                             muzeu.imagePath,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Image.asset(
+                            errorWidget: (_, __, ___) => Image.asset(
                               'assets/images/imagine_gri.jpg.webp',
                               fit: BoxFit.cover,
                             ),

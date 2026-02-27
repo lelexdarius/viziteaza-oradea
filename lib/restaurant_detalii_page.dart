@@ -9,6 +9,7 @@ import 'package:viziteaza_oradea/models/restaurant_model.dart';
 import 'widgets/custom_footer.dart';
 import 'models/favorite_item.dart';
 import 'services/favorite_service.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class RestaurantDetaliiPage extends StatefulWidget {
   final Restaurant restaurant;
@@ -389,12 +390,12 @@ class _RestaurantDetaliiPageState extends State<RestaurantDetaliiPage> {
                   // === Imagine banner ===
                   ClipRRect(
                     borderRadius: BorderRadius.circular(18),
-                    child: Image.network(
+                    child: CachedNetworkImage(imageUrl: 
                       r.imagePath,
                       fit: BoxFit.cover,
                       width: double.infinity,
                       height: 230,
-                      errorBuilder: (context, error, stack) {
+                      errorWidget: (context, error, stack) {
                         return Image.asset(
                           'assets/images/imagine_gri.jpg.webp',
                           fit: BoxFit.cover,

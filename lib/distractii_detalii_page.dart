@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'models/favorite_item.dart';
 import 'services/favorite_service.dart';
 import 'widgets/custom_footer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class DistractiiDetaliiPage extends StatefulWidget {
   final String title;
@@ -250,12 +251,12 @@ class _DistractiiDetaliiPageState extends State<DistractiiDetaliiPage> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(16),
                     child: widget.image.startsWith("http")
-                        ? Image.network(
+                        ? CachedNetworkImage(imageUrl: 
                             widget.image,
                             height: 220,
                             width: double.infinity,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Image.asset(
+                            errorWidget: (_, __, ___) => Image.asset(
                               "assets/images/imagine_gri.jpg.webp",
                               height: 220,
                               width: double.infinity,

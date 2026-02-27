@@ -5,6 +5,9 @@ import 'dart:ui';
 
 import 'fast_food_detalii_page.dart';
 import 'widgets/custom_footer.dart';
+import 'package:viziteaza_oradea/widgets/app_cached_image.dart';
+import 'package:viziteaza_oradea/widgets/category_map_preview.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 // =============================================================
 // MODEL FAST-FOOD
@@ -408,6 +411,25 @@ class FastFoodPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        CategoryMapPreview(
+                          collection: 'fast_food',
+                          markerColor: const Color(0xFFF57F17),
+                          markerIcon: Icons.fastfood,
+                          extractPoints: (data) {
+                            final locs = data['locations'];
+                            if (locs is GeoPoint) return [LatLng(locs.latitude, locs.longitude)];
+                            if (locs is List) {
+                              return locs.whereType<GeoPoint>().map((g) => LatLng(g.latitude, g.longitude)).toList();
+                            }
+                            return [];
+                          },
+                          getTitle: (data) => data['title']?.toString() ?? 'Fast Food',
+                          onMarkerTap: (ctx, doc) {
+                            Navigator.push(ctx, MaterialPageRoute(
+                              builder: (_) => FastFoodDetaliiPage(fastfood: FastFood.fromFirestore(doc)),
+                            ));
+                          },
+                        ),
                         GridView.builder(
                           physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
@@ -533,15 +555,7 @@ class FastFoodPage extends StatelessWidget {
           child: Stack(
             children: [
               Positioned.fill(
-                child: fastfood.imagePath.startsWith('http')
-                    ? Image.network(
-                        fastfood.imagePath,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => fallbackImage(),
-                      )
-                    : (fastfood.imagePath.isNotEmpty
-                        ? Image.asset(fastfood.imagePath, fit: BoxFit.cover)
-                        : fallbackImage()),
+                child: AppCachedImage(url: fastfood.imagePath, fit: BoxFit.cover, fallback: fallbackImage()),
               ),
               Positioned.fill(
                 child: DecoratedBox(

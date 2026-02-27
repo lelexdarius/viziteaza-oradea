@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:ui';
 import 'cazare_detalii_page.dart';
 import 'widgets/custom_footer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class Cazare {
   final String title;
@@ -197,24 +198,13 @@ class CazariPage extends StatelessWidget {
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(12)),
               child: c.imagePaths.isNotEmpty
-                  ? Image.network(
+                  ? CachedNetworkImage(imageUrl: 
                       c.imagePaths.first,
                       fit: BoxFit.cover,
                       width: double.infinity,
                       height: 180,
-                      loadingBuilder: (context, child, progress) {
-                        if (progress == null) return child;
-                        return Container(
-                          height: 180,
-                          color: Colors.grey.shade300,
-                          child: const Center(
-                            child: CircularProgressIndicator(
-                              color: Color(0xFF004E64),
-                            ),
-                          ),
-                        );
-                      },
-                      errorBuilder: (context, error, stackTrace) {
+                      placeholder: (_, __) => Container(color: const Color(0xFFE8F1F4)),
+                      errorWidget: (context, error, stackTrace) {
                         print("❌ Eroare imagine: $error");
                         return Image.asset(
                           'assets/images/imagine_gri.jpg.webp',

@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'models/favorite_item.dart';
 import 'services/favorite_service.dart';
 import 'widgets/custom_footer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class EventDetailsPage extends StatefulWidget {
   final String title;
@@ -301,12 +302,12 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                     borderRadius: BorderRadius.circular(16),
                     child: widget.imagePath.isNotEmpty &&
                             widget.imagePath.startsWith("http")
-                        ? Image.network(
+                        ? CachedNetworkImage(imageUrl: 
                             widget.imagePath,
                             width: double.infinity,
                             height: 220,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Image.asset(
+                            errorWidget: (_, __, ___) => Image.asset(
                               "assets/images/evenimente.jpg.webp",
                               width: double.infinity,
                               height: 220,

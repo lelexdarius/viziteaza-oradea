@@ -10,6 +10,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:viziteaza_oradea/home.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 /// Pagina NEPUBLICATĂ în meniu.
 /// O folosești doar din Trasee (ex. "Plimbare la Palatul Vulturul Negru").
@@ -378,19 +379,18 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
                   );
 
                   return isNetwork
-                      ? Image.network(
+                      ? CachedNetworkImage(imageUrl:
                           url,
                           fit: BoxFit.cover,
-                          gaplessPlayback: true,
                           filterQuality: FilterQuality.medium,
-                          errorBuilder: (_, __, ___) => err,
+                          placeholder: (_, __) => Container(color: const Color(0xFFE8F1F4)),
+                          errorWidget: (_, __, ___) => err,
                         )
                       : Image.asset(
                           url,
                           fit: BoxFit.cover,
                           gaplessPlayback: true,
                           filterQuality: FilterQuality.medium,
-                          errorBuilder: (_, __, ___) => err,
                         );
                 },
               ),

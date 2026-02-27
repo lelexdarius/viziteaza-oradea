@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'distractii_detalii_page.dart';
 import 'widgets/custom_footer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class DistractiiPage extends StatelessWidget {
   const DistractiiPage({super.key});
@@ -304,12 +305,12 @@ class DistractiiPage extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: image.toString().startsWith("http")
-                      ? Image.network(
+                      ? CachedNetworkImage(imageUrl: 
                           image,
                           width: 110,
                           height: 100,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Image.asset(
+                          errorWidget: (_, __, ___) => Image.asset(
                             "assets/images/imagine_gri.jpg.webp",
                             width: 110,
                             height: 100,

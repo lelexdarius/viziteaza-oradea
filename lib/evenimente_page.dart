@@ -6,6 +6,7 @@ import 'evenimente_detalii_page.dart';
 import 'widgets/custom_footer.dart';
 
 import 'package:viziteaza_oradea/home.dart'; // ✅ pentru HomePage
+import 'package:cached_network_image/cached_network_image.dart';
 
 class EvenimentePage extends StatelessWidget {
   const EvenimentePage({super.key});
@@ -334,7 +335,7 @@ class EvenimentePage extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: banner.isNotEmpty && banner.startsWith("http")
-                      ? Image.network(
+                      ? CachedNetworkImage(imageUrl: 
                           banner,
                           width: 100,
                           height: 100,

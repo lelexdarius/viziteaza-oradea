@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:ui';
 import 'widgets/custom_footer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class BisericiNeoprotestantePage extends StatelessWidget {
   const BisericiNeoprotestantePage({Key? key}) : super(key: key);
@@ -265,11 +266,11 @@ class _ChurchCard extends StatelessWidget {
             AspectRatio(
               aspectRatio: 16 / 9,
               child: imagePath.isNotEmpty
-                  ? Image.network(
+                  ? CachedNetworkImage(imageUrl: 
                       imagePath,
                       fit: BoxFit.cover,
                       width: double.infinity,
-                      errorBuilder: (_, __, ___) => Image.asset(
+                      errorWidget: (_, __, ___) => Image.asset(
                         'assets/images/imagine_gri.jpg.webp',
                         fit: BoxFit.cover,
                         width: double.infinity,

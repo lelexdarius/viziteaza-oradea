@@ -10,6 +10,7 @@ import 'services/favorite_service.dart';
 
 // ✅ FOOTER
 import 'widgets/custom_footer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class StrandDetaliiPage extends StatefulWidget {
   final String title;
@@ -376,11 +377,11 @@ class _StrandDetaliiPageState extends State<StrandDetaliiPage> {
                     ? widget.images[index]
                     : "https://via.placeholder.com/400x200.png";
 
-                return Image.network(
+                return CachedNetworkImage(imageUrl: 
                   imageUrl,
                   fit: BoxFit.cover,
                   width: double.infinity,
-                  errorBuilder: (_, __, ___) =>
+                  errorWidget: (_, __, ___) =>
                       const Center(child: Icon(Icons.broken_image, size: 50)),
                 );
               },

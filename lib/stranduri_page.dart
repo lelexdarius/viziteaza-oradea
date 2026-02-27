@@ -3,6 +3,9 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'stranduri_detalii_page.dart';
 import 'widgets/custom_footer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:viziteaza_oradea/widgets/category_map_preview.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class StranduriPage extends StatelessWidget {
   const StranduriPage({super.key});
@@ -183,16 +186,49 @@ class StranduriPage extends StatelessWidget {
 
                   return ListView.builder(
                     physics: const BouncingScrollPhysics(),
-                    // ✅ IMPORTANT: spațiu jos pentru footer
                     padding: EdgeInsets.only(
                       top: topPadding + 10,
                       bottom: footerSpace,
                     ),
-                    itemCount: stranduri.length + 1,
+                    itemCount: stranduri.length + 2,
                     itemBuilder: (context, index) {
-                      if (index < stranduri.length) {
-                        final data =
-                            stranduri[index].data() as Map<String, dynamic>;
+                      // index 0 = harta
+                      if (index == 0) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: CategoryMapPreview(
+                            collection: 'stranduri',
+                            markerColor: const Color(0xFF0288D1),
+                            markerIcon: Icons.pool,
+                            extractPoints: (data) {
+                              final lat = (data['latitude'] is num) ? (data['latitude'] as num).toDouble() : null;
+                              final lng = (data['longitude'] is num) ? (data['longitude'] as num).toDouble() : null;
+                              if (lat != null && lng != null) return [LatLng(lat, lng)];
+                              return [];
+                            },
+                            getTitle: (data) => data['title']?.toString() ?? 'AquaPark',
+                            onMarkerTap: (ctx, doc) {
+                              final data = doc.data() as Map<String, dynamic>;
+                              Navigator.push(ctx, MaterialPageRoute(
+                                builder: (_) => StrandDetaliiPage(
+                                  title: data['title'] ?? '',
+                                  description: data['description'] ?? '',
+                                  address: data['address'] ?? '',
+                                  schedule: data['schedule'] ?? '',
+                                  price: data['price'] ?? '',
+                                  phone: data['phone'] ?? '',
+                                  latitude: (data['latitude'] is num) ? (data['latitude'] as num).toDouble() : null,
+                                  longitude: (data['longitude'] is num) ? (data['longitude'] as num).toDouble() : null,
+                                  images: List<String>.from(data['images'] ?? []),
+                                ),
+                              ));
+                            },
+                          ),
+                        );
+                      }
+                      // index 1..stranduri.length = cardurile
+                      if (index <= stranduri.length) {
+                        final data = stranduri[index - 1].data() as Map<String, dynamic>;
                         return _buildImprovedCard(context, data);
                       } else {
                         return const Padding(
@@ -258,12 +294,12 @@ class StranduriPage extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: firstImage != null && firstImage.startsWith("http")
-                      ? Image.network(
+                      ? CachedNetworkImage(imageUrl: 
                           firstImage,
                           width: 120,
                           height: 90,
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
+                          errorWidget: (context, error, stackTrace) =>
                               Image.asset(
                             "assets/images/imagine_gri.jpg.webp",
                             width: 120,

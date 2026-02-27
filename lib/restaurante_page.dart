@@ -6,6 +6,9 @@ import 'dart:ui';
 import 'restaurant_detalii_page.dart';
 import 'package:viziteaza_oradea/models/restaurant_model.dart';
 import 'widgets/custom_footer.dart';
+import 'package:viziteaza_oradea/widgets/app_cached_image.dart';
+import 'package:viziteaza_oradea/widgets/category_map_preview.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class RestaurantePage extends StatefulWidget {
   const RestaurantePage({Key? key}) : super(key: key);
@@ -456,15 +459,7 @@ class RestaurantePage extends StatefulWidget {
           child: Stack(
             children: [
               Positioned.fill(
-                child: (r.imagePath).startsWith('http')
-                    ? Image.network(
-                        r.imagePath,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => fallbackImage(),
-                      )
-                    : (r.imagePath.isNotEmpty
-                        ? Image.asset(r.imagePath, fit: BoxFit.cover)
-                        : fallbackImage()),
+                child: AppCachedImage(url: r.imagePath, fit: BoxFit.cover, fallback: fallbackImage()),
               ),
               Positioned.fill(
                 child: DecoratedBox(
@@ -650,6 +645,25 @@ class _RestaurantePageState extends State<RestaurantePage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        CategoryMapPreview(
+                          collection: 'restaurante',
+                          markerColor: const Color(0xFFD84315),
+                          markerIcon: Icons.restaurant,
+                          extractPoints: (data) {
+                            final locs = data['locations'];
+                            if (locs is GeoPoint) return [LatLng(locs.latitude, locs.longitude)];
+                            if (locs is List) {
+                              return locs.whereType<GeoPoint>().map((g) => LatLng(g.latitude, g.longitude)).toList();
+                            }
+                            return [];
+                          },
+                          getTitle: (data) => data['title']?.toString() ?? 'Restaurant',
+                          onMarkerTap: (ctx, doc) {
+                            Navigator.push(ctx, MaterialPageRoute(
+                              builder: (_) => RestaurantDetaliiPage(restaurant: Restaurant.fromFirestore(doc)),
+                            ));
+                          },
+                        ),
                         widget._filterToggle(
                           showRecommended: _showRecommended,
                           onAll: () => setState(() => _showRecommended = false),

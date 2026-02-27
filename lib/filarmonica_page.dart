@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'filarmonica_detalii_page.dart';
 import 'widgets/custom_footer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class FilarmonicaPage extends StatelessWidget {
   const FilarmonicaPage({super.key});
@@ -320,7 +321,7 @@ class FilarmonicaPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   child: data["banner"] != null &&
                           data["banner"].toString().startsWith("http")
-                      ? Image.network(
+                      ? CachedNetworkImage(imageUrl: 
                           data["banner"],
                           width: 100,
                           height: 100,

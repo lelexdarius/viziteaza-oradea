@@ -24,6 +24,7 @@ import 'muzee_page.dart';
 
 // FOOTER
 import 'widgets/custom_footer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class FavoritePage extends StatefulWidget {
   const FavoritePage({super.key});
@@ -541,12 +542,12 @@ class _FavoritePageState extends State<FavoritePage> {
               borderRadius:
                   const BorderRadius.horizontal(left: Radius.circular(16)),
               child: img.isNotEmpty
-                  ? Image.network(
+                  ? CachedNetworkImage(imageUrl: 
                       img,
                       width: 110,
                       height: 95,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
+                      errorWidget: (_, __, ___) => Container(
                         width: 110,
                         height: 95,
                         color: Colors.grey[300],
