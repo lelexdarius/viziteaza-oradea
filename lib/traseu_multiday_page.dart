@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:ui' as ui;
+import 'package:viziteaza_oradea/utils/app_theme.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -159,7 +160,7 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
       "hint":
           "Hint: Parchează mașina la Parcarea Subterană - Independenței. Vei sta in această zonă o vreme, iar aceasta este cea mai ieftină variantă din zonă. Va trebui să mergi puțin pe jos până la cafenea. \n \nPrimul obiectiv al zilei este o experiență autentică de cafea în Oradea — Street Coffee Roasters (Piața Unirii). \n \n Această cafenea cu renume local și prăjitorie proprie aduce rafinamentul cafelei de specialitate în inima orașului și este locul perfect pentru a începe explorarea urbană. Street Coffee Roasters a fost creată din pasiune și dedicare pentru gustul adevărat al cafelei, selectând boabe atent alese din întreaga lume și prăjindu-le cu măiestrie chiar la Oradea. \n \n Atmosfera este primitoare și relaxată, ideală pentru o pauză de dimineață în Piața Unirii înainte de a porni spre obiectivele orașului, fiind aproape si de urmatorul obiectiv: Palatul Vulturul Negru"
     },
-    "ziua1_walk_vulturul": {"hint": "La cativa pași distanță, traversezi strada si mergi spre partea pietonală care are un aspect de parc. Următorul obiectiv al traseului te duce în inima istoriei arhitecturale a Oradei — Palatul Vulturul Negru. \n \n Hint: Vă recomandăm să admirați clădirea din exterior, iar pe urmă să intrați prin acel 'tunel', unde puteți să priviți și mai îndeaproape frumusețea arhitecturală. \n \n Această clădire emblematică, ridicată între 1907–1908 de arhitecții maghiari Marcell Komor și Dezső Jakab, este considerată cea mai spectaculoasă capodoperă a stilului Secession / Art Nouveau din Transilvania. \n \n Situat în Piața Unirii, pe locul fostului han „Vulturul” din secolul XVIII care găzduia evenimente publice importante, palatul impresionează prin fațada bogat ornamentată, vitraliul uriaș cu simbolul vulturului negru și pasajul său deosebit cu acoperiș de sticlă, inspirat de marile galerii europene. De-a lungul timpului, Palatul Vulturul Negru a fost un adevărat centru de viață urbană — găzduind hoteluri, cinematografe, spectacole, săli de bal, cafenele și magazine. \n \n Azi, acesta rămâne unul dintre cele mai iubite repere ale orașului, un loc perfect pentru fotografii, plimbări prin pasaj și pentru a simți pulsul cultural al centrului istoric. "},
+    "ziua1_walk_vulturul": {"hint": "La cativa pași distanță, traversezi strada si mergi spre partea pietonală care are un aspect de parc. Următorul obiectiv al traseului te duce în inima istoriei arhitecturale a Oradei — Palatul Vulturul Negru. \n \n Hint: Vă recomandăm să admirați clădirea din exterior, iar pe urmă să intrați prin acel 'tunel', unde puteți să priviți și mai îndeaproape frumusețea arhitecturală. \n \n Această clădire emblematică, ridicată între 1907–1908 de arhitecții maghiari Marcell Komor și Dezső Jakab, este considerată cea mai spectaculoasă capodoperă a stilului Secession / Art Nouveau din Transilvania. \n \n Situat în Piața Unirii, pe locul fostului han „Vulturul\" din secolul XVIII care găzduia evenimente publice importante, palatul impresionează prin fațada bogat ornamentată, vitraliul uriaș cu simbolul vulturului negru și pasajul său deosebit cu acoperiș de sticlă, inspirat de marile galerii europene. De-a lungul timpului, Palatul Vulturul Negru a fost un adevărat centru de viață urbană — găzduind hoteluri, cinematografe, spectacole, săli de bal, cafenele și magazine. \n \n Azi, acesta rămâne unul dintre cele mai iubite repere ale orașului, un loc perfect pentru fotografii, plimbări prin pasaj și pentru a simți pulsul cultural al centrului istoric. "},
     "ziua1_food_blackeagle" :{"hint": "Black Eagle Restaurant – Eleganță și gust în inima Oradei. \n \n Hint: Pentru a fi cât mai eficienți, am ales acest restaurant pentru micul dejun fiind situat chiar în zona emblematică a Palatului Vulturul Negru. \n \n Black Eagle Restaurant este locul ideal pentru o pauză savuroasă în timpul explorării orașului. Atmosfera elegantă, designul modern și meniul variat transformă fiecare vizită într-o experiență culinară deosebită. Black Eagle îți oferă gusturi rafinate și servicii de calitate, chiar în inima Oradei."},
     "ziua1_walk_unirii" :{"hint":"După micul dejun, continuăm plimbarea cu forțe proaspete, iar acum vom intra mai in profunzime in oraș.\n \n Piața Unirii este centrul istoric și simbolic al Oradei, un loc unde trecutul și prezentul se împletesc armonios. \n \n Zona a fost nucleul orașului încă din Evul Mediu, dezvoltându-se de-a lungul secolelor ca punct principal de întâlnire, comerț și viață publică. Astăzi, piața impresionează prin clădirile sale monumentale în stil Art Nouveau și eclectic, precum Palatul Episcopal Greco-Catolic, Primăria Oradea sau celebra Biserică cu Lună, unică în România datorită mecanismului său care indică fazele lunii.(Vom merge și la aceasta în curând) \n \n Cu atmosfera sa vibrantă, terasele elegante și evenimentele culturale frecvente, Piața Unirii rămâne un loc esențial pentru a înțelege spiritul și istoria Oradei."},
     "ziua1_walk_republicii" :{"hint":"Calea Republicii – Promenada istorică a Oradei \n \n Hint: Te afli in Piața Unirii. Ca să ajungi pe calea Republicii, traversează trecerea de pietoni de lângă stația de tramvai, traversează podul(unde din nou te vei întâlni cu un peisaj de poveste), și continuă pe trotoar până dai de Calea Republicii.(Folosește-te și de hartă) \n \nCalea Republicii este una dintre cele mai importante și pitorești artere ale Oradei, cu o istorie strâns legată de dezvoltarea orașului încă din secolele XVIII–XIX, când zona a început să se contureze ca principal drum comercial și de legătură între centrul orașului și cartierele în expansiune.\n \n La sfârșitul secolului al XIX-lea și începutul secolului XX, odată cu prosperitatea economică și dezvoltarea burgheziei locale, strada a devenit axa principală a vieții comerciale, culturale și sociale. În această perioadă au fost construite numeroase palate urbane, hoteluri și magazine elegante, multe dintre ele proiectate de arhitecți renumiți ai vremii. \n \n De-a lungul său se aliniază clădiri impresionante în stil Art Nouveau, Secession și eclectic, adevărate bijuterii arhitecturale care spun povestea Oradei de altădată. Astăzi, Calea Republicii este o zonă animată, plină de magazine, cafenele și spații culturale, ideală pentru plimbări relaxante și descoperirea farmecului urban al orașului."},
@@ -175,7 +176,7 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
     "ziua3_museum_tarii_crisurilor" :{"hint":"Hint: Aveți doua opțiuni. Fie o luați la pas de la cafenea până la muzeu, fiind la o distanță de doar 700m, sau dacă alegeți să mergeți cu mașina, există locuri de parcare pe marginea drumului vizavi de muzeu.\n \n Muzeul Țării Crișurilor este una dintre cele mai importante instituții culturale din vestul României, având un rol esențial în conservarea și promovarea patrimoniului istoric, artistic și natural al regiunii. Muzeul are o tradiție ce începe la sfârșitul secolului al XIX-lea, fiind astăzi găzduit într-o clădire modernizată, adaptată standardelor muzeale contemporane.\n \n Colecțiile sale sunt extrem de variate și includ exponate de arheologie, istorie, artă, etnografie și științele naturii, oferind vizitatorilor o perspectivă completă asupra evoluției zonei Crișanei. De la artefacte preistorice și medievale, până la artă modernă și tradiții populare, fiecare sală spune o poveste aparte.\n \n Muzeul Țării Crișurilor este un loc ideal pentru cei care doresc să înțeleagă mai profund identitatea culturală a Oradei și a regiunii, oferind o experiență educativă și captivantă pentru toate vârstele."},
     "ziua3_museum_francmasonerie":{"hint":"Fiind peste drum de Muzeul Țării Crișurilor, merită sa vizitați și acest muzeu. \n \n Templul Francmasoneriei din Oradea este una dintre clădirile cu cea mai aparte încărcătură simbolică din oraș, atrăgând atenția prin arhitectura sa neobișnuită și atmosfera misterioasă. Construit la începutul secolului XX, edificiul a fost sediul lojii masonice locale, într-o perioadă în care francmasoneria avea o influență importantă în viața culturală și intelectuală a orașului.\n \n Fațada clădirii este decorată cu elemente simbolice specifice masoneriei, precum compasul, echerul sau ochiul atotvăzător, detalii care îi sporesc farmecul și intrigă vizitatorii. Din punct de vedere arhitectural, construcția se înscrie în stilul eclectic, cu influențe Art Nouveau, integrându-se armonios în peisajul urban al Oradei.\n \n Astăzi, Templul Francmasoneriei reprezintă un punct de interes cultural și arhitectural, fiind un loc care invită la descoperirea unei pagini mai puțin cunoscute din istoria orașului."},
     "ziua3_food_rosecas": {"hint":"Hint: Tot la o distanță de 850m se afla restaurantul Rosecaș. Într-adevăr aici locurile de parcare sunt destul de limitate, pe marginea drumului principal. \n Restaurantul are meniul zilei de Luni - Vineri. \n \n Restaurant Rosecas este un loc bine cunoscut în Oradea, apreciat pentru bucătăria sa gustoasă și atmosfera primitoare. Cu o tradiție îndelungată în domeniul ospitalității, restaurantul a devenit de-a lungul timpului un reper pentru localnici și o descoperire plăcută pentru turiști.\n \n Meniul oferă preparate variate, inspirate atât din bucătăria tradițională românească, cât și din cea internațională, gătite cu atenție la calitatea ingredientelor și la gustul autentic. Decorul clasic și serviciile amabile creează un cadru potrivit pentru mese în familie, întâlniri relaxate sau evenimente speciale.\n \n Restaurant Rosecas rămâne o alegere sigură pentru cei care doresc să se bucure de mâncare bună și de o atmosferă caldă, într-un cadru cu tradiție în Oradea."},
-    "ziua3_walk_biserica_cu_luna": {"hint":"Hint: Vă invităm să pășiți și în interior, respectând liniștea și atmosfera de reculegere. \n \n Biserica cu Lună este unul dintre cele mai cunoscute și fascinante monumente istorice ale Oradei, remarcată prin elementul său unic: mecanismul astronomic din turn care indică fazele reale ale lunii. Construită între anii 1784–1790, biserica poartă hramul „Adormirea Maicii Domnului” și reprezintă un important lăcaș de cult al comunității ortodoxe din oraș.\n \n Arhitectura sa îmbină armonios stilul baroc cu elemente neoclasice, iar interiorul impresionează prin pictura murală bogată și atmosfera solemnă. Globul care reprezintă luna, vizibil pe fațada turnului, este pus în mișcare de un mecanism vechi de peste două secole, păstrat funcțional până astăzi.\n \n Biserica cu Lună nu este doar un loc de rugăciune, ci și un simbol al identității culturale a Oradei și o atracție deosebită pentru vizitatorii care doresc să descopere poveștile aparte ale orașului. "},
+    "ziua3_walk_biserica_cu_luna": {"hint":"Hint: Vă invităm să pășiți și în interior, respectând liniștea și atmosfera de reculegere. \n \n Biserica cu Lună este unul dintre cele mai cunoscute și fascinante monumente istorice ale Oradei, remarcată prin elementul său unic: mecanismul astronomic din turn care indică fazele reale ale lunii. Construită între anii 1784–1790, biserica poartă hramul „Adormirea Maicii Domnului\" și reprezintă un important lăcaș de cult al comunității ortodoxe din oraș.\n \n Arhitectura sa îmbină armonios stilul baroc cu elemente neoclasice, iar interiorul impresionează prin pictura murală bogată și atmosfera solemnă. Globul care reprezintă luna, vizibil pe fațada turnului, este pus în mișcare de un mecanism vechi de peste două secole, păstrat funcțional până astăzi.\n \n Biserica cu Lună nu este doar un loc de rugăciune, ci și un simbol al identității culturale a Oradei și o atracție deosebită pentru vizitatorii care doresc să descopere poveștile aparte ale orașului. "},
     "ziua3_walk_darvas": {"hint":"Casa Darvas–La Roche este unul dintre cele mai valoroase monumente de arhitectură Art Nouveau din România și un simbol al rafinamentului Oradei de la începutul secolului XX. Clădirea a fost construită între anii 1909–1912 la comanda familiei Darvas, după planurile arhitecților László și József Vágó, reprezentanți importanți ai curentului Secession.\n \n Fațada impresionează prin decorațiunile elegante, liniile fluide și motivele florale specifice stilului Art Nouveau, iar interiorul păstrează vitralii, mobilier și detalii decorative originale. Astăzi, clădirea funcționează ca centru de cultură urbană și muzeu Art Nouveau, oferind vizitatorilor ocazia de a descoperi atmosfera unei reședințe burgheze de acum mai bine de un secol.\n \n Casa Darvas–La Roche nu este doar un obiectiv arhitectural, ci o adevărată călătorie în epoca de aur a Oradei, fiind un loc de neratat pentru iubitorii de artă, istorie și frumos."},
     "ziua3_food_allegria": {"hint":"Restaurant Allegria – Gust italian cu suflet în Oradea \n \n Restaurant Allegria este un loc apreciat pentru atmosfera sa caldă și bucătăria inspirată din tradiția italiană. Cu un decor elegant și primitor, restaurantul oferă cadrul ideal pentru prânzuri relaxate, cine romantice sau întâlniri plăcute cu prietenii, chiar în inima orașului.\n \n Meniul pune accent pe preparate autentice italiene – paste proaspete, pizza gustoasă, fructe de mare și deserturi fine – realizate din ingrediente de calitate. Fie că alegi o cină specială sau o masă lejeră după o plimbare prin centru, Allegria îți oferă o experiență culinară plină de savoare și bună dispoziție."},
     "ziua4_cafe_semiramis":{"hint":"O cafenea bună, aproape de Primăria Oradea - important deoarece următoarea oprire va fi chiar la turnul Primăriei."},
@@ -278,7 +279,7 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
       accent: kAccentSuccess,
       message:
           "Ești sigur că vrei să marchezi ca bifat acest obiectiv?\n\n"
-          "„$title”\n\n"
+          "„$title\"\n\n"
           "Bifarea rămâne valabilă până când faci Reset pentru ziua curentă.",
       confirmText: "Da, bifează",
       cancelText: "Nu",
@@ -434,7 +435,7 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
         "Aici găsești trasee gata făcute, zi cu zi.\n\n"
         "• Apasă Deschide pe o zi ca să începi.\n"
         "• În ziua aleasă ai carduri mari (swipe) pentru fiecare obiectiv.\n"
-        "• Bifează „Bifat” în ordine, după ce ai vizitat.\n"
+        "• Bifează „Bifat\" în ordine, după ce ai vizitat.\n"
         "• Poți reseta o zi o singură dată (ca să repeți traseul).",
         style: TextStyle(
           fontFamily: 'Poppins',
@@ -492,7 +493,7 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
                   child: BackdropFilter(
                     filter: ui.ImageFilter.blur(sigmaX: 22, sigmaY: 22),
                     child: Material(
-                      color: Colors.white.withOpacity(0.90),
+                      color: AppTheme.isDarkGlobal ? const Color(0xFF1C1C1E) : Colors.white.withOpacity(0.90),
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 560, maxHeight: 620),
                         child: StatefulBuilder(
@@ -518,11 +519,11 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
                                       Expanded(
                                         child: Text(
                                           "Ziua $dayIndex • Rezumat",
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontFamily: 'Poppins',
                                             fontSize: 16,
                                             fontWeight: FontWeight.w900,
-                                            color: kText,
+                                            color: AppTheme.isDarkGlobal ? Colors.white : kText,
                                           ),
                                         ),
                                       ),
@@ -644,7 +645,7 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
                                                                   fontFamily: 'Poppins',
                                                                   fontSize: 13,
                                                                   fontWeight: FontWeight.w600,
-                                                                  color: Colors.white.withOpacity(0.90),
+                                                                  color: AppTheme.isDarkGlobal ? const Color(0xFF1C1C1E) : Colors.white.withOpacity(0.90),
                                                                   height: 1.25,
                                                                 );
 
@@ -681,14 +682,14 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
                                                                                 fontFamily: 'Poppins',
                                                                                 fontSize: 12.6,
                                                                                 fontWeight: FontWeight.w900,
-                                                                                color: Colors.white.withOpacity(0.92),
+                                                                                color: AppTheme.isDarkGlobal ? const Color(0xFF1C1C1E) : Colors.white.withOpacity(0.92),
                                                                               ),
                                                                             ),
                                                                             const SizedBox(width: 6),
                                                                             Icon(
                                                                               Icons.keyboard_arrow_up_rounded,
                                                                               size: 18,
-                                                                              color: Colors.white.withOpacity(0.92),
+                                                                              color: AppTheme.isDarkGlobal ? const Color(0xFF1C1C1E) : Colors.white.withOpacity(0.92),
                                                                             ),
                                                                           ],
                                                                         ),
@@ -882,7 +883,7 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
     if (title.isEmpty) return;
 
     if (collection.isEmpty || docId.isEmpty) {
-      _toast("Lipsește collection/docId pentru „$title”.");
+      _toast("Lipsește collection/docId pentru „$title\".");
       return;
     }
 
@@ -1059,7 +1060,7 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
     final steps = <_CoachStep>[
       _CoachStep(
         key: _coachCheckKey,
-        title: "Butonul „Bifat”",
+        title: "Butonul „Bifat\"",
         message:
             "După ce ai vizitat obiectivul, apasă aici ca să îl marchezi ca bifat.\n\n"
             "Notă: trebuie să bifezi obiectivele în ordine.",
@@ -1068,7 +1069,7 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
       ),
       _CoachStep(
         key: _coachDirectionsKey,
-        title: "Butonul „Direcții”",
+        title: "Butonul „Direcții\"",
         message:
             "Aici primești direcții către obiectiv. La apăsare se deschide aplicația de hărți cu ruta până la destinație.",
         accent: kAccentMaps,
@@ -1076,21 +1077,21 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
       ),
       _CoachStep(
         key: _coachSeeKey,
-        title: "Butonul „Vezi”",
+        title: "Butonul „Vezi\"",
         message: "Deschide detaliile obiectivului (descriere, info utile, etc.).",
         accent: kPrimary,
         icon: Icons.open_in_new_rounded,
       ),
       _CoachStep(
         key: _coachStatusKey,
-        title: "Starea „Vizitat / Nevizitat”",
+        title: "Starea „Vizitat / Nevizitat\"",
         message: "Aici vezi rapid dacă obiectivul este bifat (vizitat) sau încă nevizitat.",
         accent: Colors.white,
         icon: Icons.verified_rounded,
       ),
       _CoachStep(
         key: _coachResetKey,
-        title: "Butonul „Reset”",
+        title: "Butonul „Reset\"",
         message:
             "Poți reseta progresul zilei ca să repeți traseul.\n\n"
             "Important: resetarea este disponibilă doar o singură dată pe zi.",
@@ -1099,7 +1100,7 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
       ),
       _CoachStep(
         key: _coachMapKey,
-        title: "Butonul „Hartă”",
+        title: "Butonul „Hartă\"",
         message:
             "Deschide harta zilei ca să vezi mai clar traseul tău (ordine, markere, progres pe rută).",
         accent: kAccentMaps,
@@ -1194,7 +1195,7 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
                     child: BackdropFilter(
                       filter: ui.ImageFilter.blur(sigmaX: 22, sigmaY: 22),
                       child: Material(
-                        color: Colors.white.withOpacity(0.92),
+                        color: AppTheme.isDarkGlobal ? const Color(0xFF1C1C1E) : Colors.white.withOpacity(0.92),
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
                           child: Column(
@@ -1218,11 +1219,11 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
                                   Expanded(
                                     child: Text(
                                       title,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontFamily: 'Poppins',
                                         fontSize: 16,
                                         fontWeight: FontWeight.w900,
-                                        color: kText,
+                                        color: AppTheme.isDarkGlobal ? Colors.white : kText,
                                       ),
                                     ),
                                   ),
@@ -1453,7 +1454,7 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
             child: BackdropFilter(
               filter: ui.ImageFilter.blur(sigmaX: 22, sigmaY: 22),
               child: Material(
-                color: Colors.white.withOpacity(0.82),
+                color: AppTheme.isDarkGlobal ? const Color(0xFF1C1C1E) : Colors.white.withOpacity(0.82),
                 child: SafeArea(
                   top: false,
                   bottom: false,
@@ -1469,11 +1470,11 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
                             Expanded(
                               child: Text(
                                 "Hartă • Ziua $selectedDay",
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 16,
                                   fontWeight: FontWeight.w900,
-                                  color: kText,
+                                  color: AppTheme.isDarkGlobal ? Colors.white : kText,
                                 ),
                               ),
                             ),
@@ -1532,6 +1533,9 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
                             myLocationButtonEnabled: false,
                             markers: markers,
                             polylines: polylines,
+                            onMapCreated: (controller) {
+                              AppTheme.applyMapStyle(controller);
+                            },
                           ),
                         ),
                       ),
@@ -1618,7 +1622,7 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
             child: BackdropFilter(
               filter: ui.ImageFilter.blur(sigmaX: 22, sigmaY: 22),
               child: Material(
-                color: Colors.white.withOpacity(0.86),
+                color: AppTheme.isDarkGlobal ? const Color(0xFF1C1C1E) : Colors.white.withOpacity(0.86),
                 child: SafeArea(
                   top: false,
                   child: Column(
@@ -1635,11 +1639,11 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
                                 title,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 15.5,
                                   fontWeight: FontWeight.w900,
-                                  color: kText,
+                                  color: AppTheme.isDarkGlobal ? Colors.white : kText,
                                 ),
                               ),
                             ),
@@ -1658,7 +1662,9 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
                               fontSize: 13.8,
                               fontWeight: FontWeight.w600,
                               height: 1.40,
-                              color: Colors.black.withOpacity(0.78),
+                              color: AppTheme.isDarkGlobal
+                                  ? Colors.white
+                                  : Colors.black.withOpacity(0.78),
                             ),
                           ),
                         ),
@@ -1710,7 +1716,7 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
                   child: BackdropFilter(
                     filter: ui.ImageFilter.blur(sigmaX: 22, sigmaY: 22),
                     child: Material(
-                      color: Colors.white.withOpacity(0.90),
+                      color: AppTheme.isDarkGlobal ? const Color(0xFF1C1C1E) : Colors.white.withOpacity(0.90),
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 560),
                         child: Padding(
@@ -1734,11 +1740,11 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
                                   Expanded(
                                     child: Text(
                                       title,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontFamily: 'Poppins',
                                         fontSize: 16.5,
                                         fontWeight: FontWeight.w900,
-                                        color: kText,
+                                        color: AppTheme.isDarkGlobal ? Colors.white : kText,
                                       ),
                                     ),
                                   ),
@@ -1822,7 +1828,7 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
                   child: BackdropFilter(
                     filter: ui.ImageFilter.blur(sigmaX: 22, sigmaY: 22),
                     child: Material(
-                      color: Colors.white.withOpacity(0.90),
+                      color: AppTheme.isDarkGlobal ? const Color(0xFF1C1C1E) : Colors.white.withOpacity(0.90),
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 560),
                         child: Padding(
@@ -1846,11 +1852,11 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
                                   Expanded(
                                     child: Text(
                                       title,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontFamily: 'Poppins',
                                         fontSize: 16.5,
                                         fontWeight: FontWeight.w900,
-                                        color: kText,
+                                        color: AppTheme.isDarkGlobal ? Colors.white : kText,
                                       ),
                                     ),
                                   ),
@@ -1939,9 +1945,9 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
         return false;
       },
       child: Scaffold(
-        backgroundColor: kBg,
+        backgroundColor: AppTheme.isDarkGlobal ? Colors.black : kBg,
         body: SafeArea(
-          // ✅ FIX: scoate complet padding-ul de jos (dispare “dunga” de jos pe ecranul cu zilele)
+          // ✅ FIX: scoate complet padding-ul de jos (dispare "dunga" de jos pe ecranul cu zilele)
           bottom: false,
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 220),
@@ -1975,7 +1981,7 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
                         onTap: _goHomeRoot,
                       ),
                     ),
-                    const Center(
+                    Center(
                       child: Text(
                         "Trasee pe zile",
                         textAlign: TextAlign.center,
@@ -1983,7 +1989,7 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
                           fontFamily: 'Poppins',
                           fontSize: 17.5,
                           fontWeight: FontWeight.w900,
-                          color: kText,
+                          color: AppTheme.isDarkGlobal ? Colors.white : kText,
                         ),
                       ),
                     ),
@@ -2006,7 +2012,9 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
                 style: TextStyle(
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w700,
-                  color: Colors.black.withOpacity(0.55),
+                  color: AppTheme.isDarkGlobal
+                      ? Colors.white.withOpacity(0.60)
+                      : Colors.black.withOpacity(0.55),
                 ),
               ),
             ),
@@ -2056,6 +2064,25 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
               childCount: widget.totalDays,
             ),
           ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 10, bottom: 30),
+            child: Center(
+              child: Text(
+                "— Tour Oradea © 2025 —",
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 12,
+                  color: AppTheme.isDarkGlobal
+                      ? Colors.white.withOpacity(0.35)
+                      : Colors.black.withOpacity(0.35),
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -2208,11 +2235,11 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
                     Expanded(
                       child: Text(
                         "Ziua $selectedDay",
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 18,
                           fontWeight: FontWeight.w900,
-                          color: kText,
+                          color: AppTheme.isDarkGlobal ? Colors.white : kText,
                         ),
                       ),
                     ),
@@ -2257,23 +2284,33 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w800,
-                        color: Colors.black.withOpacity(0.70),
+                        color: AppTheme.isDarkGlobal
+                            ? Colors.white
+                            : Colors.black.withOpacity(0.70),
                       ),
                     ),
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppTheme.isDarkGlobal
+                          ? const Color(0xFF2C2C2E)
+                          : Colors.white,
                       borderRadius: BorderRadius.circular(999),
-                      border: Border.all(color: Colors.black.withOpacity(0.10)),
+                      border: Border.all(
+                        color: AppTheme.isDarkGlobal
+                            ? Colors.white.withOpacity(0.15)
+                            : Colors.black.withOpacity(0.10),
+                      ),
                     ),
                     child: Text(
                       "${(progress * 100).round()}%",
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w900,
-                        color: Colors.black.withOpacity(0.78),
+                        color: AppTheme.isDarkGlobal
+                            ? Colors.white
+                            : Colors.black.withOpacity(0.78),
                       ),
                     ),
                   ),
@@ -2285,7 +2322,9 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
                 child: LinearProgressIndicator(
                   value: _clamp01(progress),
                   minHeight: 8,
-                  backgroundColor: Colors.black.withOpacity(0.08),
+                  backgroundColor: AppTheme.isDarkGlobal
+                      ? Colors.white.withOpacity(0.15)
+                      : Colors.black.withOpacity(0.08),
                   valueColor: const AlwaysStoppedAnimation(kAccentSuccess),
                 ),
               ),
@@ -2540,7 +2579,7 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
                         fontFamily: 'Poppins',
                         fontSize: 13.3,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white.withOpacity(0.90),
+                        color: AppTheme.isDarkGlobal ? Colors.white : Colors.white.withOpacity(0.90),
                         height: 1.25,
                       );
 
@@ -2574,14 +2613,14 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
                                       fontFamily: 'Poppins',
                                       fontSize: 12.6,
                                       fontWeight: FontWeight.w900,
-                                      color: Colors.white.withOpacity(0.92),
+                                      color: AppTheme.isDarkGlobal ? Colors.white : Colors.white.withOpacity(0.92),
                                     ),
                                   ),
                                   const SizedBox(width: 6),
                                   Icon(
                                     Icons.keyboard_arrow_up_rounded,
                                     size: 18,
-                                    color: Colors.white.withOpacity(0.92),
+                                    color: AppTheme.isDarkGlobal ? Colors.white : Colors.white.withOpacity(0.92),
                                   ),
                                 ],
                               ),
@@ -2663,9 +2702,15 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.62),
+            color: AppTheme.isDarkGlobal
+                ? const Color(0xFF1C1C1E).withOpacity(0.90)
+                : Colors.white.withOpacity(0.62),
             borderRadius: BorderRadius.circular(26),
-            border: Border.all(color: Colors.black.withOpacity(0.06)),
+            border: Border.all(
+              color: AppTheme.isDarkGlobal
+                  ? Colors.white.withOpacity(0.10)
+                  : Colors.black.withOpacity(0.06),
+            ),
           ),
           child: child,
         ),
@@ -2679,12 +2724,20 @@ class _TraseuMultiDayPageState extends State<TraseuMultiDayPage> with SingleTick
       icon: Icon(icon, size: 18),
       label: Text(text),
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white.withOpacity(0.78),
-        foregroundColor: Colors.black.withOpacity(0.75),
+        backgroundColor: AppTheme.isDarkGlobal
+            ? const Color(0xFF2C2C2E)
+            : Colors.white.withOpacity(0.78),
+        foregroundColor: AppTheme.isDarkGlobal
+            ? Colors.white
+            : Colors.black.withOpacity(0.75),
         elevation: 0,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
-        side: BorderSide(color: Colors.black.withOpacity(0.10)),
+        side: BorderSide(
+          color: AppTheme.isDarkGlobal
+              ? Colors.white.withOpacity(0.15)
+              : Colors.black.withOpacity(0.10),
+        ),
         textStyle: const TextStyle(
           fontFamily: 'Poppins',
           fontWeight: FontWeight.w900,

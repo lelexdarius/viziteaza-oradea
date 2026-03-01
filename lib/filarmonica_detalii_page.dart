@@ -6,10 +6,13 @@ import 'models/favorite_item.dart';
 import 'services/favorite_service.dart';
 import 'widgets/custom_footer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:viziteaza_oradea/services/app_state.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
 
 class FilarmonicaDetaliiPage extends StatefulWidget {
   final String title;
   final String imageUrl;
+  final String descriere;
   final String solist;
   final String dataConcertului;
   final String ora;
@@ -23,6 +26,7 @@ class FilarmonicaDetaliiPage extends StatefulWidget {
     Key? key,
     required this.title,
     required this.imageUrl,
+    required this.descriere,
     required this.solist,
     required this.dataConcertului,
     required this.ora,
@@ -97,19 +101,20 @@ class _FilarmonicaDetaliiPageState extends State<FilarmonicaDetaliiPage> {
   }
 
   // -------------------------------------------------------------
-  // ✅ Apple 2025 “buline”
+  // ✅ Apple 2025 "buline"
   // -------------------------------------------------------------
   Widget _pillIconButton({
     required IconData icon,
     required VoidCallback onTap,
     Color? iconColor,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Material(
-          color: Colors.white.withOpacity(0.55),
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.55),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(999),
@@ -119,7 +124,7 @@ class _FilarmonicaDetaliiPageState extends State<FilarmonicaDetaliiPage> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.60),
+                  color: isDark ? Colors.white : Colors.white.withOpacity(0.60),
                   width: 1,
                 ),
                 boxShadow: [
@@ -130,7 +135,7 @@ class _FilarmonicaDetaliiPageState extends State<FilarmonicaDetaliiPage> {
                   ),
                 ],
               ),
-              child: Icon(icon, color: iconColor ?? kBrand, size: 20),
+              child: Icon(icon, color: isDark ? Colors.white : (iconColor ?? kBrand), size: 20),
             ),
           ),
         ),
@@ -139,6 +144,7 @@ class _FilarmonicaDetaliiPageState extends State<FilarmonicaDetaliiPage> {
   }
 
   Widget _titlePill(String text) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -146,9 +152,9 @@ class _FilarmonicaDetaliiPageState extends State<FilarmonicaDetaliiPage> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.70),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.70),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.55), width: 1),
+            border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.55), width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -162,11 +168,11 @@ class _FilarmonicaDetaliiPageState extends State<FilarmonicaDetaliiPage> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14.5,
               fontWeight: FontWeight.w900,
-              color: kBrand,
+              color: isDark ? Colors.white : kBrand,
             ),
           ),
         ),
@@ -220,7 +226,7 @@ class _FilarmonicaDetaliiPageState extends State<FilarmonicaDetaliiPage> {
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.92),
+        color: AppTheme.isDarkGlobal ? const Color(0xFF3A3A3C) : Colors.white.withOpacity(0.92),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: kBrand.withOpacity(0.10)),
         boxShadow: [
@@ -248,9 +254,9 @@ class _FilarmonicaDetaliiPageState extends State<FilarmonicaDetaliiPage> {
     final topPadding = MediaQuery.of(context).padding.top + kToolbarHeight + 10;
 
     return Scaffold(
-      backgroundColor: kBg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
-      // ✅ blur real “în spatele” header-ului cu buline
+      // ✅ blur real "în spatele" header-ului cu buline
       extendBodyBehindAppBar: true,
       extendBody: true,
 
@@ -285,11 +291,11 @@ class _FilarmonicaDetaliiPageState extends State<FilarmonicaDetaliiPage> {
                           Expanded(
                             child: Text(
                               widget.title,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontSize: 20,
                                 fontWeight: FontWeight.w900,
-                                color: kBrand,
+                                color: AppTheme.accentGlobal,
                                 height: 1.15,
                               ),
                             ),
@@ -328,14 +334,14 @@ class _FilarmonicaDetaliiPageState extends State<FilarmonicaDetaliiPage> {
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.confirmation_number, color: kBrand),
+                            Icon(Icons.confirmation_number, color: AppTheme.accentGlobal),
                             const SizedBox(width: 10),
                             Expanded(
                               child: Text(
                                 "Preț bilet: ${widget.pret} lei",
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontFamily: 'Poppins',
-                                  color: kBrand,
+                                  color: AppTheme.accentGlobal,
                                   fontWeight: FontWeight.w800,
                                   fontSize: 14.8,
                                 ),
@@ -349,13 +355,13 @@ class _FilarmonicaDetaliiPageState extends State<FilarmonicaDetaliiPage> {
                         const SizedBox(height: 10),
                         GestureDetector(
                           onTap: () => _launchURL(context, widget.linkBilete),
-                          child: const Text(
+                          child: Text(
                             "Cumpără bilete online",
                             style: TextStyle(
                               fontFamily: 'Poppins',
                               fontSize: 15.2,
                               fontWeight: FontWeight.w800,
-                              color: kBrand,
+                              color: AppTheme.accentGlobal,
                               decoration: TextDecoration.underline,
                             ),
                           ),
@@ -365,15 +371,31 @@ class _FilarmonicaDetaliiPageState extends State<FilarmonicaDetaliiPage> {
                   ),
                 ),
 
+                if (widget.descriere.trim().isNotEmpty) ...[
+                  const SizedBox(height: 14),
+                  _whiteCard(
+                    child: Text(
+                      widget.descriere,
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 14.4,
+                        height: 1.55,
+                        color: AppTheme.textPrimary(context),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+
                 const SizedBox(height: 30),
 
-                const Center(
+                Center(
                   child: Text(
                     "— Tour Oradea © 2025 —",
                     style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 12,
-                      color: Colors.grey,
+                      color: AppTheme.textSecondary(context),
                       fontWeight: FontWeight.w400,
                       letterSpacing: 0.5,
                     ),
@@ -383,7 +405,7 @@ class _FilarmonicaDetaliiPageState extends State<FilarmonicaDetaliiPage> {
             ),
           ),
 
-          // ✅ Footer fix “deasupra” conținutului
+          // ✅ Footer fix "deasupra" conținutului
           const Align(
             alignment: Alignment.bottomCenter,
             child: CustomFooter(isHome: true),
@@ -401,7 +423,15 @@ class _FilarmonicaDetaliiPageState extends State<FilarmonicaDetaliiPage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: kBrand, size: 20),
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: AppTheme.accentGlobal,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: Colors.white, size: 20),
+          ),
           const SizedBox(width: 10),
           Expanded(
             child: RichText(
@@ -409,15 +439,15 @@ class _FilarmonicaDetaliiPageState extends State<FilarmonicaDetaliiPage> {
                 style: TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 14.2,
-                  color: Colors.black.withOpacity(0.80),
+                  color: AppTheme.textPrimary(context),
                   height: 1.35,
                   fontWeight: FontWeight.w600,
                 ),
                 children: [
                   TextSpan(
                     text: "$label: ",
-                    style: const TextStyle(
-                      color: kBrand,
+                    style: TextStyle(
+                      color: AppTheme.accentGlobal,
                       fontWeight: FontWeight.w800,
                     ),
                   ),

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,6 +8,10 @@ import 'dart:ui';
 
 // ✅ NEW: tutorial doar la prima deschidere
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'services/app_state.dart';
+import 'l10n/app_strings.dart';
+import 'utils/app_theme.dart';
 
 // paginile tale existente
 import 'package:viziteaza_oradea/biserici_page.dart';
@@ -79,7 +84,10 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _maybeShowTutorialFirstRun();
+    AppState.instance.addListener(_onAppStateChanged);
   }
+
+  void _onAppStateChanged() => setState(() {});
 
   Future<void> _maybeShowTutorialFirstRun() async {
     try {
@@ -169,7 +177,7 @@ class _HomePageState extends State<HomePage> {
       case 2:
         return "Sus se află data în care ne aflăm azi, pentru a vă sincroniza rapid cu programele la Teatru, Filarmonica, sau eveniementele locale.";
       case 3:
-        return "Pentru ghidul turistic digital, accesați pagina „Trasee”, apăsând aici, sau din meniul Principal. \n \n Distracție plăcută în Oradea!";
+        return "Pentru ghidul turistic digital, accesați pagina „Trasee\", apăsând aici, sau din meniul Principal. \n \n Distracție plăcută în Oradea!";
       default:
         return "";
     }
@@ -202,6 +210,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
+    AppState.instance.removeListener(_onAppStateChanged);
     _scrollController.dispose();
     super.dispose();
   }
@@ -214,7 +223,7 @@ class _HomePageState extends State<HomePage> {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
       child: Scaffold(
-        backgroundColor: kBg,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         extendBodyBehindAppBar: true,
         extendBody: true,
 
@@ -231,7 +240,7 @@ class _HomePageState extends State<HomePage> {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
               child: Drawer(
-                backgroundColor: Colors.white.withOpacity(0.72),
+                backgroundColor: AppTheme.drawerBg(context),
                 child: ListView(
                   padding: EdgeInsets.zero,
                   children: [
@@ -270,10 +279,12 @@ class _HomePageState extends State<HomePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const SizedBox(height: 6),
-                                const Text(
+                                Text(
                                   "Tour Oradea",
                                   style: TextStyle(
-                                    color: kBrand,
+                                    color: AppState.instance.isDarkMode
+                                        ? Colors.white
+                                        : kBrand,
                                     fontSize: 26,
                                     fontWeight: FontWeight.w800,
                                     letterSpacing: 0.2,
@@ -281,9 +292,11 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 const SizedBox(height: 6),
                                 Text(
-                                  "Descoperă orașul pas cu pas",
+                                  S.of('explore'),
                                   style: TextStyle(
-                                    color: kBrand.withOpacity(0.90),
+                                    color: AppState.instance.isDarkMode
+                                        ? Colors.white.withOpacity(0.70)
+                                        : kBrand.withOpacity(0.90),
                                     fontSize: 14.5,
                                     fontWeight: FontWeight.w500,
                                     height: 1.2,
@@ -297,16 +310,18 @@ class _HomePageState extends State<HomePage> {
                     ),
 
                     const SizedBox(height: 10),
-                    _buildCategoryHeader("Sugestii"),
+                    _buildDarkModeToggle(context),
+                    const SizedBox(height: 4),
+                    _buildCategoryHeader(S.of('menu_suggestions')),
                     _buildMenuItem(
                       context,
-                      title: "Poze Oradea",
+                      title: S.of('photos'),
                       icon: Icons.photo_library_outlined,
                       destination: GaleriePage(),
                     ),
                     _buildMenuItem(
                       context,
-                      title: "Favorite",
+                      title: S.of('favorites'),
                       icon: Icons.favorite_border,
                       destination: const FavoritePage(),
                     ),
@@ -314,101 +329,102 @@ class _HomePageState extends State<HomePage> {
                     // ⭐️ Trasee = Premium gate
                     _buildMenuItem(
                       context,
-                      title: "Trasee",
+                      title: S.of('routes'),
                       icon: Icons.route_outlined,
                       destination: const TraseePage(),
                       premiumGlow: true,
                       onTap: () => _openTraseePremium(context),
                     ),
 
-                    _buildCategoryHeader("Mâncare"),
+                    _buildCategoryHeader(S.of('menu_food')),
                     _buildMenuItem(
                       context,
-                      title: "Cafenele",
+                      title: S.of('cafenele'),
                       icon: Icons.local_cafe_outlined,
                       destination: CafenelePage(),
                     ),
                     _buildMenuItem(
                       context,
-                      title: "Restaurante",
+                      title: S.of('restaurante'),
                       icon: Icons.restaurant_outlined,
                       destination: RestaurantePage(),
                     ),
                     _buildMenuItem(
                       context,
-                      title: "FastFood",
+                      title: S.of('fastfood'),
                       icon: Icons.fastfood_outlined,
                       destination: FastFoodPage(),
                     ),
 
-                    _buildCategoryHeader("Activități"),
-                    _buildMenuItem(
+                    _buildCategoryHeader(S.of('menu_activities')),
+                     _buildMenuItem(
                       context,
-                      title: "Teatru",
-                      icon: Icons.theater_comedy_outlined,
-                      destination: const TeatruPage(),
-                    ),
-                    _buildMenuItem(
-                      context,
-                      title: "Filarmonica",
-                      icon: Icons.music_note_outlined,
-                      destination: FilarmonicaPage(),
-                    ),
-                    _buildMenuItem(
-                      context,
-                      title: "AquaPark",
-                      icon: Icons.pool_outlined,
-                      destination: const StranduriPage(),
-                    ),
-                    _buildMenuItem(
-                      context,
-                      title: "Evenimente",
+                      title: S.of('evenimente'),
                       icon: Icons.event_outlined,
                       destination: EvenimentePage(),
                     ),
                     _buildMenuItem(
                       context,
-                      title: "Distracții",
+                      title: S.of('teatru'),
+                      icon: Icons.theater_comedy_outlined,
+                      destination: const TeatruPage(),
+                    ),
+                    _buildMenuItem(
+                      context,
+                      title: S.of('filarmonica'),
+                      icon: Icons.music_note_outlined,
+                      destination: FilarmonicaPage(),
+                    ),
+                    _buildMenuItem(
+                      context,
+                      title: S.of('stranduri'),
+                      icon: Icons.pool_outlined,
+                      destination: const StranduriPage(),
+                    ),
+                   
+                    _buildMenuItem(
+                      context,
+                      title: S.of('distractii'),
                       icon: Icons.celebration_outlined,
                       destination: DistractiiPage(),
                     ),
 
-                    _buildCategoryHeader("Cultura"),
+                    _buildCategoryHeader(S.of('menu_culture')),
                     _buildMenuItem(
                       context,
-                      title: "Muzee",
+                      title: S.of('muzee'),
                       icon: Icons.museum_outlined,
                       destination: MuzeePage(),
                     ),
                     _buildMenuItem(
                       context,
-                      title: "Biserici",
+                      title: S.of('churches'),
                       icon: Icons.church_outlined,
                       destination: BisericiPage(),
                     ),
                     _buildMenuItem(
                       context,
-                      title: "Catedrale / Mănăstiri",
+                      title: S.of('cathedrals'),
                       icon: Icons.account_balance_outlined,
                       destination: CatedralePage(),
                     ),
 
-                    _buildCategoryHeader("Contact"),
+                    _buildCategoryHeader(S.of('menu_contact')),
                     _buildMenuItem(
                       context,
-                      title: "Ajutor",
+                      title: S.of('nav_help'),
                       icon: Icons.help_outline,
                       destination: const AjutorPage(),
                     ),
                     _buildMenuItem(
                       context,
-                      title: "FAQ",
+                      title: S.of('faq'),
                       icon: Icons.question_answer_outlined,
                       destination: const FAQPage(),
                     ),
                     _buildMenuItem(
                       context,
-                      title: "Termeni și condiții",
+                      title: S.of('terms'),
                       icon: Icons.gavel_outlined,
                       destination: const TermeniPage(),
                     ),
@@ -422,9 +438,14 @@ class _HomePageState extends State<HomePage> {
                         vertical: 2,
                       ),
                       minVerticalPadding: 0,
-                      leading:
-                          const Icon(Icons.info_outline, color: Colors.grey),
-                      title: const Text("Despre aplicație"),
+                      leading: Icon(
+                        Icons.info_outline,
+                        color: AppTheme.textSecondary(context),
+                      ),
+                      title: Text(
+                        S.of('about'),
+                        style: TextStyle(color: AppTheme.textPrimary(context)),
+                      ),
                       onTap: () {
                         Navigator.pop(context);
                         Navigator.push(
@@ -460,23 +481,23 @@ class _HomePageState extends State<HomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Bine ai venit în Oradea",
+                      S.of('welcome'),
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 26,
                         fontWeight: FontWeight.w800,
-                        color: Colors.black.withOpacity(0.88),
+                        color: AppTheme.textPrimary(context),
                         height: 1.15,
                       ),
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      "Locul unde trecutul și prezentul dansează împreună!",
+                      S.of('tagline'),
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 15.5,
                         fontWeight: FontWeight.w500,
-                        color: Colors.black.withOpacity(0.65),
+                        color: AppTheme.textSecondary(context),
                         height: 1.25,
                       ),
                     ),
@@ -487,7 +508,7 @@ class _HomePageState extends State<HomePage> {
                         vertical: 10,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.85),
+                        color: AppTheme.cardBg(context).withOpacity(0.85),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(color: kBrand.withOpacity(0.10)),
                         boxShadow: [
@@ -516,12 +537,12 @@ class _HomePageState extends State<HomePage> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              "Turist în Oradea? Ai ajuns în locul potrivit!",
+                              S.of('tourist_banner'),
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontSize: 14.5,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.black.withOpacity(0.78),
+                                color: AppTheme.textPrimary(context).withOpacity(0.78),
                               ),
                             ),
                           ),
@@ -541,12 +562,12 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 2),
 
                     Text(
-                      "Cele mai accesate",
+                      S.of('most_popular'),
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 16,
                         fontWeight: FontWeight.w900,
-                        color: Colors.black.withOpacity(0.86),
+                        color: AppTheme.textPrimary(context),
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -556,34 +577,34 @@ class _HomePageState extends State<HomePage> {
                       items: [
                         _QuickActionItem(
                           icon: Icons.local_cafe_rounded,
-                          label: "Cafenele",
+                          label: S.of('cafenele'),
                           onTap: () => _openFromHome(context, CafenelePage()),
                         ),
                         _QuickActionItem(
                           icon: Icons.restaurant_rounded,
-                          label: "Restaurante",
+                          label: S.of('restaurante'),
                           onTap: () =>
                               _openFromHome(context, RestaurantePage()),
                         ),
                         _QuickActionItem(
                           icon: Icons.photo_library_rounded,
-                          label: "Poze Oradea",
+                          label: S.of('photos'),
                           onTap: () => _openFromHome(context, GaleriePage()),
                         ),
                         _QuickActionItem(
                           icon: Icons.theater_comedy_rounded,
-                          label: "Teatru",
+                          label: S.of('teatru'),
                           onTap: () =>
                               _openFromHome(context, const TeatruPage()),
                         ),
                         _QuickActionItem(
                           icon: Icons.event_rounded,
-                          label: "Evenimente",
+                          label: S.of('evenimente'),
                           onTap: () => _openFromHome(context, EvenimentePage()),
                         ),
                         _QuickActionItem(
                           icon: Icons.museum_rounded,
-                          label: "Muzee",
+                          label: S.of('muzee'),
                           onTap: () => _openFromHome(context, MuzeePage()),
                         ),
                       ],
@@ -591,11 +612,11 @@ class _HomePageState extends State<HomePage> {
 
                     const SizedBox(height: 28),
 
-                    const Padding(
-                      padding: EdgeInsets.only(top: 12, bottom: 6),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12, bottom: 6),
                       child: Center(
                         child: Text(
-                          "— Tour Oradea © 2025 —",
+                          S.of('copyright'),
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 12,
@@ -643,10 +664,10 @@ class _HomePageState extends State<HomePage> {
                               vertical: 8,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.90),
+                              color: AppTheme.isDarkGlobal ? Colors.black : AppTheme.cardBg(context).withOpacity(0.90),
                               borderRadius: BorderRadius.circular(999),
                               border: Border.all(
-                                color: Colors.white.withOpacity(0.55),
+                                color: AppTheme.isDarkGlobal ? Colors.white : Colors.white.withOpacity(0.55),
                                 width: 1,
                               ),
                               boxShadow: [
@@ -659,18 +680,18 @@ class _HomePageState extends State<HomePage> {
                             ),
                             child: RichText(
                               text: TextSpan(
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 14.5,
                                   fontWeight: FontWeight.w700,
-                                  color: kBrand,
+                                  color: AppTheme.isDarkGlobal ? Colors.white : kBrand,
                                 ),
                                 children: [
-                                  const TextSpan(text: "Astăzi • "),
+                                  TextSpan(text: "${S.of('today')} • "),
                                   TextSpan(
                                     text: formattedDate,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontWeight: FontWeight.w900,
-                                      color: kBrand,
+                                      color: AppTheme.isDarkGlobal ? Colors.white : kBrand,
                                     ),
                                   ),
                                 ],
@@ -682,14 +703,14 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      Container(width: 36),
+                      const SizedBox(width: 42), // language button hidden for now
                     ],
                   ),
                 ),
               ),
             ),
 
-            // ✅ FOOTER “floating”
+            // ✅ FOOTER "floating"
             Align(
               alignment: Alignment.bottomCenter,
               child: KeyedSubtree(
@@ -721,18 +742,112 @@ class _HomePageState extends State<HomePage> {
   // =============================================================
   // UI helpers
   // =============================================================
+
+  Widget _langPillButton(BuildContext context) {
+    final lang = AppState.instance.language.toUpperCase();
+    final isDark = AppState.instance.isDarkMode;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(999),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Material(
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.35),
+          child: InkWell(
+            onTap: () => AppState.instance.toggleLanguage(),
+            borderRadius: BorderRadius.circular(999),
+            child: Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(999),
+                border: Border.all(
+                  color: isDark ? Colors.white : Colors.white.withOpacity(0.6),
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  lang,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w900,
+                    color: isDark ? Colors.white : kBrand,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDarkModeToggle(BuildContext context) {
+    final isDark = AppState.instance.isDarkMode;
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: AppTheme.cardBg(context).withOpacity(0.94),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: kBrand.withOpacity(0.08)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.045),
+            blurRadius: 12,
+            offset: const Offset(0, 7),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: kBrand,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              isDark ? Icons.nightlight_round : Icons.wb_sunny_outlined,
+              size: 17,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              S.of('dark_mode'),
+              style: TextStyle(
+                fontSize: 14.6,
+                fontWeight: FontWeight.w700,
+                color: isDark ? Colors.white : Colors.black87,
+              ),
+            ),
+          ),
+          CupertinoSwitch(
+            value: isDark,
+            activeColor: kBrand,
+            onChanged: (val) => AppState.instance.setDarkMode(val),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _iconPillButton({
     Key? key,
     required IconData icon,
     required VoidCallback onTap,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       key: key,
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Material(
-          color: Colors.white.withOpacity(0.35),
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.35),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(999),
@@ -741,9 +856,11 @@ class _HomePageState extends State<HomePage> {
               height: 42,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
-                border: Border.all(color: Colors.white.withOpacity(0.6)),
+                border: Border.all(
+                  color: isDark ? Colors.white : Colors.white.withOpacity(0.6),
+                ),
               ),
-              child: Icon(icon, color: kBrand, size: 22),
+              child: Icon(icon, color: isDark ? Colors.white : kBrand, size: 22),
             ),
           ),
         ),
@@ -753,15 +870,16 @@ class _HomePageState extends State<HomePage> {
 
   // ---------- Helper Widgets ----------
   static Widget _buildCategoryHeader(String title) {
+    final isDark = AppState.instance.isDarkMode;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(18, 20, 18, 6), // ✅ puțin mai compact
+      padding: const EdgeInsets.fromLTRB(18, 20, 18, 6),
       child: Text(
         title.toUpperCase(),
         style: TextStyle(
-          fontSize: 12.0, // ✅ puțin mai mic
+          fontSize: 12.0,
           letterSpacing: 0.9,
           fontWeight: FontWeight.w800,
-          color: kBrand.withOpacity(0.75),
+          color: isDark ? Colors.white.withOpacity(0.55) : kBrand.withOpacity(0.75),
         ),
       ),
     );
@@ -787,7 +905,7 @@ class _HomePageState extends State<HomePage> {
             key: key,
             margin: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.94),
+              color: Theme.of(context).cardColor.withOpacity(0.94),
               borderRadius: BorderRadius.circular(14),
               border: premiumGlow
                   ? Border.all(
@@ -827,14 +945,17 @@ class _HomePageState extends State<HomePage> {
         ),
         title: Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14.6,
             fontWeight: FontWeight.w700,
-            color: Colors.black87,
+            color: AppTheme.textPrimary(context),
           ),
         ),
-        trailing:
-            const Icon(Icons.chevron_right, size: 20, color: Colors.black38),
+        trailing: Icon(
+          Icons.chevron_right,
+          size: 20,
+          color: AppTheme.textSecondary(context),
+        ),
         onTap: onTap ??
             () {
               Navigator.pop(context);
@@ -1073,7 +1194,7 @@ class _SpotlightClipper extends CustomClipper<Path> {
 }
 
 // ===============================================================
-// ✅ Secțiune “Cele mai accesate” (grid modern)
+// ✅ Secțiune "Cele mai accesate" (grid modern)
 // ===============================================================
 class _QuickActionsGrid extends StatelessWidget {
   final List<_QuickActionItem> items;
@@ -1128,8 +1249,14 @@ class _QuickActionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = AppTheme.isDarkGlobal;
+    final iconContainerColor = isDark
+        ? Colors.white.withOpacity(0.15)
+        : brandColor.withOpacity(0.10);
+    final iconColor = isDark ? Colors.white : brandColor;
+
     return Material(
-      color: Colors.white.withOpacity(0.92),
+      color: Theme.of(context).cardColor.withOpacity(0.92),
       borderRadius: BorderRadius.circular(18),
       child: InkWell(
         borderRadius: BorderRadius.circular(18),
@@ -1154,12 +1281,12 @@ class _QuickActionTile extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: brandColor.withOpacity(0.10),
+                  color: iconContainerColor,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Icon(
                   item.icon,
-                  color: brandColor,
+                  color: iconColor,
                   size: 22,
                 ),
               ),
@@ -1173,7 +1300,7 @@ class _QuickActionTile extends StatelessWidget {
                   fontFamily: 'Poppins',
                   fontSize: 12.5,
                   fontWeight: FontWeight.w700,
-                  color: Colors.black.withOpacity(0.80),
+                  color: AppTheme.textPrimary(context),
                   height: 1.15,
                 ),
               ),
@@ -1406,6 +1533,7 @@ class _HomeMapSectionState extends State<_HomeMapSection> {
   BitmapDescriptor? _ffIcon;
   BitmapDescriptor? _muzIcon;
   bool _iconsReady = false;
+  GoogleMapController? _mapController;
 
   List<QueryDocumentSnapshot> _cafeDocs = [];
   List<QueryDocumentSnapshot> _restDocs = [];
@@ -1417,10 +1545,16 @@ class _HomeMapSectionState extends State<_HomeMapSection> {
   void initState() {
     super.initState();
     _buildIconsThenSubscribe();
+    AppState.instance.addListener(_onThemeChanged);
+  }
+
+  void _onThemeChanged() {
+    if (_mapController != null) AppTheme.applyMapStyle(_mapController!);
   }
 
   @override
   void dispose() {
+    AppState.instance.removeListener(_onThemeChanged);
     for (final s in _subs) s.cancel();
     super.dispose();
   }
@@ -1522,7 +1656,7 @@ class _HomeMapSectionState extends State<_HomeMapSection> {
             fontFamily: 'Poppins',
             fontSize: 16,
             fontWeight: FontWeight.w900,
-            color: Colors.black.withOpacity(0.86),
+            color: AppTheme.textPrimary(context),
           ),
         ),
         const SizedBox(height: 10),
@@ -1562,6 +1696,10 @@ class _HomeMapSectionState extends State<_HomeMapSection> {
                       myLocationButtonEnabled: false,
                       compassEnabled: false,
                       mapToolbarEnabled: false,
+                      onMapCreated: (controller) {
+                        _mapController = controller;
+                        AppTheme.applyMapStyle(controller);
+                      },
                     ),
                   ),
                   if (!_iconsReady)
@@ -1626,6 +1764,7 @@ class _FullScreenMapPageState extends State<_FullScreenMapPage> {
   bool _isLoading = true;
   Position? _userPosition;
   bool _locationEnabled = false;
+  String? _activeFilter; // null = all, 'cafe' | 'rest' | 'ff' | 'muz'
 
   BitmapDescriptor? _cafeIcon;
   BitmapDescriptor? _restIcon;
@@ -1642,12 +1781,93 @@ class _FullScreenMapPageState extends State<_FullScreenMapPage> {
   void initState() {
     super.initState();
     _initLocationAndMarkers();
+    _maybeShowFilterHint();
   }
 
   @override
   void dispose() {
     for (final s in _subs) s.cancel();
     super.dispose();
+  }
+
+  Future<void> _maybeShowFilterHint() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('map_filter_hint_shown') ?? false) return;
+    await prefs.setBool('map_filter_hint_shown', true);
+    // Wait for the map to render before showing the dialog
+    await Future.delayed(const Duration(milliseconds: 700));
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+        backgroundColor: const Color(0xFF004E64),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.filter_list_rounded,
+                    color: Colors.white, size: 28),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                "Filtrează harta",
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                "Apasă pe una din categoriile din stânga sus pentru a vedea doar locațiile dorite!",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 13.5,
+                  height: 1.55,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: const Color(0xFF004E64),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14)),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    "Am înțeles!",
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      color: Color(0xFF004E64),
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _initLocationAndMarkers() async {
@@ -1716,103 +1936,160 @@ class _FullScreenMapPageState extends State<_FullScreenMapPage> {
     final markers = <Marker>{};
     int id = 0;
 
+    final f = _activeFilter;
+
     // ── Cafenele ──────────────────────────────────────────────────
-    for (final doc in _cafeDocs) {
-      final cafe = Cafenea.fromFirestore(doc);
-      for (final loc in cafe.locations ?? []) {
-        final mid = 'cafe_${id++}';
-        final snap = cafe;
-        markers.add(Marker(
-          markerId: MarkerId(mid),
-          position: LatLng(loc.latitude, loc.longitude),
-          icon: _cafeIcon!,
-          infoWindow: InfoWindow(
-            title: cafe.title,
-            snippet: _distanceSnippet(loc.latitude, loc.longitude),
-            onTap: () {
-              if (!mounted) return;
-              Navigator.push(context, MaterialPageRoute(
-                builder: (_) => CafeneaDetaliiPage(cafe: snap),
-              ));
-            },
-          ),
-        ));
+    if (f == null || f == 'cafe') {
+      for (final doc in _cafeDocs) {
+        final cafe = Cafenea.fromFirestore(doc);
+        for (final loc in cafe.locations ?? []) {
+          final mid = 'cafe_${id++}';
+          final snap = cafe;
+          markers.add(Marker(
+            markerId: MarkerId(mid),
+            position: LatLng(loc.latitude, loc.longitude),
+            icon: _cafeIcon!,
+            infoWindow: InfoWindow(
+              title: cafe.title,
+              snippet: _distanceSnippet(loc.latitude, loc.longitude),
+              onTap: () {
+                if (!mounted) return;
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (_) => CafeneaDetaliiPage(cafe: snap),
+                ));
+              },
+            ),
+          ));
+        }
       }
     }
 
     // ── Restaurante ───────────────────────────────────────────────
-    for (final doc in _restDocs) {
-      final rest = Restaurant.fromFirestore(doc);
-      for (final loc in rest.locations ?? []) {
-        final mid = 'rest_${id++}';
-        final snap = rest;
-        markers.add(Marker(
-          markerId: MarkerId(mid),
-          position: LatLng(loc.latitude, loc.longitude),
-          icon: _restIcon!,
-          infoWindow: InfoWindow(
-            title: rest.title,
-            snippet: _distanceSnippet(loc.latitude, loc.longitude),
-            onTap: () {
-              if (!mounted) return;
-              Navigator.push(context, MaterialPageRoute(
-                builder: (_) => RestaurantDetaliiPage(restaurant: snap),
-              ));
-            },
-          ),
-        ));
+    if (f == null || f == 'rest') {
+      for (final doc in _restDocs) {
+        final rest = Restaurant.fromFirestore(doc);
+        for (final loc in rest.locations ?? []) {
+          final mid = 'rest_${id++}';
+          final snap = rest;
+          markers.add(Marker(
+            markerId: MarkerId(mid),
+            position: LatLng(loc.latitude, loc.longitude),
+            icon: _restIcon!,
+            infoWindow: InfoWindow(
+              title: rest.title,
+              snippet: _distanceSnippet(loc.latitude, loc.longitude),
+              onTap: () {
+                if (!mounted) return;
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (_) => RestaurantDetaliiPage(restaurant: snap),
+                ));
+              },
+            ),
+          ));
+        }
       }
     }
 
     // ── Fast Food ─────────────────────────────────────────────────
-    for (final doc in _ffDocs) {
-      final ff = FastFood.fromFirestore(doc);
-      for (final loc in ff.locations ?? []) {
-        final mid = 'ff_${id++}';
-        final snap = ff;
-        markers.add(Marker(
-          markerId: MarkerId(mid),
-          position: LatLng(loc.latitude, loc.longitude),
-          icon: _ffIcon!,
-          infoWindow: InfoWindow(
-            title: ff.title,
-            snippet: _distanceSnippet(loc.latitude, loc.longitude),
-            onTap: () {
-              if (!mounted) return;
-              Navigator.push(context, MaterialPageRoute(
-                builder: (_) => FastFoodDetaliiPage(fastfood: snap),
-              ));
-            },
-          ),
-        ));
+    if (f == null || f == 'ff') {
+      for (final doc in _ffDocs) {
+        final ff = FastFood.fromFirestore(doc);
+        for (final loc in ff.locations ?? []) {
+          final mid = 'ff_${id++}';
+          final snap = ff;
+          markers.add(Marker(
+            markerId: MarkerId(mid),
+            position: LatLng(loc.latitude, loc.longitude),
+            icon: _ffIcon!,
+            infoWindow: InfoWindow(
+              title: ff.title,
+              snippet: _distanceSnippet(loc.latitude, loc.longitude),
+              onTap: () {
+                if (!mounted) return;
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (_) => FastFoodDetaliiPage(fastfood: snap),
+                ));
+              },
+            ),
+          ));
+        }
       }
     }
 
     // ── Muzee ─────────────────────────────────────────────────────
-    for (final doc in _muzDocs) {
-      final muz = Muzeu.fromFirestore(doc);
-      if (muz.latitude != null && muz.longitude != null) {
-        final mid = 'muz_${id++}';
-        final snap = muz;
-        markers.add(Marker(
-          markerId: MarkerId(mid),
-          position: LatLng(muz.latitude!, muz.longitude!),
-          icon: _muzIcon!,
-          infoWindow: InfoWindow(
-            title: muz.title,
-            snippet: _distanceSnippet(muz.latitude!, muz.longitude!),
-            onTap: () {
-              if (!mounted) return;
-              Navigator.push(context, MaterialPageRoute(
-                builder: (_) => MuzeuDetaliiPage(muzeu: snap),
-              ));
-            },
-          ),
-        ));
+    if (f == null || f == 'muz') {
+      for (final doc in _muzDocs) {
+        final muz = Muzeu.fromFirestore(doc);
+        if (muz.latitude != null && muz.longitude != null) {
+          final mid = 'muz_${id++}';
+          final snap = muz;
+          markers.add(Marker(
+            markerId: MarkerId(mid),
+            position: LatLng(muz.latitude!, muz.longitude!),
+            icon: _muzIcon!,
+            infoWindow: InfoWindow(
+              title: muz.title,
+              snippet: _distanceSnippet(muz.latitude!, muz.longitude!),
+              onTap: () {
+                if (!mounted) return;
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (_) => MuzeuDetaliiPage(muzeu: snap),
+                ));
+              },
+            ),
+          ));
+        }
       }
     }
 
     if (mounted) setState(() => _markers = markers);
+  }
+
+  Widget _filterItem(String key, Color color, IconData icon, String label) {
+    final isSelected = _activeFilter == key;
+    final isActive   = _activeFilter == null || isSelected;
+    return GestureDetector(
+      onTap: () {
+        _activeFilter = isSelected ? null : key;
+        _rebuildAllMarkers();
+      },
+      child: AnimatedOpacity(
+        opacity: isActive ? 1.0 : 0.35,
+        duration: const Duration(milliseconds: 200),
+        child: Container(
+          padding: isSelected
+              ? const EdgeInsets.symmetric(horizontal: 6, vertical: 3)
+              : const EdgeInsets.symmetric(horizontal: 0, vertical: 3),
+          decoration: isSelected
+              ? BoxDecoration(
+                  color: color.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: color.withOpacity(0.40)),
+                )
+              : null,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 22,
+                height: 22,
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+                child: Icon(icon, color: Colors.white, size: 13),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                  color: isSelected ? color : Colors.black87,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -1831,6 +2108,7 @@ class _FullScreenMapPageState extends State<_FullScreenMapPage> {
             myLocationButtonEnabled: _locationEnabled,
             zoomControlsEnabled: true,
             mapToolbarEnabled: false,
+            onMapCreated: (controller) => AppTheme.applyMapStyle(controller),
           ),
           if (_isLoading)
             Container(
@@ -1863,7 +2141,7 @@ class _FullScreenMapPageState extends State<_FullScreenMapPage> {
               ),
             ),
           ),
-          // Legendă
+          // Legendă / Filtre
           Positioned(
             top: topPadding + 12,
             left: 16,
@@ -1880,17 +2158,17 @@ class _FullScreenMapPageState extends State<_FullScreenMapPage> {
                   ),
                 ],
               ),
-              child: const Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _LegendItem(color: Color(0xFF1565C0), icon: Icons.local_cafe, label: "Cafenele"),
-                  SizedBox(height: 6),
-                  _LegendItem(color: Color(0xFFD84315), icon: Icons.restaurant, label: "Restaurante"),
-                  SizedBox(height: 6),
-                  _LegendItem(color: Color(0xFFF57F17), icon: Icons.fastfood, label: "Fast Food"),
-                  SizedBox(height: 6),
-                  _LegendItem(color: Color(0xFF6A1B9A), icon: Icons.museum, label: "Muzee"),
+                  _filterItem('cafe', const Color(0xFF1565C0), Icons.local_cafe, "Cafenele"),
+                  const SizedBox(height: 6),
+                  _filterItem('rest', const Color(0xFFD84315), Icons.restaurant, "Restaurante"),
+                  const SizedBox(height: 6),
+                  _filterItem('ff',   const Color(0xFFF57F17), Icons.fastfood,   "Fast Food"),
+                  const SizedBox(height: 6),
+                  _filterItem('muz',  const Color(0xFF6A1B9A), Icons.museum,     "Muzee"),
                 ],
               ),
             ),

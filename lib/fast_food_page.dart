@@ -8,6 +8,8 @@ import 'widgets/custom_footer.dart';
 import 'package:viziteaza_oradea/widgets/app_cached_image.dart';
 import 'package:viziteaza_oradea/widgets/category_map_preview.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
+import 'package:viziteaza_oradea/services/app_state.dart';
 
 // =============================================================
 // MODEL FAST-FOOD
@@ -139,12 +141,13 @@ class FastFoodPage extends StatelessWidget {
     required VoidCallback onTap,
     Color? iconColor,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Material(
-          color: Colors.white.withOpacity(0.55),
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.55),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(999),
@@ -154,7 +157,7 @@ class FastFoodPage extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.60),
+                  color: isDark ? Colors.white : Colors.white.withOpacity(0.60),
                   width: 1,
                 ),
                 boxShadow: [
@@ -165,7 +168,7 @@ class FastFoodPage extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Icon(icon, color: iconColor ?? kBrand, size: 20),
+              child: Icon(icon, color: isDark ? Colors.white : (iconColor ?? kBrand), size: 20),
             ),
           ),
         ),
@@ -174,6 +177,7 @@ class FastFoodPage extends StatelessWidget {
   }
 
   Widget _titlePillRich({required String left, required String right}) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -181,9 +185,9 @@ class FastFoodPage extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.70),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.70),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.55), width: 1),
+            border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.55), width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -196,11 +200,11 @@ class FastFoodPage extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             text: TextSpan(
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 14.5,
                 fontWeight: FontWeight.w900,
-                color: kBrand,
+                color: isDark ? Colors.white : kBrand,
               ),
               children: [
                 TextSpan(text: left),
@@ -259,7 +263,7 @@ class FastFoodPage extends StatelessWidget {
   // -------------------------------------------------------------
   // Empty state
   // -------------------------------------------------------------
-  Widget _emptyState(double topPadding) {
+  Widget _emptyState(BuildContext context, double topPadding) {
     return Padding(
       padding: EdgeInsets.only(top: topPadding),
       child: Center(
@@ -267,7 +271,7 @@ class FastFoodPage extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 16),
           padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.88),
+            color: Theme.of(context).cardColor.withOpacity(0.88),
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: kBrand.withOpacity(0.10)),
             boxShadow: [
@@ -287,7 +291,7 @@ class FastFoodPage extends StatelessWidget {
                   color: kBrand.withOpacity(0.10),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(Icons.fastfood_rounded, color: kBrand),
+                child: Icon(Icons.fastfood_rounded, color: AppTheme.accentGlobal),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -297,7 +301,7 @@ class FastFoodPage extends StatelessWidget {
                     fontFamily: 'Poppins',
                     fontSize: 14.2,
                     fontWeight: FontWeight.w700,
-                    color: Colors.black.withOpacity(0.72),
+                    color: AppTheme.textPrimary(context),
                     height: 1.25,
                   ),
                 ),
@@ -312,11 +316,11 @@ class FastFoodPage extends StatelessWidget {
   // -------------------------------------------------------------
   // Contact block (modern)
   // -------------------------------------------------------------
-  Widget _contactCard() {
+  Widget _contactCard(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.92),
+        color: Theme.of(context).cardColor.withOpacity(0.92),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: kBrand.withOpacity(0.10)),
         boxShadow: [
@@ -327,7 +331,7 @@ class FastFoodPage extends StatelessWidget {
           ),
         ],
       ),
-      child: const Column(
+      child: Column(
         children: [
           Text(
             "Dacă dorești ca fast-food-ul tău să apară în această listă, contactează-ne la:",
@@ -335,18 +339,18 @@ class FastFoodPage extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 13,
-              color: Colors.black87,
+              color: AppTheme.textPrimary(context),
               height: 1.4,
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             "touroradea@gmail.com",
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'Poppins',
-              color: kBrand,
+              color: AppTheme.accentGlobal,
               fontWeight: FontWeight.w900,
               fontSize: 12.5,
               letterSpacing: 0.2,
@@ -371,7 +375,7 @@ class FastFoodPage extends StatelessWidget {
     final double footerSpace = 90 + bottomInset + 12;
 
     return Scaffold(
-      backgroundColor: kBg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       extendBody: true,
       appBar: _floatingPillsHeader(context),
@@ -390,7 +394,7 @@ class FastFoodPage extends StatelessWidget {
                 }
 
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return _emptyState(topPadding);
+                  return _emptyState(context, topPadding);
                 }
 
                 final fastfoods = snapshot.data!.docs
@@ -446,7 +450,7 @@ class FastFoodPage extends StatelessWidget {
                           },
                         ),
                         const SizedBox(height: 16),
-                        _contactCard(),
+                        _contactCard(context),
                         const SizedBox(height: 22),
                         Center(
                           child: Text(
@@ -454,7 +458,7 @@ class FastFoodPage extends StatelessWidget {
                             style: TextStyle(
                               fontFamily: 'Poppins',
                               fontSize: 12,
-                              color: Colors.grey.shade600,
+                              color: AppTheme.textSecondary(context),
                               fontWeight: FontWeight.w400,
                               letterSpacing: 0.5,
                             ),

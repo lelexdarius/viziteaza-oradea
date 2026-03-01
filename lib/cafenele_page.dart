@@ -8,6 +8,8 @@ import 'widgets/custom_footer.dart';
 import 'package:viziteaza_oradea/widgets/app_cached_image.dart';
 import 'package:viziteaza_oradea/widgets/category_map_preview.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
+import 'package:viziteaza_oradea/services/app_state.dart';
 
 // =============================================================
 // MODEL
@@ -142,19 +144,20 @@ class CafenelePage extends StatefulWidget {
   }
 
   // -------------------------------------------------------------
-  // ✅ HEADER FLOATING CU “BULINE”
+  // ✅ HEADER FLOATING CU "BULINE"
   // -------------------------------------------------------------
   Widget _pillIconButton({
     required IconData icon,
     required VoidCallback onTap,
     Color iconColor = kBrand,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Material(
-          color: Colors.white.withOpacity(0.55),
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.55),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(999),
@@ -163,8 +166,7 @@ class CafenelePage extends StatefulWidget {
               height: 42,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
-                border:
-                    Border.all(color: Colors.white.withOpacity(0.60), width: 1),
+                border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.60), width: 1),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.06),
@@ -173,7 +175,7 @@ class CafenelePage extends StatefulWidget {
                   ),
                 ],
               ),
-              child: Icon(icon, color: iconColor, size: 20),
+              child: Icon(icon, color: isDark ? Colors.white : iconColor, size: 20),
             ),
           ),
         ),
@@ -182,6 +184,7 @@ class CafenelePage extends StatefulWidget {
   }
 
   Widget _titlePill(String text) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -189,9 +192,9 @@ class CafenelePage extends StatefulWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.70),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.70),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.55), width: 1),
+            border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.55), width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -205,11 +208,11 @@ class CafenelePage extends StatefulWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14.5,
               fontWeight: FontWeight.w900,
-              color: kBrand,
+              color: isDark ? Colors.white : kBrand,
               letterSpacing: 0.2,
             ),
           ),
@@ -257,7 +260,7 @@ class CafenelePage extends StatefulWidget {
     );
   }
 
-  Widget _emptyState(double topPadding) {
+  Widget _emptyState(BuildContext context, double topPadding) {
     return Padding(
       padding: EdgeInsets.only(top: topPadding),
       child: Center(
@@ -265,7 +268,7 @@ class CafenelePage extends StatefulWidget {
           margin: const EdgeInsets.symmetric(horizontal: 16),
           padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.88),
+            color: Theme.of(context).cardColor.withOpacity(0.88),
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: kBrand.withOpacity(0.10)),
             boxShadow: [
@@ -285,7 +288,7 @@ class CafenelePage extends StatefulWidget {
                   color: kBrand.withOpacity(0.10),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(Icons.info_outline_rounded, color: kBrand),
+                child: Icon(Icons.info_outline_rounded, color: AppTheme.accent(context)),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -295,7 +298,7 @@ class CafenelePage extends StatefulWidget {
                     fontFamily: 'Poppins',
                     fontSize: 14.2,
                     fontWeight: FontWeight.w700,
-                    color: Colors.black.withOpacity(0.72),
+                    color: AppTheme.textPrimary(context),
                     height: 1.25,
                   ),
                 ),
@@ -364,12 +367,10 @@ class _CafenelePageState extends State<CafenelePage> {
     required IconData icon,
   }) {
     final bg = selected
-        ? CafenelePage.kBrand.withOpacity(0.12)
+        ? const Color(0xFF004E64).withOpacity(0.12)
         : Colors.transparent;
 
-    final textColor = selected
-        ? CafenelePage.kBrand
-        : CafenelePage.kBrand.withOpacity(0.70);
+    const textColor = Color(0xFF004E64);
 
     return Material(
       color: Colors.transparent,
@@ -383,8 +384,8 @@ class _CafenelePageState extends State<CafenelePage> {
             borderRadius: BorderRadius.circular(999),
             border: Border.all(
               color: selected
-                  ? CafenelePage.kBrand.withOpacity(0.18)
-                  : Colors.white.withOpacity(0.0),
+                  ? const Color(0xFF004E64).withOpacity(0.18)
+                  : Colors.transparent,
             ),
           ),
           child: Row(
@@ -422,7 +423,7 @@ class _CafenelePageState extends State<CafenelePage> {
     final double footerSpace = 18 + 90 + (bottomInset > 0 ? bottomInset : 0);
 
     return Scaffold(
-      backgroundColor: CafenelePage.kBg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       extendBody: true,
       appBar: widget._floatingPillsHeader(context),
@@ -440,7 +441,7 @@ class _CafenelePageState extends State<CafenelePage> {
                 }
 
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return widget._emptyState(topPadding);
+                  return widget._emptyState(context, topPadding);
                 }
 
                 final allCafenele = snapshot.data!.docs
@@ -472,7 +473,7 @@ class _CafenelePageState extends State<CafenelePage> {
                           Container(
                             padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.88),
+                              color: Theme.of(context).cardColor.withOpacity(0.88),
                               borderRadius: BorderRadius.circular(18),
                               border: Border.all(
                                 color: CafenelePage.kBrand.withOpacity(0.10),
@@ -494,9 +495,9 @@ class _CafenelePageState extends State<CafenelePage> {
                                     color: CafenelePage.kBrand.withOpacity(0.10),
                                     borderRadius: BorderRadius.circular(14),
                                   ),
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.star_outline_rounded,
-                                    color: CafenelePage.kBrand,
+                                    color: AppTheme.accent(context),
                                   ),
                                 ),
                                 const SizedBox(width: 12),
@@ -507,7 +508,7 @@ class _CafenelePageState extends State<CafenelePage> {
                                       fontFamily: 'Poppins',
                                       fontSize: 14.2,
                                       fontWeight: FontWeight.w700,
-                                      color: Colors.black.withOpacity(0.72),
+                                      color: AppTheme.textPrimary(context),
                                       height: 1.25,
                                     ),
                                   ),
@@ -522,7 +523,7 @@ class _CafenelePageState extends State<CafenelePage> {
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontSize: 12,
-                                color: Colors.grey.shade600,
+                                color: AppTheme.textSecondary(context),
                                 fontWeight: FontWeight.w400,
                                 letterSpacing: 0.5,
                               ),

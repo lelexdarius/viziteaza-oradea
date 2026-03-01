@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'filarmonica_detalii_page.dart';
 import 'widgets/custom_footer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
+import 'package:viziteaza_oradea/services/app_state.dart';
 
 class FilarmonicaPage extends StatelessWidget {
   const FilarmonicaPage({super.key});
@@ -12,18 +14,19 @@ class FilarmonicaPage extends StatelessWidget {
   static const Color kBg = Color(0xFFE8F1F4);
 
   // -------------------------------------------------------------
-  // ✅ UI helpers (Apple 2025 - “buline”)
+  // ✅ UI helpers (Apple 2025 - "buline")
   // -------------------------------------------------------------
   Widget _pillIconButton({
     required IconData icon,
     required VoidCallback onTap,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Material(
-          color: Colors.white.withOpacity(0.55),
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.55),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(999),
@@ -33,7 +36,7 @@ class FilarmonicaPage extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.60),
+                  color: isDark ? Colors.white : Colors.white.withOpacity(0.60),
                   width: 1,
                 ),
                 boxShadow: [
@@ -44,7 +47,7 @@ class FilarmonicaPage extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Icon(icon, color: kBrand, size: 20),
+              child: Icon(icon, color: isDark ? Colors.white : kBrand, size: 20),
             ),
           ),
         ),
@@ -53,6 +56,7 @@ class FilarmonicaPage extends StatelessWidget {
   }
 
   Widget _titlePill(String text) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -60,9 +64,9 @@ class FilarmonicaPage extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.70),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.70),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.55), width: 1),
+            border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.55), width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -76,11 +80,11 @@ class FilarmonicaPage extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14.5,
               fontWeight: FontWeight.w900,
-              color: kBrand,
+              color: isDark ? Colors.white : kBrand,
             ),
           ),
         ),
@@ -128,14 +132,14 @@ class FilarmonicaPage extends StatelessWidget {
   }
 
   // -------------------------------------------------------------
-  // ✅ “Card” alb premium (pentru textul de sus)
+  // ✅ "Card" alb premium (pentru textul de sus)
   // -------------------------------------------------------------
-  Widget _whiteInfoCard({required Widget child}) {
+  Widget _whiteInfoCard(BuildContext context, {required Widget child}) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.92),
+        color: Theme.of(context).cardColor.withOpacity(0.92),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: kBrand.withOpacity(0.10)),
         boxShadow: [
@@ -160,13 +164,13 @@ class FilarmonicaPage extends StatelessWidget {
     final footerSpace = 90 + bottomInset + 12;
 
     return Scaffold(
-      backgroundColor: kBg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
       // ✅ elimină banda albă din spatele footerului
       extendBodyBehindAppBar: true,
       extendBody: true,
 
-      // ✅ “buline” ca la celelalte pagini
+      // ✅ "buline" ca la celelalte pagini
       appBar: _floatingPillsHeader(context),
 
       // ✅ BODY cu footer overlay
@@ -186,18 +190,18 @@ class FilarmonicaPage extends StatelessWidget {
                 children: [
                   const SizedBox(height: 10),
 
-                  // ✅ bloc “Programul Lunii” într-un card alb (mai Apple)
-                  _whiteInfoCard(
+                  // ✅ bloc "Programul Lunii" într-un card alb (mai Apple)
+                  _whiteInfoCard(context,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           "Programul Lunii",
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 18.5,
                             fontWeight: FontWeight.w900,
-                            color: kBrand,
+                            color: AppTheme.accentGlobal,
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -207,7 +211,7 @@ class FilarmonicaPage extends StatelessWidget {
                             fontFamily: 'Poppins',
                             fontSize: 13.8,
                             fontWeight: FontWeight.w600,
-                            color: Colors.black.withOpacity(0.80),
+                            color: AppTheme.textPrimary(context),
                             height: 1.5,
                           ),
                         ),
@@ -218,7 +222,7 @@ class FilarmonicaPage extends StatelessWidget {
                             fontFamily: 'Poppins',
                             fontSize: 13.6,
                             fontWeight: FontWeight.w600,
-                            color: Colors.black.withOpacity(0.78),
+                            color: AppTheme.textPrimary(context),
                             height: 1.5,
                           ),
                         ),
@@ -241,10 +245,10 @@ class FilarmonicaPage extends StatelessWidget {
                       }
 
                       if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                        return const Center(
+                        return Center(
                           child: Text(
                             "Momentan nu există evenimente disponibile.",
-                            style: TextStyle(color: Colors.black54),
+                            style: TextStyle(color: AppTheme.textSecondary(context)),
                           ),
                         );
                       }
@@ -305,8 +309,8 @@ class FilarmonicaPage extends StatelessWidget {
     // ✅ DOAR asta s-a schimbat: cardul devine alb (în rest, logică intactă)
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
-      color: Colors.white, // ✅ cerința ta
-      surfaceTintColor: Colors.white, // ✅ Material 3: păstrează alb
+      color: Theme.of(context).cardColor,
+      surfaceTintColor: Theme.of(context).cardColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 5,
       child: Padding(
@@ -341,14 +345,14 @@ class FilarmonicaPage extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.calendar_month,
-                              color: Color(0xFF004E64), size: 18),
+                          Icon(Icons.calendar_month,
+                              color: AppTheme.accentGlobal, size: 18),
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
                               dataText,
-                              style: const TextStyle(
-                                color: Color(0xFF004E64),
+                              style: TextStyle(
+                                color: AppTheme.accentGlobal,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
                               ),
@@ -362,10 +366,10 @@ class FilarmonicaPage extends StatelessWidget {
                           Expanded(
                             child: Text(
                               data["titlu"] ?? "",
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.black,
+                                color: AppTheme.textPrimary(context),
                                 height: 1.2,
                               ),
                             ),
@@ -384,9 +388,9 @@ class FilarmonicaPage extends StatelessWidget {
                       if (ora.isNotEmpty)
                         Text(
                           "Ora: $ora",
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 13,
-                            color: Colors.black87,
+                            color: AppTheme.textPrimary(context),
                           ),
                         ),
                     ],
@@ -397,16 +401,18 @@ class FilarmonicaPage extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               data["dirijor"] ?? "",
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: Colors.black54,
+                color: AppTheme.textSecondary(context),
               ),
             ),
             const SizedBox(height: 6),
             Text(
               data["descriere"] ?? "",
-              style: const TextStyle(fontSize: 14, color: Colors.black87),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 14, color: AppTheme.textPrimary(context)),
             ),
             const SizedBox(height: 10),
             Row(
@@ -428,6 +434,7 @@ class FilarmonicaPage extends StatelessWidget {
                         builder: (_) => FilarmonicaDetaliiPage(
                           title: data["titlu"] ?? "",
                           imageUrl: data["banner"] ?? "",
+                          descriere: data["descriere"] ?? "",
                           solist: data["solist"] ?? "",
                           dataConcertului: data["data"] ?? "",
                           ora: data["ora"] ?? "",
@@ -440,11 +447,11 @@ class FilarmonicaPage extends StatelessWidget {
                       ),
                     );
                   },
-                  icon: const Icon(Icons.music_note, color: Color(0xFF004E64)),
-                  label: const Text(
+                  icon: Icon(Icons.music_note, color: AppTheme.accentGlobal),
+                  label: Text(
                     "Mai multe detalii",
                     style: TextStyle(
-                      color: Color(0xFF004E64),
+                      color: AppTheme.accentGlobal,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

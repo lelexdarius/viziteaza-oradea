@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -74,7 +75,7 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
       return;
     }
 
-    // fallback (dacă ai ajuns aici “direct”)
+    // fallback (dacă ai ajuns aici "direct")
     nav.pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => HomePage()),
       (r) => false,
@@ -102,7 +103,7 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
 
     final qs = await col.where('title', isEqualTo: t).limit(1).get();
     if (qs.docs.isEmpty) {
-      throw Exception("Nu am găsit plimbarea în Firestore: „$t”.");
+      throw Exception("Nu am găsit plimbarea în Firestore: „$t\".");
     }
 
     return _WalkModel.fromDoc(qs.docs.first);
@@ -221,10 +222,10 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
                           title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14.5,
                             fontWeight: FontWeight.w900,
-                            color: kBrand,
+                            color: AppTheme.accentGlobal,
                           ),
                         ),
                       ),
@@ -261,7 +262,7 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
                 borderRadius: BorderRadius.circular(999),
                 border: Border.all(color: Colors.white.withOpacity(0.6)),
               ),
-              child: Icon(icon, color: kBrand, size: 20),
+              child: Icon(icon, color: AppTheme.accentGlobal, size: 20),
             ),
           ),
         ),
@@ -279,7 +280,7 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
         fontFamily: 'Poppins',
         fontSize: 16,
         fontWeight: FontWeight.w900,
-        color: kInk.withOpacity(0.92),
+        color: AppTheme.textPrimary(context),
       ),
     );
   }
@@ -298,15 +299,15 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: kBrand),
+          Icon(icon, size: 16, color: AppTheme.accentGlobal),
           const SizedBox(width: 8),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 12.5,
               fontWeight: FontWeight.w800,
-              color: kBrand,
+              color: AppTheme.accentGlobal,
             ),
           ),
         ],
@@ -317,7 +318,7 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
   Widget _card({required Widget child}) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.92),
+        color: AppTheme.isDarkGlobal ? const Color(0xFF3A3A3C) : Colors.white.withOpacity(0.92),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: kBrand.withOpacity(0.10)),
         boxShadow: [
@@ -373,8 +374,8 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
 
                   final err = Container(
                     color: kBrand.withOpacity(0.08),
-                    child: const Center(
-                      child: Icon(Icons.broken_image_rounded, color: kBrand, size: 40),
+                    child: Center(
+                      child: Icon(Icons.broken_image_rounded, color: AppTheme.accentGlobal, size: 40),
                     ),
                   );
 
@@ -489,7 +490,7 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
                   color: kBrand.withOpacity(0.10),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(Icons.map_outlined, color: kBrand, size: 20),
+                child: Icon(Icons.map_outlined, color: AppTheme.accentGlobal, size: 20),
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -499,7 +500,7 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
                     fontFamily: 'Poppins',
                     fontSize: 13.2,
                     fontWeight: FontWeight.w700,
-                    color: kInk.withOpacity(0.70),
+                    color: AppTheme.textSecondary(context),
                     height: 1.2,
                   ),
                 ),
@@ -521,7 +522,7 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
               padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
               child: Row(
                 children: [
-                  const Icon(Icons.map_rounded, color: kBrand, size: 20),
+                  Icon(Icons.map_rounded, color: AppTheme.accentGlobal, size: 20),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -530,18 +531,18 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
                         fontFamily: 'Poppins',
                         fontSize: 14.5,
                         fontWeight: FontWeight.w900,
-                        color: kInk.withOpacity(0.86),
+                        color: AppTheme.textPrimary(context),
                       ),
                     ),
                   ),
                   TextButton(
                     onPressed: () => _openExternalMaps(w),
-                    child: const Text(
+                    child: Text(
                       "Deschide în Maps",
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w900,
-                        color: kBrand,
+                        color: AppTheme.accentGlobal,
                       ),
                     ),
                   ),
@@ -569,6 +570,9 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
                     ),
                   ),
                 },
+                onMapCreated: (controller) {
+                  AppTheme.applyMapStyle(controller);
+                },
               ),
             ),
           ],
@@ -592,7 +596,7 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
                 fontFamily: 'Poppins',
                 fontSize: 14.5,
                 fontWeight: FontWeight.w900,
-                color: kInk.withOpacity(0.88),
+                color: AppTheme.textPrimary(context),
               ),
             ),
             const SizedBox(height: 10),
@@ -619,7 +623,7 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
                           fontFamily: 'Poppins',
                           fontSize: 13.5,
                           fontWeight: FontWeight.w600,
-                          color: kInk.withOpacity(0.75),
+                          color: AppTheme.textPrimary(context),
                           height: 1.25,
                         ),
                       ),
@@ -646,7 +650,7 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
       // Lăsăm sistemul să facă pop normal.
       onWillPop: () async => true,
       child: Scaffold(
-        backgroundColor: kBg,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         extendBodyBehindAppBar: true,
         body: FutureBuilder<_WalkModel>(
           // ✅ FUTURE CACHED -> fără reload la swipe
@@ -658,7 +662,7 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
 
             if (snap.hasError) {
               return Scaffold(
-                backgroundColor: kBg,
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                 appBar: _glassAppBar("Plimbare"),
                 body: Padding(
                   padding: EdgeInsets.only(top: topPadding, left: 16, right: 16),
@@ -684,7 +688,7 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
                                 fontFamily: 'Poppins',
                                 fontSize: 13.5,
                                 fontWeight: FontWeight.w700,
-                                color: kInk.withOpacity(0.80),
+                                color: AppTheme.textPrimary(context),
                               ),
                             ),
                           ),
@@ -699,7 +703,7 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
             final w = snap.data!;
 
             return Scaffold(
-              backgroundColor: kBg,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               extendBodyBehindAppBar: true,
               appBar: _glassAppBar(w.title),
               body: SingleChildScrollView(
@@ -728,7 +732,7 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
                                 fontFamily: 'Poppins',
                                 fontSize: 18,
                                 fontWeight: FontWeight.w900,
-                                color: kInk.withOpacity(0.92),
+                                color: AppTheme.textPrimary(context),
                                 height: 1.1,
                               ),
                             ),
@@ -745,7 +749,7 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
                                         fontFamily: 'Poppins',
                                         fontSize: 13,
                                         fontWeight: FontWeight.w700,
-                                        color: kInk.withOpacity(0.60),
+                                        color: AppTheme.textSecondary(context),
                                       ),
                                     ),
                                   ),
@@ -776,7 +780,7 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
                                   fontSize: 13.8,
                                   height: 1.45,
                                   fontWeight: FontWeight.w600,
-                                  color: kInk.withOpacity(0.78),
+                                  color: AppTheme.textPrimary(context),
                                 ),
                               ),
                             const SizedBox(height: 10),
@@ -833,7 +837,7 @@ class _WalksDetaliiPageState extends State<WalksDetaliiPage> {
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 12,
-                          color: Colors.grey.shade600,
+                          color: AppTheme.textSecondary(context),
                           fontWeight: FontWeight.w500,
                           letterSpacing: 0.4,
                         ),

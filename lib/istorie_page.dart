@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:ui'; // blur
+import 'package:viziteaza_oradea/services/app_state.dart';
 
 class IstoriePage extends StatelessWidget {
   const IstoriePage({Key? key}) : super(key: key);
@@ -16,12 +17,13 @@ class IstoriePage extends StatelessWidget {
     required VoidCallback onTap,
     Color? iconColor,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
         child: Material(
-          color: Colors.white.withOpacity(0.55),
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.55),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(999),
@@ -30,7 +32,7 @@ class IstoriePage extends StatelessWidget {
               height: 42,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
-                border: Border.all(color: Colors.white.withOpacity(0.60), width: 1),
+                border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.60), width: 1),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.06),
@@ -39,7 +41,7 @@ class IstoriePage extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Icon(icon, color: iconColor ?? kBrand, size: 20),
+              child: Icon(icon, color: isDark ? Colors.white : (iconColor ?? kBrand), size: 20),
             ),
           ),
         ),
@@ -48,6 +50,7 @@ class IstoriePage extends StatelessWidget {
   }
 
   Widget _titlePill(String text) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -55,9 +58,9 @@ class IstoriePage extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.72),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.72),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.55), width: 1),
+            border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.55), width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -71,11 +74,11 @@ class IstoriePage extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14.5,
               fontWeight: FontWeight.w900,
-              color: kBrand,
+              color: isDark ? Colors.white : kBrand,
             ),
           ),
         ),
@@ -187,7 +190,7 @@ class IstoriePage extends StatelessWidget {
 
       body: Stack(
         children: [
-          // ✅ fundal “Apple-ish” cu glow/gradiente soft
+          // ✅ fundal "Apple-ish" cu glow/gradiente soft
           const _SoftBackdrop(),
 
           CustomScrollView(

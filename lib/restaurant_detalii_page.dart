@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:ui';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
+import 'package:viziteaza_oradea/services/app_state.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -61,12 +63,13 @@ class _RestaurantDetaliiPageState extends State<RestaurantDetaliiPage> {
     required VoidCallback onTap,
     Color iconColor = kBrand,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Material(
-          color: Colors.white.withOpacity(0.55),
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.55),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(999),
@@ -76,7 +79,7 @@ class _RestaurantDetaliiPageState extends State<RestaurantDetaliiPage> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.60),
+                  color: isDark ? Colors.white : Colors.white.withOpacity(0.60),
                   width: 1,
                 ),
                 boxShadow: [
@@ -87,7 +90,7 @@ class _RestaurantDetaliiPageState extends State<RestaurantDetaliiPage> {
                   ),
                 ],
               ),
-              child: Icon(icon, color: iconColor, size: 20),
+              child: Icon(icon, color: isDark ? Colors.white : iconColor, size: 20),
             ),
           ),
         ),
@@ -96,6 +99,7 @@ class _RestaurantDetaliiPageState extends State<RestaurantDetaliiPage> {
   }
 
   Widget _titlePill(String text) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -103,9 +107,9 @@ class _RestaurantDetaliiPageState extends State<RestaurantDetaliiPage> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.70),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.70),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.55), width: 1),
+            border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.55), width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -119,11 +123,11 @@ class _RestaurantDetaliiPageState extends State<RestaurantDetaliiPage> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14.5,
               fontWeight: FontWeight.w900,
-              color: kBrand,
+              color: isDark ? Colors.white : kBrand,
             ),
           ),
         ),
@@ -208,7 +212,7 @@ class _RestaurantDetaliiPageState extends State<RestaurantDetaliiPage> {
     return Container(
       padding: padding,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.92),
+        color: AppTheme.isDarkGlobal ? const Color(0xFF3A3A3C) : Colors.white.withOpacity(0.92),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: kBrand.withOpacity(0.10)),
         boxShadow: [
@@ -224,6 +228,7 @@ class _RestaurantDetaliiPageState extends State<RestaurantDetaliiPage> {
   }
 
   Widget _infoRowCard(IconData icon, String label, String value) {
+    final ctx = context;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
@@ -233,10 +238,10 @@ class _RestaurantDetaliiPageState extends State<RestaurantDetaliiPage> {
             width: 38,
             height: 38,
             decoration: BoxDecoration(
-              color: kBrand.withOpacity(0.10),
+              color: AppTheme.accentGlobal,
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(icon, color: kBrand, size: 20),
+            child: Icon(icon, color: Colors.white, size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -245,11 +250,11 @@ class _RestaurantDetaliiPageState extends State<RestaurantDetaliiPage> {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 12.5,
                     fontWeight: FontWeight.w800,
-                    color: kBrand,
+                    color: AppTheme.accentGlobal,
                     height: 1.0,
                   ),
                 ),
@@ -260,7 +265,7 @@ class _RestaurantDetaliiPageState extends State<RestaurantDetaliiPage> {
                     fontFamily: 'Poppins',
                     fontSize: 14.5,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black.withOpacity(0.80),
+                    color: AppTheme.textPrimary(ctx),
                     height: 1.35,
                   ),
                 ),
@@ -365,11 +370,11 @@ class _RestaurantDetaliiPageState extends State<RestaurantDetaliiPage> {
         MediaQuery.of(context).padding.top + kToolbarHeight + 10;
 
     return Scaffold(
-      backgroundColor: kBg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       extendBody: true,
 
-      // ✅ header cu “buline” + titlu pill (fără background bar)
+      // ✅ header cu "buline" + titlu pill (fără background bar)
       appBar: _floatingPillsHeader(context, r.title),
 
       body: Stack(
@@ -414,11 +419,11 @@ class _RestaurantDetaliiPageState extends State<RestaurantDetaliiPage> {
                       children: [
                         Text(
                           r.title,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 18.8,
                             fontWeight: FontWeight.w900,
-                            color: Colors.black,
+                            color: AppTheme.textPrimary(context),
                             height: 1.15,
                           ),
                         ),
@@ -429,7 +434,7 @@ class _RestaurantDetaliiPageState extends State<RestaurantDetaliiPage> {
                             fontFamily: 'Poppins',
                             fontSize: 14.8,
                             fontWeight: FontWeight.w600,
-                            color: Colors.black.withOpacity(0.78),
+                            color: AppTheme.textPrimary(context),
                             height: 1.55,
                           ),
                         ),
@@ -468,9 +473,9 @@ class _RestaurantDetaliiPageState extends State<RestaurantDetaliiPage> {
                     child: _whiteCard(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 12),
-                      child: const Row(
+                      child: Row(
                         children: [
-                          Icon(Icons.restaurant_menu, color: kBrand),
+                          Icon(Icons.restaurant_menu, color: AppTheme.accentGlobal),
                           SizedBox(width: 10),
                           Expanded(
                             child: Text(
@@ -478,12 +483,12 @@ class _RestaurantDetaliiPageState extends State<RestaurantDetaliiPage> {
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontWeight: FontWeight.w800,
-                                color: kBrand,
+                                color: AppTheme.accentGlobal,
                                 fontSize: 15.5,
                               ),
                             ),
                           ),
-                          Icon(Icons.open_in_new, color: kBrand),
+                          Icon(Icons.open_in_new, color: AppTheme.accentGlobal),
                         ],
                       ),
                     ),
@@ -506,13 +511,13 @@ class _RestaurantDetaliiPageState extends State<RestaurantDetaliiPage> {
                   const SizedBox(height: 18),
 
                   // ✅ Titlu hartă (păstrat)
-                  const Text(
+                  Text(
                     "📍 Vezi locațiile pe hartă:",
                     style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 14.6,
                       fontWeight: FontWeight.w900,
-                      color: kBrand,
+                      color: AppTheme.accentGlobal,
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -547,6 +552,7 @@ class _RestaurantDetaliiPageState extends State<RestaurantDetaliiPage> {
                             mapType: MapType.normal,
                             onMapCreated: (controller) async {
                               _mapController = controller;
+                              AppTheme.applyMapStyle(controller);
                               await Future.delayed(
                                   const Duration(milliseconds: 100));
                               _fitAllMarkers(markers);
@@ -608,13 +614,13 @@ class _RestaurantDetaliiPageState extends State<RestaurantDetaliiPage> {
 
                   const SizedBox(height: 36),
 
-                  const Center(
+                  Center(
                     child: Text(
                       "— Tour Oradea © 2025 —",
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 12,
-                        color: Colors.grey,
+                        color: AppTheme.textSecondary(context),
                         fontWeight: FontWeight.w400,
                         letterSpacing: 0.5,
                       ),
@@ -626,7 +632,7 @@ class _RestaurantDetaliiPageState extends State<RestaurantDetaliiPage> {
             ),
           ),
 
-          // ✅ Footer fix “deasupra” conținutului
+          // ✅ Footer fix "deasupra" conținutului
           const Align(
             alignment: Alignment.bottomCenter,
             child: CustomFooter(isHome: true),
@@ -663,6 +669,7 @@ class _RestaurantDetaliiPageState extends State<RestaurantDetaliiPage> {
                                 mapType: MapType.normal,
                                 onMapCreated: (controller) async {
                                   _mapController = controller;
+                                  AppTheme.applyMapStyle(controller);
                                   await Future.delayed(
                                       const Duration(milliseconds: 120));
                                   _fitAllMarkers(markers);

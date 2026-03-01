@@ -7,6 +7,8 @@ import 'widgets/custom_footer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:viziteaza_oradea/widgets/category_map_preview.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
+import 'package:viziteaza_oradea/services/app_state.dart';
 
 class Muzeu {
   final String title;
@@ -63,18 +65,19 @@ class _MuzeePageState extends State<MuzeePage> {
   static const Color kBg = Color(0xFFE8F1F4);
 
   // -------------------------------------------------------------
-  // ✅ UI helpers (Apple 2025 - “buline”)
+  // ✅ UI helpers (Apple 2025 - "buline")
   // -------------------------------------------------------------
   Widget _pillIconButton({
     required IconData icon,
     required VoidCallback onTap,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Material(
-          color: Colors.white.withOpacity(0.55),
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.55),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(999),
@@ -84,7 +87,7 @@ class _MuzeePageState extends State<MuzeePage> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.60),
+                  color: isDark ? Colors.white : Colors.white.withOpacity(0.60),
                   width: 1,
                 ),
                 boxShadow: [
@@ -95,7 +98,7 @@ class _MuzeePageState extends State<MuzeePage> {
                   ),
                 ],
               ),
-              child: Icon(icon, color: kBrand, size: 20),
+              child: Icon(icon, color: isDark ? Colors.white : kBrand, size: 20),
             ),
           ),
         ),
@@ -104,6 +107,7 @@ class _MuzeePageState extends State<MuzeePage> {
   }
 
   Widget _titlePillRich(String formattedDate) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -111,9 +115,9 @@ class _MuzeePageState extends State<MuzeePage> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.70),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.70),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.55), width: 1),
+            border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.55), width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -126,11 +130,11 @@ class _MuzeePageState extends State<MuzeePage> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             text: TextSpan(
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 14.5,
                 fontWeight: FontWeight.w900,
-                color: kBrand,
+                color: isDark ? Colors.white : kBrand,
               ),
               children: [
                 const TextSpan(text: "Muzee • "),
@@ -138,7 +142,6 @@ class _MuzeePageState extends State<MuzeePage> {
                   text: formattedDate,
                   style: const TextStyle(
                     fontWeight: FontWeight.w900,
-                    color: kBrand,
                   ),
                 ),
               ],
@@ -203,11 +206,11 @@ class _MuzeePageState extends State<MuzeePage> {
     final topPad = MediaQuery.of(context).padding.top + 80;
 
     return Scaffold(
-      backgroundColor: kBg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       extendBody: true,
 
-      // ✅ “buline” (back + titlu în pill)
+      // ✅ "buline" (back + titlu în pill)
       appBar: _floatingPillsHeader(context, formattedDate),
 
       body: Stack(
@@ -224,10 +227,10 @@ class _MuzeePageState extends State<MuzeePage> {
                 }
 
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(
+                  return Center(
                     child: Text(
                       "Nu există muzee disponibile momentan.",
-                      style: TextStyle(fontSize: 16, color: Colors.black54),
+                      style: TextStyle(fontSize: 16, color: AppTheme.textSecondary(context)),
                     ),
                   );
                 }
@@ -266,13 +269,13 @@ class _MuzeePageState extends State<MuzeePage> {
                       ),
                       ...muzee.map((m) => _buildCard(context, m)).toList(),
                       const SizedBox(height: 40),
-                      const Center(
+                      Center(
                         child: Text(
                           "— Tour Oradea © 2025 —",
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 12,
-                            color: Colors.grey,
+                            color: AppTheme.textSecondary(context),
                             fontWeight: FontWeight.w400,
                             letterSpacing: 0.5,
                           ),
@@ -301,7 +304,7 @@ class _MuzeePageState extends State<MuzeePage> {
         : muzeu.description;
 
     return Card(
-      color: Colors.white,
+      color: Theme.of(context).cardColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: const EdgeInsets.only(bottom: 15),
       elevation: 4,
@@ -340,25 +343,25 @@ class _MuzeePageState extends State<MuzeePage> {
                 children: [
                   Text(
                     muzeu.title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: AppTheme.textPrimary(context),
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     "🏛️ ${muzeu.type}",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
-                      color: kBrand,
+                      color: AppTheme.accentGlobal,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     shortDesc,
-                    style: const TextStyle(fontSize: 14, color: Colors.black87),
+                    style: TextStyle(fontSize: 14, color: AppTheme.textPrimary(context)),
                   ),
                   const SizedBox(height: 8),
                   TextButton(
@@ -370,10 +373,10 @@ class _MuzeePageState extends State<MuzeePage> {
                         ),
                       );
                     },
-                    child: const Text(
+                    child: Text(
                       "Vezi detalii",
                       style: TextStyle(
-                        color: kBrand,
+                        color: AppTheme.accentGlobal,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

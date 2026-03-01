@@ -3,6 +3,8 @@ import 'dart:ui';
 
 import 'home.dart';
 import 'widgets/custom_footer.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
+import 'package:viziteaza_oradea/services/app_state.dart';
 
 class FAQPage extends StatefulWidget {
   const FAQPage({Key? key}) : super(key: key);
@@ -29,7 +31,7 @@ class _FAQPageState extends State<FAQPage> {
       "question": "Este Tour Oradea gratuit?",
       "answer":
           "Da. Aplicația este gratuită pentru folosirea de bază. "
-              "Unele funcții pot fi disponibile ca „Premium” (de exemplu trasee complete pe mai multe zile)."
+              "Unele funcții pot fi disponibile ca „Premium\" (de exemplu trasee complete pe mai multe zile)."
     },
     {
       "question": "Ce înseamnă Premium și cum funcționează?",
@@ -52,19 +54,19 @@ class _FAQPageState extends State<FAQPage> {
     {
       "question": "Unde găsesc rapid cele mai populare categorii?",
       "answer":
-          "Pe pagina principală există secțiunea „Cele mai accesate”, unde găsești rapid Cafenele, Restaurante, "
+          "Pe pagina principală există secțiunea „Cele mai accesate\", unde găsești rapid Cafenele, Restaurante, "
               "Poze Oradea, Teatru, Evenimente și Muzee."
     },
     {
       "question": "Cum pot vedea traseele recomandate pe zile?",
       "answer":
-          "Intră la „Trasee”. Dacă ai acces Premium, vei vedea trasee pe mai multe zile, cu hartă și ordine recomandată. "
+          "Intră la „Trasee\". Dacă ai acces Premium, vei vedea trasee pe mai multe zile, cu hartă și ordine recomandată. "
               "Poți marca obiectivele ca vizitate ca să-ți urmărești progresul."
     },
     {
       "question": "Cum pot contacta echipa Tour Oradea?",
       "answer":
-          "Intră în pagina „Ajutor” și completează formularul. "
+          "Intră în pagina „Ajutor\" și completează formularul. "
               "Țintim să răspundem cât mai repede, de obicei în maximum 24 de ore."
     },
     {
@@ -76,14 +78,14 @@ class _FAQPageState extends State<FAQPage> {
     {
       "question": "Pot sugera un loc nou sau o corecție?",
       "answer":
-          "Da. Scrie-ne din „Ajutor” cu detaliile (nume, adresă, ce ar trebui schimbat). "
+          "Da. Scrie-ne din „Ajutor\" cu detaliile (nume, adresă, ce ar trebui schimbat). "
               "Dacă informația se confirmă, o includem într-o actualizare viitoare."
     },
     {
       "question": "De ce uneori apar diferențe la poze sau descrieri?",
       "answer":
           "Unele locații își actualizează periodic imaginile sau detaliile. "
-              "Dacă observi ceva greșit, trimite-ne un mesaj din „Ajutor” și rezolvăm."
+              "Dacă observi ceva greșit, trimite-ne un mesaj din „Ajutor\" și rezolvăm."
     },
   ];
 
@@ -112,12 +114,13 @@ class _FAQPageState extends State<FAQPage> {
     required VoidCallback onTap,
     Color? iconColor,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Material(
-          color: Colors.white.withOpacity(0.55),
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.55),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(999),
@@ -127,7 +130,7 @@ class _FAQPageState extends State<FAQPage> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.60),
+                  color: isDark ? Colors.white : Colors.white.withOpacity(0.60),
                   width: 1,
                 ),
                 boxShadow: [
@@ -138,7 +141,7 @@ class _FAQPageState extends State<FAQPage> {
                   ),
                 ],
               ),
-              child: Icon(icon, color: iconColor ?? kBrand, size: 20),
+              child: Icon(icon, color: isDark ? Colors.white : (iconColor ?? kBrand), size: 20),
             ),
           ),
         ),
@@ -147,6 +150,7 @@ class _FAQPageState extends State<FAQPage> {
   }
 
   Widget _titlePill(String text) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -154,9 +158,9 @@ class _FAQPageState extends State<FAQPage> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.70),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.70),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.55), width: 1),
+            border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.55), width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -170,11 +174,11 @@ class _FAQPageState extends State<FAQPage> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14.5,
               fontWeight: FontWeight.w900,
-              color: kBrand,
+              color: isDark ? Colors.white : kBrand,
             ),
           ),
         ),
@@ -222,7 +226,7 @@ class _FAQPageState extends State<FAQPage> {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.88),
+        color: Theme.of(context).cardColor.withOpacity(0.88),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: kBrand.withOpacity(0.10)),
         boxShadow: [
@@ -239,11 +243,11 @@ class _FAQPageState extends State<FAQPage> {
             width: 46,
             height: 46,
             decoration: BoxDecoration(
-              color: kBrand,
+              color: AppTheme.accentGlobal,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: kBrand.withOpacity(0.25),
+                  color: AppTheme.accentGlobal.withOpacity(0.25),
                   blurRadius: 14,
                   offset: const Offset(0, 8),
                 ),
@@ -266,7 +270,7 @@ class _FAQPageState extends State<FAQPage> {
                     fontFamily: 'Poppins',
                     fontSize: 16.5,
                     fontWeight: FontWeight.w900,
-                    color: Colors.black.withOpacity(0.86),
+                    color: AppTheme.textPrimary(context),
                     height: 1.1,
                   ),
                 ),
@@ -278,7 +282,7 @@ class _FAQPageState extends State<FAQPage> {
                     fontFamily: 'Poppins',
                     fontSize: 13.3,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black.withOpacity(0.62),
+                    color: AppTheme.textSecondary(context),
                     height: 1.28,
                   ),
                 ),
@@ -295,7 +299,7 @@ class _FAQPageState extends State<FAQPage> {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.92),
+        color: Theme.of(context).cardColor.withOpacity(0.92),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: kBrand.withOpacity(0.10)),
         boxShadow: [
@@ -326,12 +330,12 @@ class _FAQPageState extends State<FAQPage> {
             style: const TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w800,
-              color: kBrand,
+              color: Colors.white,
               fontSize: 14.5,
               height: 1.2,
             ),
           ),
-          trailing: const Icon(Icons.expand_more_rounded, color: kBrand),
+          trailing: const Icon(Icons.expand_more_rounded, color: Colors.white),
           children: [
             Text(
               faq["answer"] ?? "",
@@ -339,7 +343,7 @@ class _FAQPageState extends State<FAQPage> {
                 fontFamily: 'Poppins',
                 fontSize: 13.8,
                 height: 1.5,
-                color: Colors.black.withOpacity(0.78),
+                color: AppTheme.textPrimary(context),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -359,7 +363,7 @@ class _FAQPageState extends State<FAQPage> {
     final footerSpace = 90 + bottomInset + 12;
 
     return Scaffold(
-      backgroundColor: kBg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       extendBody: true,
 
@@ -393,7 +397,7 @@ class _FAQPageState extends State<FAQPage> {
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 12,
-                          color: Colors.grey.shade600,
+                          color: AppTheme.textSecondary(context),
                           fontWeight: FontWeight.w400,
                           letterSpacing: 0.5,
                         ),

@@ -6,6 +6,8 @@ import 'models/favorite_item.dart';
 import 'services/favorite_service.dart';
 import 'widgets/custom_footer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
+import 'package:viziteaza_oradea/services/app_state.dart';
 
 class DistractiiDetaliiPage extends StatefulWidget {
   final String title;
@@ -77,18 +79,19 @@ class _DistractiiDetaliiPageState extends State<DistractiiDetaliiPage> {
   }
 
   // -------------------------------------------------------------
-  // ✅ UI helpers (Apple 2025 - “buline”)
+  // ✅ UI helpers (Apple 2025 - "buline")
   // -------------------------------------------------------------
   Widget _pillIconButton({
     required IconData icon,
     required VoidCallback onTap,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Material(
-          color: Colors.white.withOpacity(0.55),
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.55),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(999),
@@ -98,7 +101,7 @@ class _DistractiiDetaliiPageState extends State<DistractiiDetaliiPage> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.60),
+                  color: isDark ? Colors.white : Colors.white.withOpacity(0.60),
                   width: 1,
                 ),
                 boxShadow: [
@@ -109,7 +112,7 @@ class _DistractiiDetaliiPageState extends State<DistractiiDetaliiPage> {
                   ),
                 ],
               ),
-              child: Icon(icon, color: kBrand, size: 20),
+              child: Icon(icon, color: isDark ? Colors.white : kBrand, size: 20),
             ),
           ),
         ),
@@ -118,6 +121,7 @@ class _DistractiiDetaliiPageState extends State<DistractiiDetaliiPage> {
   }
 
   Widget _titlePill(String text) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -125,9 +129,9 @@ class _DistractiiDetaliiPageState extends State<DistractiiDetaliiPage> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.70),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.70),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.55), width: 1),
+            border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.55), width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -141,11 +145,11 @@ class _DistractiiDetaliiPageState extends State<DistractiiDetaliiPage> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14.5,
               fontWeight: FontWeight.w900,
-              color: kBrand,
+              color: isDark ? Colors.white : kBrand,
             ),
           ),
         ),
@@ -195,14 +199,14 @@ class _DistractiiDetaliiPageState extends State<DistractiiDetaliiPage> {
   }
 
   // -------------------------------------------------------------
-  // ✅ “Card” alb premium (Apple-ish)
+  // ✅ "Card" alb premium (Apple-ish)
   // -------------------------------------------------------------
   Widget _whiteCard({required Widget child}) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.92),
+        color: AppTheme.isDarkGlobal ? const Color(0xFF3A3A3C) : Colors.white.withOpacity(0.92),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: kBrand.withOpacity(0.10)),
         boxShadow: [
@@ -226,11 +230,11 @@ class _DistractiiDetaliiPageState extends State<DistractiiDetaliiPage> {
     final footerSpace = 90 + bottomInset + 12;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFE8F1F4),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       extendBody: true,
 
-      // ✅ “buline” ca în restul app-ului
+      // ✅ "buline" ca în restul app-ului
       appBar: _floatingPillsHeader(context),
 
       body: Stack(
@@ -276,10 +280,10 @@ class _DistractiiDetaliiPageState extends State<DistractiiDetaliiPage> {
                   // TITLU (în pagină)
                   Text(
                     widget.title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: kBrand,
+                      color: AppTheme.accentGlobal,
                       fontFamily: 'Poppins',
                       height: 1.15,
                     ),
@@ -293,9 +297,9 @@ class _DistractiiDetaliiPageState extends State<DistractiiDetaliiPage> {
                       widget.description.isNotEmpty
                           ? widget.description
                           : "Detalii indisponibile momentan.",
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
-                        color: Colors.black87,
+                        color: AppTheme.textPrimary(context),
                         height: 1.55,
                       ),
                     ),
@@ -326,7 +330,7 @@ class _DistractiiDetaliiPageState extends State<DistractiiDetaliiPage> {
                     child: ElevatedButton.icon(
                       onPressed: _openGoogleMaps,
                       icon: const Icon(Icons.map, color: Colors.white),
-                      label: const Text(
+                      label: Text(
                         "Deschide în Google Maps",
                         style: TextStyle(fontSize: 15, color: Colors.white),
                       ),
@@ -345,10 +349,10 @@ class _DistractiiDetaliiPageState extends State<DistractiiDetaliiPage> {
 
                   const SizedBox(height: 34),
 
-                  const Center(
+                  Center(
                     child: Text(
                       "— Tour Oradea © 2025 —",
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                      style: TextStyle(fontSize: 12, color: AppTheme.textSecondary(context)),
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -371,12 +375,20 @@ class _DistractiiDetaliiPageState extends State<DistractiiDetaliiPage> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: kBrand, size: 20),
+        Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: AppTheme.accentGlobal,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: Colors.white, size: 20),
+        ),
         const SizedBox(width: 8),
         Expanded(
           child: RichText(
             text: TextSpan(
-              style: const TextStyle(fontSize: 15, color: Colors.black87),
+              style: TextStyle(fontSize: 15, color: AppTheme.textPrimary(context)),
               children: [
                 TextSpan(
                   text: "$label ",

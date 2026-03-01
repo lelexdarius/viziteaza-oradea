@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
 
 typedef _ExtractPoints = List<LatLng> Function(Map<String, dynamic> data);
 typedef _GetTitle = String Function(Map<String, dynamic> data);
@@ -183,6 +184,8 @@ class _CategoryMapPreviewState extends State<CategoryMapPreview> {
                         compassEnabled: false,
                         mapToolbarEnabled: false,
                         liteModeEnabled: false,
+                        onMapCreated: (controller) =>
+                            AppTheme.applyMapStyle(controller),
                       ),
                     ),
                     Positioned(
@@ -356,6 +359,8 @@ class _CategoryFullScreenMapState extends State<_CategoryFullScreenMap> {
                 myLocationButtonEnabled: _locationEnabled,
                 zoomControlsEnabled: true,
                 mapToolbarEnabled: false,
+                onMapCreated: (controller) =>
+                    AppTheme.applyMapStyle(controller),
               );
             },
           ),

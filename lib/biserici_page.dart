@@ -8,6 +8,8 @@ import 'biserici_catolice_page.dart';
 import 'biserici_neoprotestante_page.dart';
 import 'widgets/custom_footer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:viziteaza_oradea/services/app_state.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
 
 // === MODEL ===
 class BisericaCategorie {
@@ -46,18 +48,19 @@ class _BisericiPageState extends State<BisericiPage> {
   static const Color kBrand = Color(0xFF004E64);
 
   // -------------------------------------------------------------
-  // ✅ UI helpers (Apple 2025 - “buline” sus)
+  // ✅ UI helpers (Apple 2025 - "buline" sus)
   // -------------------------------------------------------------
   Widget _pillIconButton({
     required IconData icon,
     required VoidCallback onTap,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Material(
-          color: Colors.white.withOpacity(0.55),
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.55),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(999),
@@ -67,7 +70,7 @@ class _BisericiPageState extends State<BisericiPage> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.60),
+                  color: isDark ? Colors.white : Colors.white.withOpacity(0.60),
                   width: 1,
                 ),
                 boxShadow: [
@@ -78,7 +81,7 @@ class _BisericiPageState extends State<BisericiPage> {
                   ),
                 ],
               ),
-              child: Icon(icon, color: kBrand, size: 20),
+              child: Icon(icon, color: isDark ? Colors.white : kBrand, size: 20),
             ),
           ),
         ),
@@ -87,6 +90,7 @@ class _BisericiPageState extends State<BisericiPage> {
   }
 
   Widget _titlePill(String text) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -94,9 +98,9 @@ class _BisericiPageState extends State<BisericiPage> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.70),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.70),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.55), width: 1),
+            border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.55), width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -110,11 +114,11 @@ class _BisericiPageState extends State<BisericiPage> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14.5,
               fontWeight: FontWeight.w900,
-              color: kBrand,
+              color: isDark ? Colors.white : kBrand,
             ),
           ),
         ),
@@ -170,11 +174,11 @@ class _BisericiPageState extends State<BisericiPage> {
     final footerSpace = 90 + bottomInset + 12;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFE8F1F4),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       extendBody: true, // ✅ elimină banda albă din spatele footer-ului
 
-      // ✅ DOAR sus: “floating pills”
+      // ✅ DOAR sus: "floating pills"
       appBar: _floatingPillsHeader(context, "Biserici • $formattedDate"),
 
       // ✅ Layout corect: content + footer floating
@@ -215,15 +219,15 @@ class _BisericiPageState extends State<BisericiPage> {
                           .map((cat) => _buildCategoryCard(context, cat))
                           .toList(),
                       const SizedBox(height: 40),
-                      const Padding(
-                        padding: EdgeInsets.only(top: 12, bottom: 6),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12, bottom: 6),
                         child: Center(
                           child: Text(
                             "— Tour Oradea © 2025 —",
                             style: TextStyle(
                               fontFamily: 'Poppins',
                               fontSize: 12,
-                              color: Colors.grey,
+                              color: AppTheme.textSecondary(context),
                               fontWeight: FontWeight.w400,
                               letterSpacing: 0.5,
                             ),
@@ -237,7 +241,7 @@ class _BisericiPageState extends State<BisericiPage> {
             ),
           ),
 
-          // ✅ Footer floating (nu mai “împinge” layout-ul, nu mai face bandă albă)
+          // ✅ Footer floating (nu mai "împinge" layout-ul, nu mai face bandă albă)
           const Align(
             alignment: Alignment.bottomCenter,
             child: CustomFooter(isHome: true),
@@ -270,7 +274,7 @@ class _BisericiPageState extends State<BisericiPage> {
         MaterialPageRoute(builder: (_) => destination),
       ),
       child: Card(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         elevation: 6,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         margin: const EdgeInsets.only(bottom: 20),
@@ -281,7 +285,7 @@ class _BisericiPageState extends State<BisericiPage> {
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(16)),
               child: cat.imagePath.isNotEmpty
-                  ? CachedNetworkImage(imageUrl: 
+                  ? CachedNetworkImage(imageUrl:
                       cat.imagePath,
                       fit: BoxFit.cover,
                       width: double.infinity,
@@ -309,17 +313,18 @@ class _BisericiPageState extends State<BisericiPage> {
                 children: [
                   Text(
                     cat.title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
+                      color: AppTheme.textPrimary(context),
                     ),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     cat.subtitle,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 15,
-                      color: Colors.black54,
+                      color: AppTheme.textSecondary(context),
                       height: 1.4,
                     ),
                   ),

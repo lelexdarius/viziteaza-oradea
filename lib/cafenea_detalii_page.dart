@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart'; // 👈 necesar pentru gestureRecognizers
 import 'dart:ui';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
+import 'package:viziteaza_oradea/services/app_state.dart';
 import 'package:viziteaza_oradea/cafenele_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:geolocator/geolocator.dart';
@@ -63,7 +65,7 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
     _hintDismissed = prefs.getBool("favorite_hint_dismissed") ?? false;
 
     if (!_hintDismissed) {
-      // mic delay ca să pară mai „natural”
+      // mic delay ca să pară mai „natural\"
       Future.delayed(const Duration(milliseconds: 400), () {
         if (mounted) setState(() => _showFavoriteHint = true);
       });
@@ -128,11 +130,11 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
     final footerSpace = 90 + bottomInset + 12;
 
     return Scaffold(
-      backgroundColor: kBg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       extendBody: true,
 
-      // ✅ NU AppBar. Header “floating” în Stack.
+      // ✅ NU AppBar. Header "floating" în Stack.
       body: Stack(
         children: [
           // ====== CONTENT ======
@@ -182,7 +184,7 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
                     width: double.infinity,
                     padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.92),
+                      color: AppTheme.isDarkGlobal ? const Color(0xFF3A3A3C) : Colors.white.withOpacity(0.92),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: kBrand.withOpacity(0.08)),
                       boxShadow: [
@@ -208,7 +210,7 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
                                   cafe.locatii,
                                   style: TextStyle(
                                     fontSize: 15,
-                                    color: Colors.black.withOpacity(0.78),
+                                    color: AppTheme.textPrimary(context),
                                     fontWeight: FontWeight.w600,
                                     height: 1.25,
                                     fontFamily: 'Poppins',
@@ -225,7 +227,7 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
                           cafe.description,
                           style: TextStyle(
                             fontSize: 15.5,
-                            color: Colors.black.withOpacity(0.78),
+                            color: AppTheme.textPrimary(context),
                             height: 1.55,
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w500,
@@ -234,9 +236,9 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
                         const SizedBox(height: 14),
                         Divider(height: 1, color: Colors.black.withOpacity(0.08)),
                         const SizedBox(height: 10),
-                        _buildInfoRow(Icons.phone, "Telefon:", cafe.phone),
+                        _buildInfoRow(context, Icons.phone, "Telefon:", cafe.phone),
                         const SizedBox(height: 8),
-                        _buildInfoRow(Icons.access_time, "Program:", cafe.schedule),
+                        _buildInfoRow(context, Icons.access_time, "Program:", cafe.schedule),
                       ],
                     ),
                   ),
@@ -249,7 +251,7 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w900,
-                      color: kBrand,
+                      color: AppTheme.accentGlobal,
                       fontFamily: 'Poppins',
                     ),
                   ),
@@ -284,6 +286,7 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
                             mapType: MapType.normal,
                             onMapCreated: (controller) async {
                               _mapController = controller;
+                              AppTheme.applyMapStyle(controller);
                               await Future.delayed(const Duration(milliseconds: 100));
                               _fitAllMarkers(markers);
                             },
@@ -337,13 +340,13 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
 
                   const SizedBox(height: 22),
 
-                  const Center(
+                  Center(
                     child: Text(
                       "— Tour Oradea © 2025 —",
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 12,
-                        color: Colors.grey,
+                        color: AppTheme.textSecondary(context),
                         fontWeight: FontWeight.w400,
                         letterSpacing: 0.5,
                       ),
@@ -354,7 +357,7 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
             ),
           ),
 
-          // ====== HEADER FLOATING CU “BULINE” (stil inițial) ======
+          // ====== HEADER FLOATING CU "BULINE" (stil inițial) ======
           Positioned(
             top: safeTop,
             left: 0,
@@ -428,7 +431,7 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
                     child: Opacity(opacity: value, child: child),
                   );
                 },
-                child: _favoriteHintBox(),
+                child: _favoriteHintBox(context),
               ),
             ),
 
@@ -463,6 +466,7 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
                                 mapType: MapType.normal,
                                 onMapCreated: (controller) async {
                                   _mapController = controller;
+                                  AppTheme.applyMapStyle(controller);
                                   await Future.delayed(const Duration(milliseconds: 120));
                                   _fitAllMarkers(markers);
                                 },
@@ -498,18 +502,19 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
     );
   }
 
-  // ====== UI: buton “bulină” (stil inițial) ======
+  // ====== UI: buton "bulină" (stil inițial) ======
   Widget _pillIconButton({
     required IconData icon,
     required VoidCallback onTap,
     Color iconColor = kBrand,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Material(
-          color: Colors.white.withOpacity(0.55),
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.55),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(999),
@@ -518,7 +523,7 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
               height: 42,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
-                border: Border.all(color: Colors.white.withOpacity(0.60), width: 1),
+                border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.60), width: 1),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.06),
@@ -527,7 +532,7 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
                   ),
                 ],
               ),
-              child: Icon(icon, color: iconColor, size: 20),
+              child: Icon(icon, color: isDark ? Colors.white : iconColor, size: 20),
             ),
           ),
         ),
@@ -535,8 +540,9 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
     );
   }
 
-  // ====== UI: “bulina” titlu (stil inițial) ======
+  // ====== UI: "bulina" titlu (stil inițial) ======
   Widget _titlePill(String title) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -544,9 +550,9 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.70),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.70),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.55), width: 1),
+            border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.55), width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -560,11 +566,11 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14.5,
               fontWeight: FontWeight.w900,
-              color: kBrand,
+              color: isDark ? Colors.white : kBrand,
               letterSpacing: 0.2,
             ),
           ),
@@ -574,7 +580,7 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
   }
 
   // ===== Popup mic, elegant, cu săgeată spre inimă =====
-  Widget _favoriteHintBox() {
+  Widget _favoriteHintBox(BuildContext context) {
     return Material(
       color: Colors.transparent,
       child: Stack(
@@ -597,22 +603,22 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   "Știai că…",
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: kBrand,
+                    color: AppTheme.accentGlobal,
                     fontFamily: 'Poppins',
                   ),
                 ),
                 const SizedBox(height: 6),
-                const Text(
+                Text(
                   "Poți salva această cafenea la Favorite atingând simbolul inimă.",
                   style: TextStyle(
                     fontSize: 14,
                     height: 1.3,
-                    color: Colors.black87,
+                    color: AppTheme.textPrimary(context),
                     fontFamily: 'Poppins',
                   ),
                 ),
@@ -623,12 +629,12 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
                     TextButton(
                       style: TextButton.styleFrom(foregroundColor: kBrand),
                       onPressed: _dismissHint,
-                      child: const Text("OK"),
+                      child: Text("OK"),
                     ),
                     const SizedBox(width: 4),
                     GestureDetector(
                       onTap: _dismissHint,
-                      child: const Icon(Icons.close, size: 18, color: Colors.black54),
+                      child: Icon(Icons.close, size: 18, color: AppTheme.textSecondary(context)),
                     ),
                   ],
                 ),
@@ -661,18 +667,26 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String label, String value) {
+  Widget _buildInfoRow(BuildContext context, IconData icon, String label, String value) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: kBrand.withOpacity(0.95), size: 20),
+        Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: AppTheme.accentGlobal,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: Colors.white, size: 20),
+        ),
         const SizedBox(width: 10),
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 15.2,
             fontWeight: FontWeight.w900,
-            color: kBrand,
+            color: AppTheme.accentGlobal,
             fontFamily: 'Poppins',
           ),
         ),
@@ -682,7 +696,7 @@ class _CafeneaDetaliiPageState extends State<CafeneaDetaliiPage> {
             value,
             style: TextStyle(
               fontSize: 15.2,
-              color: Colors.black.withOpacity(0.78),
+              color: AppTheme.textPrimary(context),
               fontFamily: 'Poppins',
               height: 1.25,
               fontWeight: FontWeight.w600,

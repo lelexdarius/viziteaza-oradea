@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
+import 'package:viziteaza_oradea/services/app_state.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:io';
@@ -82,7 +84,7 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
   }
 
   // -------------------------------------------------------------
-  // ✅ UI helpers (Apple 2025 - “buline”)
+  // ✅ UI helpers (Apple 2025 - "buline")
   // -------------------------------------------------------------
   Widget _pillIconButton({
     required IconData icon,
@@ -90,6 +92,7 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
     Color? iconColor,
     String? semanticsLabel,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return Semantics(
       label: semanticsLabel,
       button: true,
@@ -98,7 +101,7 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
           child: Material(
-            color: Colors.white.withOpacity(0.55),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.55),
             child: InkWell(
               onTap: onTap,
               borderRadius: BorderRadius.circular(999),
@@ -108,7 +111,7 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(999),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.60),
+                    color: isDark ? Colors.white : Colors.white.withOpacity(0.60),
                     width: 1,
                   ),
                   boxShadow: [
@@ -119,7 +122,7 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
                     ),
                   ],
                 ),
-                child: Icon(icon, color: iconColor ?? kBrand, size: 20),
+                child: Icon(icon, color: isDark ? Colors.white : (iconColor ?? kBrand), size: 20),
               ),
             ),
           ),
@@ -129,6 +132,7 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
   }
 
   Widget _titlePill(String text) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -136,9 +140,9 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.70),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.70),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.55), width: 1),
+            border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.55), width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -152,11 +156,11 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14.5,
               fontWeight: FontWeight.w900,
-              color: kBrand,
+              color: isDark ? Colors.white : kBrand,
             ),
           ),
         ),
@@ -205,7 +209,7 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
   }
 
   // -------------------------------------------------------------
-  // ✅ Info “chips” (2025)
+  // ✅ Info "chips" (2025)
   // -------------------------------------------------------------
   Widget _infoChip({
     required IconData icon,
@@ -217,7 +221,7 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.92),
+        color: AppTheme.isDarkGlobal ? const Color(0xFF3A3A3C) : Colors.white.withOpacity(0.92),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: kBrand.withOpacity(0.10)),
         boxShadow: [
@@ -235,10 +239,10 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
             width: 38,
             height: 38,
             decoration: BoxDecoration(
-              color: kBrand.withOpacity(0.10),
+              color: AppTheme.accentGlobal,
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(icon, color: kBrand, size: 20),
+            child: Icon(icon, color: Colors.white, size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -248,15 +252,15 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
                   fontFamily: 'Poppins',
                   fontSize: 13.6,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black.withOpacity(0.78),
+                  color: AppTheme.textPrimary(context),
                   height: 1.35,
                 ),
                 children: [
                   TextSpan(
                     text: "$label\n",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w900,
-                      color: kBrand,
+                      color: AppTheme.accentGlobal,
                       fontSize: 12.8,
                       height: 1.2,
                     ),
@@ -269,7 +273,7 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
           if (onTap != null) ...[
             const SizedBox(width: 8),
             Icon(Icons.chevron_right_rounded,
-                color: Colors.black.withOpacity(0.35)),
+                color: AppTheme.textSecondary(context)),
           ],
         ],
       ),
@@ -299,7 +303,7 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.92),
+          color: AppTheme.isDarkGlobal ? const Color(0xFF3A3A3C) : Colors.white.withOpacity(0.92),
           borderRadius: BorderRadius.circular(999),
           border: Border.all(color: kBrand.withOpacity(0.12)),
           boxShadow: [
@@ -312,20 +316,20 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
         ),
         child: Row(
           children: [
-            Icon(icon, color: kBrand),
+            Icon(icon, color: AppTheme.accentGlobal),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
                 text,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 15.5,
                   fontWeight: FontWeight.w800,
-                  color: kBrand,
+                  color: AppTheme.accentGlobal,
                 ),
               ),
             ),
-            const Icon(Icons.open_in_new_rounded, color: kBrand, size: 18),
+            Icon(Icons.open_in_new_rounded, color: AppTheme.accentGlobal, size: 18),
           ],
         ),
       ),
@@ -378,7 +382,7 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
     final footerSpace = 90 + bottomInset + 12;
 
     return Scaffold(
-      backgroundColor: kBg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
       // ✅ fără bandă albă sub footer
       extendBody: true,
@@ -401,7 +405,7 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // -------------------------------------------------
-                  // ✅ HERO cu gradient + label tip “glass”
+                  // ✅ HERO cu gradient + label tip "glass"
                   // -------------------------------------------------
                   ClipRRect(
                     borderRadius: BorderRadius.circular(22),
@@ -481,7 +485,7 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         fontFamily: 'Poppins',
-                                        color: Colors.white.withOpacity(0.90),
+                                        color: AppTheme.isDarkGlobal ? const Color(0xFF3A3A3C) : Colors.white.withOpacity(0.90),
                                         fontWeight: FontWeight.w700,
                                         fontSize: 13.5,
                                       ),
@@ -518,7 +522,7 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
                     width: double.infinity,
                     padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.92),
+                      color: AppTheme.isDarkGlobal ? const Color(0xFF3A3A3C) : Colors.white.withOpacity(0.92),
                       borderRadius: BorderRadius.circular(18),
                       border: Border.all(color: kBrand.withOpacity(0.10)),
                       boxShadow: [
@@ -537,7 +541,7 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
                         fontFamily: 'Poppins',
                         fontSize: 13.8,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black.withOpacity(0.78),
+                        color: AppTheme.textPrimary(context),
                         height: 1.55,
                       ),
                     ),
@@ -578,7 +582,7 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
                   const SizedBox(height: 14),
 
                   // -------------------------------------------------
-                  // ✅ Buton “Traseu”
+                  // ✅ Buton "Traseu"
                   // -------------------------------------------------
                   _primaryButton(
                     icon: Icons.directions_rounded,
@@ -597,7 +601,7 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
                       fontFamily: 'Poppins',
                       fontSize: 15.5,
                       fontWeight: FontWeight.w900,
-                      color: kBrand,
+                      color: AppTheme.accentGlobal,
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -621,7 +625,10 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
                             myLocationEnabled: true,
                             myLocationButtonEnabled: true,
                             zoomControlsEnabled: false,
-                            onMapCreated: (c) => _mapController = c,
+                            onMapCreated: (c) {
+                              _mapController = c;
+                              AppTheme.applyMapStyle(c);
+                            },
                           ),
                           Positioned.fill(
                             child: Material(
@@ -674,13 +681,13 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
 
                   const SizedBox(height: 34),
 
-                  const Center(
+                  Center(
                     child: Text(
                       "— Tour Oradea © 2025 —",
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 12,
-                        color: Colors.grey,
+                        color: AppTheme.textSecondary(context),
                         fontWeight: FontWeight.w400,
                         letterSpacing: 0.5,
                       ),
@@ -723,6 +730,10 @@ class _MuzeuDetaliiPageState extends State<MuzeuDetaliiPage> {
                               myLocationEnabled: true,
                               myLocationButtonEnabled: true,
                               zoomControlsEnabled: true,
+                              onMapCreated: (controller) {
+                                _mapController = controller;
+                                AppTheme.applyMapStyle(controller);
+                              },
                             ),
                             Positioned(
                               top: 10,

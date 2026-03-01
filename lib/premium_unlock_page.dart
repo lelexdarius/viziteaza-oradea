@@ -8,6 +8,7 @@ import 'services/iap_service.dart';
 // ✅ pentru back -> Home (fără blank)
 import 'package:viziteaza_oradea/home.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:viziteaza_oradea/services/app_state.dart';
 
 class PremiumUnlockPage extends StatefulWidget {
   const PremiumUnlockPage({Key? key}) : super(key: key);
@@ -138,12 +139,13 @@ class _PremiumUnlockPageState extends State<PremiumUnlockPage> {
     required VoidCallback onTap,
     Color iconColor = kBrand,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Material(
-          color: Colors.white.withOpacity(0.55),
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.55),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(999),
@@ -152,7 +154,7 @@ class _PremiumUnlockPageState extends State<PremiumUnlockPage> {
               height: 42,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
-                border: Border.all(color: Colors.white.withOpacity(0.60), width: 1),
+                border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.60), width: 1),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.06),
@@ -161,7 +163,7 @@ class _PremiumUnlockPageState extends State<PremiumUnlockPage> {
                   ),
                 ],
               ),
-              child: Icon(icon, color: iconColor, size: 20),
+              child: Icon(icon, color: isDark ? Colors.white : iconColor, size: 20),
             ),
           ),
         ),
@@ -170,6 +172,7 @@ class _PremiumUnlockPageState extends State<PremiumUnlockPage> {
   }
 
   Widget _titlePill(String title) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -177,9 +180,9 @@ class _PremiumUnlockPageState extends State<PremiumUnlockPage> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.70),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.70),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.55), width: 1),
+            border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.55), width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -193,11 +196,11 @@ class _PremiumUnlockPageState extends State<PremiumUnlockPage> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14.5,
               fontWeight: FontWeight.w900,
-              color: kBrand,
+              color: isDark ? Colors.white : kBrand,
               letterSpacing: 0.2,
             ),
           ),
@@ -214,9 +217,16 @@ class _PremiumUnlockPageState extends State<PremiumUnlockPage> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.70),
+            color: AppState.instance.isDarkMode
+                ? const Color(0xFF2C2C2E)
+                : Colors.white.withOpacity(0.70),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.55), width: 1),
+            border: Border.all(
+              color: AppState.instance.isDarkMode
+                  ? Colors.white.withOpacity(0.20)
+                  : Colors.white.withOpacity(0.55),
+              width: 1,
+            ),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -225,18 +235,18 @@ class _PremiumUnlockPageState extends State<PremiumUnlockPage> {
               ),
             ],
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.star_rounded, size: 16, color: kAccent),
-              SizedBox(width: 6),
+              const Icon(Icons.star_rounded, size: 16, color: kAccent),
+              const SizedBox(width: 6),
               Text(
                 "Premium",
                 style: TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 12.5,
                   fontWeight: FontWeight.w900,
-                  color: kBrand,
+                  color: AppState.instance.isDarkMode ? Colors.white : kBrand,
                 ),
               ),
             ],
@@ -270,7 +280,9 @@ class _PremiumUnlockPageState extends State<PremiumUnlockPage> {
                 fontSize: 14,
                 height: 1.4,
                 fontWeight: FontWeight.w600,
-                color: Colors.black.withOpacity(0.62),
+                color: AppState.instance.isDarkMode
+                    ? Colors.white.withOpacity(0.85)
+                    : Colors.black.withOpacity(0.62),
               ),
             ),
           ),
@@ -280,10 +292,11 @@ class _PremiumUnlockPageState extends State<PremiumUnlockPage> {
   }
 
   Widget _packagePreviewCard() {
+    final isDark = AppState.instance.isDarkMode;
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.92),
+        color: isDark ? const Color(0xFF1C1C1E) : Colors.white.withOpacity(0.92),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: kBrand.withOpacity(0.08)),
         boxShadow: [
@@ -317,7 +330,7 @@ class _PremiumUnlockPageState extends State<PremiumUnlockPage> {
                     fontFamily: 'Poppins',
                     fontSize: 15.5,
                     fontWeight: FontWeight.w900,
-                    color: Colors.black.withOpacity(0.78),
+                    color: isDark ? Colors.white : Colors.black.withOpacity(0.78),
                   ),
                 ),
               ),
@@ -331,7 +344,7 @@ class _PremiumUnlockPageState extends State<PremiumUnlockPage> {
               fontSize: 14,
               height: 1.45,
               fontWeight: FontWeight.w600,
-              color: Colors.black.withOpacity(0.58),
+              color: isDark ? Colors.white.withOpacity(0.85) : Colors.black.withOpacity(0.58),
             ),
           ),
           const SizedBox(height: 12),
@@ -349,10 +362,11 @@ class _PremiumUnlockPageState extends State<PremiumUnlockPage> {
   }
 
   Widget _whatItFeelsLikeCard() {
+    final isDark = AppState.instance.isDarkMode;
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.92),
+        color: isDark ? const Color(0xFF1C1C1E) : Colors.white.withOpacity(0.92),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: kBrand.withOpacity(0.08)),
         boxShadow: [
@@ -385,7 +399,7 @@ class _PremiumUnlockPageState extends State<PremiumUnlockPage> {
                 fontSize: 14,
                 height: 1.4,
                 fontWeight: FontWeight.w600,
-                color: Colors.black.withOpacity(0.60),
+                color: isDark ? Colors.white.withOpacity(0.85) : Colors.black.withOpacity(0.60),
               ),
             ),
           ),
@@ -396,6 +410,7 @@ class _PremiumUnlockPageState extends State<PremiumUnlockPage> {
 
   Widget _priceBox(BuildContext context) {
     final h = MediaQuery.of(context).size.height;
+    final isDark = AppState.instance.isDarkMode;
 
     // ✅ preț real din Store (dacă este încărcat)
     final storePrice = IAPService.instance.premiumProduct?.price;
@@ -404,7 +419,7 @@ class _PremiumUnlockPageState extends State<PremiumUnlockPage> {
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.92),
+        color: isDark ? const Color(0xFF1C1C1E) : Colors.white.withOpacity(0.92),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: kBrand.withOpacity(0.08)),
         boxShadow: [
@@ -425,7 +440,7 @@ class _PremiumUnlockPageState extends State<PremiumUnlockPage> {
                   fontFamily: 'Poppins',
                   fontSize: h * 0.040,
                   fontWeight: FontWeight.w900,
-                  color: Colors.black.withOpacity(0.80),
+                  color: isDark ? Colors.white : Colors.black.withOpacity(0.80),
                 ),
               ),
               const Spacer(),
@@ -491,7 +506,7 @@ class _PremiumUnlockPageState extends State<PremiumUnlockPage> {
                 "Restaurare achiziție",
                 style: TextStyle(
                   fontFamily: 'Poppins',
-                  color: Colors.black.withOpacity(0.60),
+                  color: isDark ? Colors.white.withOpacity(0.70) : Colors.black.withOpacity(0.60),
                   decoration: TextDecoration.underline,
                   fontWeight: FontWeight.w700,
                 ),
@@ -505,7 +520,7 @@ class _PremiumUnlockPageState extends State<PremiumUnlockPage> {
             style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 12,
-              color: Colors.black.withOpacity(0.45),
+              color: isDark ? Colors.white.withOpacity(0.50) : Colors.black.withOpacity(0.45),
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -634,7 +649,7 @@ class _PremiumUnlockPageState extends State<PremiumUnlockPage> {
         return false;
       },
       child: Scaffold(
-        backgroundColor: kBg,
+        backgroundColor: AppState.instance.isDarkMode ? Colors.black : kBg,
         extendBodyBehindAppBar: true,
         extendBody: true,
         body: Stack(

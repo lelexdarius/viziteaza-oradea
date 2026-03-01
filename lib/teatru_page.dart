@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'teatru_detalii_page.dart';
 import 'widgets/custom_footer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
+import 'package:viziteaza_oradea/services/app_state.dart';
 
 class TeatruPage extends StatelessWidget {
   const TeatruPage({super.key});
@@ -21,11 +23,11 @@ class TeatruPage extends StatelessWidget {
     final footerSpace = 90 + bottomInset + 12;
 
     return Scaffold(
-      backgroundColor: kBg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       extendBody: true,
 
-      // ✅ AppBar “invizibil”, dar cu “buline” (ca la Cafenele/Detalii)
+      // ✅ AppBar "invizibil", dar cu "buline" (ca la Cafenele/Detalii)
       appBar: _floatingPillsHeader(context, "Teatrul Regina Maria"),
 
       body: Stack(
@@ -45,43 +47,43 @@ class TeatruPage extends StatelessWidget {
                   const SizedBox(height: 10),
 
                   // ✅ Header info în card alb (Apple-ish)
-                  _whiteCard(
+                  _whiteCard(context,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
                           "Programul Lunii",
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 18,
                             fontWeight: FontWeight.w900,
-                            color: kBrand,
+                            color: AppTheme.accentGlobal,
                           ),
                         ),
                         SizedBox(height: 10),
-                        Text(
+                        Builder(builder: (context) => Text(
                           "🎭 Teatrul Regina Maria te invită să trăiești emoția scenei. Descoperă spectacole de comedie, dramă și muzical într-o atmosferă unică.",
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 13.8,
-                            color: Colors.black87,
+                            color: AppTheme.textPrimary(context),
                             height: 1.55,
                             fontWeight: FontWeight.w600,
                           ),
-                        ),
-                        SizedBox(height: 18),
-                        Text(
+                        )),
+                        const SizedBox(height: 18),
+                        Builder(builder: (context) => Text(
                           "Program casierie: Luni - Vineri: 10:00 - 17:00\n"
                           "Sâmbătă - Duminică: 17:00 - 19:00 (în zilele cu spectacole)\n"
                           "Telefon rezervări: 0359 409 475",
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 13.8,
-                            color: Colors.black87,
+                            color: AppTheme.textPrimary(context),
                             height: 1.55,
                             fontWeight: FontWeight.w600,
                           ),
-                        ),
+                        )),
                       ],
                     ),
                   ),
@@ -97,16 +99,16 @@ class TeatruPage extends StatelessWidget {
                         .snapshots(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
+                        return Center(
                           child: Padding(
-                            padding: EdgeInsets.only(top: 40),
-                            child: CircularProgressIndicator(color: kBrand),
+                            padding: const EdgeInsets.only(top: 40),
+                            child: CircularProgressIndicator(color: AppTheme.accentGlobal),
                           ),
                         );
                       }
 
                       if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                        return _whiteCard(
+                        return _whiteCard(context,
                           child: Row(
                             children: [
                               Container(
@@ -116,8 +118,8 @@ class TeatruPage extends StatelessWidget {
                                   color: kBrand.withOpacity(0.10),
                                   borderRadius: BorderRadius.circular(14),
                                 ),
-                                child: const Icon(Icons.info_outline_rounded,
-                                    color: kBrand),
+                                child: Icon(Icons.info_outline_rounded,
+                                    color: AppTheme.accentGlobal),
                               ),
                               const SizedBox(width: 12),
                               Expanded(
@@ -127,7 +129,7 @@ class TeatruPage extends StatelessWidget {
                                     fontFamily: 'Poppins',
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700,
-                                    color: Colors.black.withOpacity(0.72),
+                                    color: AppTheme.textPrimary(context),
                                     height: 1.25,
                                   ),
                                 ),
@@ -166,7 +168,7 @@ class TeatruPage extends StatelessWidget {
             ),
           ),
 
-          // ✅ Footer fix “deasupra” conținutului (fără bandă albă)
+          // ✅ Footer fix "deasupra" conținutului (fără bandă albă)
           const Align(
             alignment: Alignment.bottomCenter,
             child: CustomFooter(isHome: true),
@@ -177,7 +179,7 @@ class TeatruPage extends StatelessWidget {
   }
 
   // -------------------------------------------------------------
-  // ✅ Header cu “buline” + titlu pill (identic ca stil cu celelalte pagini)
+  // ✅ Header cu "buline" + titlu pill (identic ca stil cu celelalte pagini)
   // -------------------------------------------------------------
   PreferredSizeWidget _floatingPillsHeader(BuildContext context, String title) {
     final safeTop = MediaQuery.of(context).padding.top;
@@ -217,12 +219,13 @@ class TeatruPage extends StatelessWidget {
     required IconData icon,
     required VoidCallback onTap,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Material(
-          color: Colors.white.withOpacity(0.55),
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.55),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(999),
@@ -232,7 +235,7 @@ class TeatruPage extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.60),
+                  color: isDark ? Colors.white : Colors.white.withOpacity(0.60),
                   width: 1,
                 ),
                 boxShadow: [
@@ -243,7 +246,7 @@ class TeatruPage extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Icon(icon, color: kBrand, size: 20),
+              child: Icon(icon, color: isDark ? Colors.white : kBrand, size: 20),
             ),
           ),
         ),
@@ -252,6 +255,7 @@ class TeatruPage extends StatelessWidget {
   }
 
   Widget _titlePill(String text) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -259,9 +263,9 @@ class TeatruPage extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.70),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.70),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.55), width: 1),
+            border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.55), width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -275,11 +279,11 @@ class TeatruPage extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14.5,
               fontWeight: FontWeight.w900,
-              color: kBrand,
+              color: isDark ? Colors.white : kBrand,
             ),
           ),
         ),
@@ -288,16 +292,16 @@ class TeatruPage extends StatelessWidget {
   }
 
   // -------------------------------------------------------------
-  // ✅ White “Apple” card
+  // ✅ White "Apple" card
   // -------------------------------------------------------------
-  Widget _whiteCard({
+  Widget _whiteCard(BuildContext context, {
     required Widget child,
     EdgeInsets padding = const EdgeInsets.fromLTRB(14, 14, 14, 14),
   }) {
     return Container(
       padding: padding,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.92),
+        color: Theme.of(context).cardColor.withOpacity(0.92),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: kBrand.withOpacity(0.10)),
         boxShadow: [
@@ -371,7 +375,7 @@ class TeatruPage extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.92),
+            color: Theme.of(context).cardColor.withOpacity(0.92),
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: kBrand.withOpacity(0.10)),
           ),
@@ -401,8 +405,8 @@ class TeatruPage extends StatelessWidget {
                                 color: kBrand.withOpacity(0.10),
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: const Icon(Icons.calendar_month,
-                                  color: kBrand, size: 16),
+                              child: Icon(Icons.calendar_month,
+                                  color: AppTheme.accentGlobal, size: 16),
                             ),
                             const SizedBox(width: 8),
                             Expanded(
@@ -410,9 +414,9 @@ class TeatruPage extends StatelessWidget {
                                 dataText,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontFamily: 'Poppins',
-                                  color: kBrand,
+                                  color: AppTheme.accentGlobal,
                                   fontWeight: FontWeight.w900,
                                   fontSize: 13.6,
                                   height: 1.0,
@@ -433,7 +437,7 @@ class TeatruPage extends StatelessWidget {
                                   fontFamily: 'Poppins',
                                   fontSize: 15.6,
                                   fontWeight: FontWeight.w900,
-                                  color: Colors.black.withOpacity(0.88),
+                                  color: AppTheme.textPrimary(context),
                                   height: 1.15,
                                 ),
                                 maxLines: 2,
@@ -459,7 +463,7 @@ class TeatruPage extends StatelessWidget {
                               fontFamily: 'Poppins',
                               fontSize: 13.2,
                               fontWeight: FontWeight.w700,
-                              color: Colors.black.withOpacity(0.70),
+                              color: AppTheme.textSecondary(context),
                             ),
                           ),
                         ],
@@ -477,7 +481,7 @@ class TeatruPage extends StatelessWidget {
                     fontFamily: 'Poppins',
                     fontSize: 13.2,
                     fontWeight: FontWeight.w700,
-                    color: Colors.black.withOpacity(0.62),
+                    color: AppTheme.textSecondary(context),
                   ),
                 ),
               ],
@@ -490,7 +494,7 @@ class TeatruPage extends StatelessWidget {
                   fontFamily: 'Poppins',
                   fontSize: 13.8,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black.withOpacity(0.78),
+                  color: AppTheme.textPrimary(context),
                   height: 1.45,
                 ),
                 maxLines: 3,
@@ -542,17 +546,17 @@ class TeatruPage extends StatelessWidget {
                         ),
                       );
                     },
-                    icon: const Icon(Icons.theater_comedy, color: kBrand),
-                    label: const Text(
+                    icon: Icon(Icons.theater_comedy, color: AppTheme.accentGlobal),
+                    label: Text(
                       "Mai multe detalii",
                       style: TextStyle(
                         fontFamily: 'Poppins',
-                        color: kBrand,
+                        color: AppTheme.accentGlobal,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
                     style: TextButton.styleFrom(
-                      foregroundColor: kBrand,
+                      foregroundColor: AppTheme.accentGlobal,
                     ),
                   ),
                 ],

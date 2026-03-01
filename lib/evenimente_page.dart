@@ -5,16 +5,43 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'evenimente_detalii_page.dart';
 import 'widgets/custom_footer.dart';
 
-import 'package:viziteaza_oradea/home.dart'; // ✅ pentru HomePage
+import 'package:viziteaza_oradea/home.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
+import 'package:viziteaza_oradea/utils/schedule_parser.dart';
+import 'package:viziteaza_oradea/services/app_state.dart';
 
-class EvenimentePage extends StatelessWidget {
+class EvenimentePage extends StatefulWidget {
   const EvenimentePage({super.key});
 
-  static const Color kBrand = Color(0xFF004E64);
-  static const Color kBg = Color(0xFFE8F1F4);
+  @override
+  State<EvenimentePage> createState() => _EvenimentePageState();
+}
 
-  // ✅ Navigare către Home fără animație (evită blank)
+class _EvenimentePageState extends State<EvenimentePage> {
+  static const Color kBrand = Color(0xFF004E64);
+  static const Color _cellDark = Color(0xFF37474F);  // dark mode unselected
+  static const Color _cellLight = Color(0xFF1B7A96); // light mode unselected
+
+  DateTime? _selectedDate; // null = toate
+
+  static const List<String> _dayNames = ['LU', 'MA', 'MI', 'JO', 'VI', 'SÂ', 'DU'];
+
+  String _dayAbbr(DateTime d) => _dayNames[d.weekday - 1];
+
+  bool _isSameDay(DateTime a, DateTime b) =>
+      a.year == b.year && a.month == b.month && a.day == b.day;
+
+  /// Urmtoarele 9 zile începând de azi (se schimbă automat în fiecare zi).
+  List<DateTime> _next9Days() {
+    final today = DateTime.now();
+    final base = DateTime(today.year, today.month, today.day);
+    return List.generate(9, (i) => base.add(Duration(days: i)));
+  }
+
+  // ----------------------------------------------------------------
+  // Navigation
+  // ----------------------------------------------------------------
   void _goHomeNoAnim(BuildContext context) {
     Navigator.of(context, rootNavigator: true).pushReplacement(
       PageRouteBuilder(
@@ -28,19 +55,17 @@ class EvenimentePage extends StatelessWidget {
     );
   }
 
-  // -------------------------------------------------------------
-  // ✅ UI helpers (Apple 2025 - “buline”)
-  // -------------------------------------------------------------
-  Widget _pillIconButton({
-    required IconData icon,
-    required VoidCallback onTap,
-  }) {
+  // ----------------------------------------------------------------
+  // Pill header helpers
+  // ----------------------------------------------------------------
+  Widget _pillIconButton({required IconData icon, required VoidCallback onTap}) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Material(
-          color: Colors.white.withOpacity(0.55),
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.55),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(999),
@@ -50,7 +75,7 @@ class EvenimentePage extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.60),
+                  color: isDark ? Colors.white : Colors.white.withOpacity(0.60),
                   width: 1,
                 ),
                 boxShadow: [
@@ -61,7 +86,7 @@ class EvenimentePage extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Icon(icon, color: kBrand, size: 20),
+              child: Icon(icon, color: isDark ? Colors.white : kBrand, size: 20),
             ),
           ),
         ),
@@ -70,6 +95,7 @@ class EvenimentePage extends StatelessWidget {
   }
 
   Widget _titlePill(String text) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -77,9 +103,11 @@ class EvenimentePage extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.70),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.70),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.55), width: 1),
+            border: Border.all(
+                color: isDark ? Colors.white : Colors.white.withOpacity(0.55),
+                width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -93,11 +121,11 @@ class EvenimentePage extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14.5,
               fontWeight: FontWeight.w900,
-              color: kBrand,
+              color: isDark ? Colors.white : kBrand,
             ),
           ),
         ),
@@ -107,7 +135,6 @@ class EvenimentePage extends StatelessWidget {
 
   PreferredSizeWidget _floatingPillsHeader(BuildContext context) {
     final safeTop = MediaQuery.of(context).padding.top;
-
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: SizedBox(
@@ -128,12 +155,9 @@ class EvenimentePage extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: Center(
-                      child: _titlePill("Evenimente Oradea"),
-                    ),
+                    child: Center(child: _titlePill("Evenimente Oradea")),
                   ),
                   const SizedBox(width: 10),
-                  // simetrie
                   const SizedBox(width: 42, height: 42),
                 ],
               ),
@@ -144,15 +168,45 @@ class EvenimentePage extends StatelessWidget {
     );
   }
 
-  // -------------------------------------------------------------
-  // ✅ “Card” alb premium (pentru intro)
-  // -------------------------------------------------------------
-  Widget _whiteInfoCard({required Widget child}) {
+  // ----------------------------------------------------------------
+  // Date picker card — built from real event dates
+  // ----------------------------------------------------------------
+  Widget _datePickerCard(List<DateTime> dates) {
+    final accent = AppTheme.accentGlobal;
+    final isAll = _selectedDate == null;
+
+    // Build rows of 3
+    final rows = <Widget>[];
+    for (int i = 0; i < dates.length; i += 3) {
+      final rowDates = dates.skip(i).take(3).toList();
+      rows.add(
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (int j = 0; j < 3; j++)
+                j < rowDates.length
+                    ? Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(left: j > 0 ? 8 : 0),
+                          child: _dayCell(rowDates[j], accent),
+                        ),
+                      )
+                    : Expanded(child: Padding(padding: EdgeInsets.only(left: 8), child: const SizedBox())),
+            ],
+          ),
+        ),
+      );
+      if (i + 3 < dates.length) rows.add(const SizedBox(height: 8));
+    }
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.92),
+        color: AppTheme.isDarkGlobal
+            ? const Color(0xFF1C1C1E)
+            : Colors.white.withOpacity(0.92),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: kBrand.withOpacity(0.10)),
         boxShadow: [
@@ -163,133 +217,103 @@ class EvenimentePage extends StatelessWidget {
           ),
         ],
       ),
-      child: child,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final double topPadding =
-        MediaQuery.of(context).padding.top + kToolbarHeight + 10;
-
-    // ✅ spațiu real pentru footer floating
-    final bottomInset = MediaQuery.of(context).padding.bottom;
-    final footerSpace = 90 + bottomInset + 12;
-
-    // ✅ Wrap cu FooterBackInterceptor ca butonul back (sistem) să ducă la Home
-    return FooterBackInterceptor(
-      child: Scaffold(
-        backgroundColor: kBg,
-
-        // ✅ IMPORTANT: asta elimină “banda albă” din spatele footer-ului
-        extendBody: true,
-        extendBodyBehindAppBar: true,
-
-        // ✅ “buline” ca la restul paginilor
-        appBar: _floatingPillsHeader(context),
-
-        // ✅ Stack ca footerul să plutească
-        body: Stack(
-          children: [
-            Positioned.fill(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.only(
-                  top: topPadding,
-                  left: 16,
-                  right: 16,
-                  bottom: footerSpace, // ✅ loc pentru footer
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 10),
-
-                    // ✅ intro într-un chenar alb (stil Apple)
-                    _whiteInfoCard(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Evenimente în Oradea",
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 18.5,
-                              fontWeight: FontWeight.w900,
-                              color: kBrand,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            "🎉 Descoperă cele mai interesante evenimente, festivaluri și activități care au loc în Oradea.",
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 13.8,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black.withOpacity(0.80),
-                              height: 1.5,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 18),
-
-                    StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('evenimente')
-                          .orderBy('order')
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
-
-                        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                          return const Center(
-                            child: Text(
-                              "Momentan nu există evenimente disponibile.",
-                              style: TextStyle(color: Colors.black54),
-                            ),
-                          );
-                        }
-
-                        final events = snapshot.data!.docs;
-
-                        return Column(
-                          children: events
-                              .map((doc) => _buildEventCard(context, doc))
-                              .toList(),
-                        );
-                      },
-                    ),
-
-                    const SizedBox(height: 34),
-                    const Center(
-                      child: Text(
-                        "— Tour Oradea © 2025 —",
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 12,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w400,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                  ],
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // "Toate" button
+          GestureDetector(
+            onTap: () => setState(() => _selectedDate = null),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(vertical: 11),
+              decoration: BoxDecoration(
+                color: isAll ? accent : (AppTheme.isDarkGlobal ? _cellDark : _cellLight),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Text(
+                "Toate evenimentele",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
                 ),
               ),
             ),
+          ),
 
-            // ✅ Footer floating (fără bandă albă)
-            const Align(
-              alignment: Alignment.bottomCenter,
-              child: CustomFooter(isHome: false),
+          if (dates.isEmpty)
+            const Padding(
+              padding: EdgeInsets.only(top: 10),
+              child: Text(
+                "Nu există date disponibile.",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white54, fontSize: 13),
+              ),
+            )
+          else ...[
+            const SizedBox(height: 8),
+            ...rows,
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _dayCell(DateTime day, Color accent) {
+    final isSelected = _selectedDate != null && _isSameDay(_selectedDate!, day);
+    final dateStr =
+        '${day.day.toString().padLeft(2, '0')}/${day.month.toString().padLeft(2, '0')}';
+
+    return GestureDetector(
+      onTap: () => setState(() {
+        _selectedDate = isSelected ? null : day;
+      }),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? accent : (AppTheme.isDarkGlobal ? _cellDark : _cellLight),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.18),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.calendar_month_rounded,
+                color: Colors.white,
+                size: 18,
+              ),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              _dayAbbr(day),
+              style: const TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 14,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 1),
+            Text(
+              dateStr,
+              style: const TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              ),
             ),
           ],
         ),
@@ -297,7 +321,9 @@ class EvenimentePage extends StatelessWidget {
     );
   }
 
-  // ---------- CARD EVENIMENT ----------
+  // ----------------------------------------------------------------
+  // Event card
+  // ----------------------------------------------------------------
   Widget _buildEventCard(BuildContext context, QueryDocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
 
@@ -309,11 +335,8 @@ class EvenimentePage extends StatelessWidget {
     final String banner = data["image"] ?? "";
     final String linkBilete = data["mapLink"] ?? "";
 
-    // 🔹 Citește data_timp din Firestore
-    final Timestamp? ts = data["data_timp"];
-    final DateTime? eventDate = ts?.toDate();
-
-    // 🔹 Determină dacă este eveniment viitor
+    final ts = data["data_timp"];
+    final DateTime? eventDate = (ts is Timestamp) ? ts.toDate() : null;
     final bool esteViitor =
         eventDate == null ? true : eventDate.isAfter(DateTime.now());
     final Color statusColor = esteViitor ? Colors.green : Colors.red;
@@ -322,21 +345,20 @@ class EvenimentePage extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 5,
-      color: Colors.white, // ✅ alb
+      color: Theme.of(context).cardColor,
       child: Padding(
         padding: const EdgeInsets.all(14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🔹 Imagine + titlu + dată
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: banner.isNotEmpty && banner.startsWith("http")
-                      ? CachedNetworkImage(imageUrl: 
-                          banner,
+                      ? CachedNetworkImage(
+                          imageUrl: banner,
                           width: 100,
                           height: 100,
                           fit: BoxFit.cover,
@@ -359,10 +381,10 @@ class EvenimentePage extends StatelessWidget {
                           Expanded(
                             child: Text(
                               title,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.black,
+                                color: AppTheme.textPrimary(context),
                               ),
                             ),
                           ),
@@ -380,16 +402,15 @@ class EvenimentePage extends StatelessWidget {
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          const Icon(Icons.calendar_month,
-                              color: kBrand, size: 16),
+                          Icon(Icons.calendar_month,
+                              color: AppTheme.accentGlobal, size: 16),
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
                               dataText,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                color: Colors.black87,
-                              ),
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  color: AppTheme.textPrimary(context)),
                             ),
                           ),
                         ],
@@ -397,16 +418,15 @@ class EvenimentePage extends StatelessWidget {
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          const Icon(Icons.location_on_outlined,
-                              color: kBrand, size: 16),
+                          Icon(Icons.location_on_outlined,
+                              color: AppTheme.accentGlobal, size: 16),
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
                               locatie,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                color: Colors.black87,
-                              ),
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  color: AppTheme.textPrimary(context)),
                             ),
                           ),
                         ],
@@ -416,22 +436,19 @@ class EvenimentePage extends StatelessWidget {
                 ),
               ],
             ),
-
             const SizedBox(height: 10),
-
-            // 🔹 Descriere
+            // Descriere scurtată
             Text(
               description,
-              style: const TextStyle(
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
                 fontSize: 14,
-                color: Colors.black87,
+                color: AppTheme.textPrimary(context),
                 height: 1.4,
               ),
             ),
-
             const SizedBox(height: 10),
-
-            // 🔹 Preț + buton detalii
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -462,16 +479,140 @@ class EvenimentePage extends StatelessWidget {
                       ),
                     );
                   },
-                  icon: const Icon(Icons.event, color: kBrand),
-                  label: const Text(
+                  icon: Icon(Icons.event, color: AppTheme.accentGlobal),
+                  label: Text(
                     "Detalii",
                     style: TextStyle(
-                      color: kBrand,
+                      color: AppTheme.accentGlobal,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ----------------------------------------------------------------
+  // Build
+  // ----------------------------------------------------------------
+  @override
+  Widget build(BuildContext context) {
+    final double topPadding =
+        MediaQuery.of(context).padding.top + kToolbarHeight + 10;
+    final bottomInset = MediaQuery.of(context).padding.bottom;
+    final footerSpace = 90 + bottomInset + 12;
+
+    return FooterBackInterceptor(
+      child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        extendBody: true,
+        extendBodyBehindAppBar: true,
+        appBar: _floatingPillsHeader(context),
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('evenimente')
+                    .orderBy('order')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  final allDocs = snapshot.hasData
+                      ? snapshot.data!.docs
+                      : <QueryDocumentSnapshot>[];
+
+                  // Apply date filter using schedule text
+                  final filtered = _selectedDate == null
+                      ? allDocs
+                      : allDocs.where((doc) {
+                          final d = doc.data() as Map<String, dynamic>;
+                          final schedule = (d['schedule'] as String?) ?? '';
+                          final ts = d['data_timp'];
+                          final DateTime? endDate = ts is Timestamp
+                              ? ts.toDate().toLocal()
+                              : null;
+                          return ScheduleParser.occursOn(
+                            schedule: schedule,
+                            endDate: endDate,
+                            date: _selectedDate!,
+                          );
+                        }).toList();
+
+                  return SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    padding: EdgeInsets.only(
+                      top: topPadding,
+                      left: 16,
+                      right: 16,
+                      bottom: footerSpace,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 10),
+
+                        // Date picker card with real event dates
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting)
+                          const Center(child: CircularProgressIndicator())
+                        else
+                          _datePickerCard(_next9Days()),
+
+                        const SizedBox(height: 18),
+
+                        // Event list
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting)
+                          const SizedBox.shrink()
+                        else if (filtered.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12),
+                            child: Center(
+                              child: Text(
+                                _selectedDate != null
+                                    ? "Nu există evenimente pentru această dată."
+                                    : "Momentan nu există evenimente disponibile.",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  color: AppTheme.textSecondary(context),
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          )
+                        else
+                          ...filtered.map(
+                              (doc) => _buildEventCard(context, doc)),
+
+                        const SizedBox(height: 34),
+                        Center(
+                          child: Text(
+                            "— Tour Oradea © 2025 —",
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 12,
+                              color: AppTheme.textSecondary(context),
+                              fontWeight: FontWeight.w400,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            const Align(
+              alignment: Alignment.bottomCenter,
+              child: CustomFooter(isHome: false),
             ),
           ],
         ),

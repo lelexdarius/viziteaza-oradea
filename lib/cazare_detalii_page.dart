@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:viziteaza_oradea/cazari_page.dart'; // modelul Cazare
 import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
 
 class CazareDetaliiPage extends StatelessWidget {
   final Cazare cazare;
@@ -22,7 +23,7 @@ class CazareDetaliiPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFDFBF7),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
       // 🔹 AppBar transparent cu efect de blur
       appBar: AppBar(
@@ -87,9 +88,9 @@ class CazareDetaliiPage extends StatelessWidget {
           const SizedBox(height: 20),
 
           // === Info general ===
-          _infoRow(Icons.location_on_outlined, cazare.address),
-          _infoRow(Icons.phone_outlined, cazare.phone),
-          _infoRow(Icons.access_time_outlined, "Program: ${cazare.schedule}"),
+          _infoRow(context, Icons.location_on_outlined, cazare.address),
+          _infoRow(context, Icons.phone_outlined, cazare.phone),
+          _infoRow(context, Icons.access_time_outlined, "Program: ${cazare.schedule}"),
 
           const SizedBox(height: 20),
 
@@ -135,7 +136,7 @@ class CazareDetaliiPage extends StatelessWidget {
                   ),
                 ),
                 icon: const Icon(Icons.open_in_new, color: Colors.white),
-                label: const Text(
+                label: Text(
                   "Vizitează site-ul / Booking",
                   style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
@@ -145,7 +146,7 @@ class CazareDetaliiPage extends StatelessWidget {
           const SizedBox(height: 35),
 
           // === Descriere ===
-          const Text(
+          Text(
             "Descriere:",
             style: TextStyle(
               fontSize: 20,
@@ -156,9 +157,9 @@ class CazareDetaliiPage extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             cazare.description,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 15,
-              color: Colors.black87,
+              color: AppTheme.textPrimary(context),
               height: 1.5,
             ),
             textAlign: TextAlign.justify,
@@ -217,17 +218,25 @@ class CazareDetaliiPage extends StatelessWidget {
   }
 
   // === Linie informativă ===
-  Widget _infoRow(IconData icon, String text) {
+  Widget _infoRow(BuildContext context, IconData icon, String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Icon(icon, color: const Color(0xFF004E64), size: 22),
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: AppTheme.accentGlobal,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: Colors.white, size: 20),
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(fontSize: 15, color: Colors.black87),
+              style: TextStyle(fontSize: 15, color: AppTheme.textPrimary(context)),
             ),
           ),
         ],

@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'distractii_detalii_page.dart';
 import 'widgets/custom_footer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
+import 'package:viziteaza_oradea/services/app_state.dart';
 
 class DistractiiPage extends StatelessWidget {
   const DistractiiPage({super.key});
@@ -12,18 +14,19 @@ class DistractiiPage extends StatelessWidget {
   static const Color kBg = Color(0xFFE8F1F4);
 
   // -------------------------------------------------------------
-  // ✅ UI helpers (Apple 2025 - “buline”)
+  // ✅ UI helpers (Apple 2025 - "buline")
   // -------------------------------------------------------------
   Widget _pillIconButton({
     required IconData icon,
     required VoidCallback onTap,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Material(
-          color: Colors.white.withOpacity(0.55),
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.55),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(999),
@@ -33,7 +36,7 @@ class DistractiiPage extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.60),
+                  color: isDark ? Colors.white : Colors.white.withOpacity(0.60),
                   width: 1,
                 ),
                 boxShadow: [
@@ -44,7 +47,7 @@ class DistractiiPage extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Icon(icon, color: kBrand, size: 20),
+              child: Icon(icon, color: isDark ? Colors.white : kBrand, size: 20),
             ),
           ),
         ),
@@ -53,6 +56,7 @@ class DistractiiPage extends StatelessWidget {
   }
 
   Widget _titlePill(String text) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -60,9 +64,9 @@ class DistractiiPage extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.70),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.70),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.55), width: 1),
+            border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.55), width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -76,11 +80,11 @@ class DistractiiPage extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14.5,
               fontWeight: FontWeight.w900,
-              color: kBrand,
+              color: isDark ? Colors.white : kBrand,
             ),
           ),
         ),
@@ -128,14 +132,14 @@ class DistractiiPage extends StatelessWidget {
   }
 
   // -------------------------------------------------------------
-  // ✅ “Card” alb premium (pentru textul de sus)
+  // ✅ "Card" alb premium (pentru textul de sus)
   // -------------------------------------------------------------
-  Widget _whiteInfoCard({required Widget child}) {
+  Widget _whiteInfoCard(BuildContext context, {required Widget child}) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.92),
+        color: Theme.of(context).cardColor.withOpacity(0.92),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: kBrand.withOpacity(0.10)),
         boxShadow: [
@@ -160,16 +164,16 @@ class DistractiiPage extends StatelessWidget {
     final footerSpace = 90 + bottomInset + 12;
 
     return Scaffold(
-      backgroundColor: kBg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
-      // ✅ elimină “banda albă” sub footer + blur real în spatele lui
+      // ✅ elimină "banda albă" sub footer + blur real în spatele lui
       extendBodyBehindAppBar: true,
       extendBody: true,
 
-      // ✅ header cu “buline”
+      // ✅ header cu "buline"
       appBar: _floatingPillsHeader(context),
 
-      // 🔹 Conținut + Footer “floating”
+      // 🔹 Conținut + Footer "floating"
       body: Stack(
         children: [
           Positioned.fill(
@@ -187,17 +191,17 @@ class DistractiiPage extends StatelessWidget {
                   const SizedBox(height: 10),
 
                   // ✅ intro în chenar alb (stil Apple)
-                  _whiteInfoCard(
+                  _whiteInfoCard(context,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           "Alege distracția potrivită!",
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 18.5,
                             fontWeight: FontWeight.w900,
-                            color: kBrand,
+                            color: AppTheme.accentGlobal,
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -207,7 +211,7 @@ class DistractiiPage extends StatelessWidget {
                             fontFamily: 'Poppins',
                             fontSize: 13.8,
                             fontWeight: FontWeight.w600,
-                            color: Colors.black.withOpacity(0.80),
+                            color: AppTheme.textPrimary(context),
                             height: 1.5,
                           ),
                         ),
@@ -229,10 +233,10 @@ class DistractiiPage extends StatelessWidget {
                       }
 
                       if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                        return const Center(
+                        return Center(
                           child: Text(
                             "Momentan nu sunt disponibile activități.",
-                            style: TextStyle(color: Colors.black54),
+                            style: TextStyle(color: AppTheme.textSecondary(context)),
                           ),
                         );
                       }
@@ -248,13 +252,13 @@ class DistractiiPage extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 34),
-                  const Center(
+                  Center(
                     child: Text(
                       "— Tour Oradea © 2025 —",
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 12,
-                        color: Colors.grey,
+                        color: AppTheme.textSecondary(context),
                         fontWeight: FontWeight.w400,
                         letterSpacing: 0.5,
                       ),
@@ -266,7 +270,7 @@ class DistractiiPage extends StatelessWidget {
             ),
           ),
 
-          // ✅ Footer fix “deasupra” conținutului (fără bandă albă)
+          // ✅ Footer fix "deasupra" conținutului (fără bandă albă)
           const Align(
             alignment: Alignment.bottomCenter,
             child: CustomFooter(isHome: true),
@@ -292,7 +296,7 @@ class DistractiiPage extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       elevation: 5,
-      color: Colors.white, // ✅ card alb (premium)
+      color: Theme.of(context).cardColor, // ✅ card (premium)
       child: Padding(
         padding: const EdgeInsets.all(14),
         child: Column(
@@ -331,10 +335,10 @@ class DistractiiPage extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.bold,
-                          color: kBrand,
+                          color: AppTheme.accentGlobal,
                         ),
                       ),
                       const SizedBox(height: 6),
@@ -342,9 +346,9 @@ class DistractiiPage extends StatelessWidget {
                         description,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13.5,
-                          color: Colors.black87,
+                          color: AppTheme.textPrimary(context),
                         ),
                       ),
                     ],
@@ -362,8 +366,8 @@ class DistractiiPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 6),
-            Text("🕒 $schedule", style: const TextStyle(color: Colors.black87)),
-            Text("📍 $address", style: const TextStyle(color: Colors.black87)),
+            Text("🕒 $schedule", style: TextStyle(color: AppTheme.textPrimary(context))),
+            Text("📍 $address", style: TextStyle(color: AppTheme.textPrimary(context))),
 
             const SizedBox(height: 10),
             Align(
@@ -388,7 +392,7 @@ class DistractiiPage extends StatelessWidget {
                 icon: const Icon(Icons.info_outline, size: 18),
                 label: const Text("Detalii"),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: kBrand,
+                  backgroundColor: AppTheme.accentGlobal,
                   foregroundColor: Colors.white,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 14, vertical: 8),

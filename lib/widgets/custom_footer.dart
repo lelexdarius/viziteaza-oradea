@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:viziteaza_oradea/l10n/app_strings.dart';
 
 // 🔹 Pagini
 import 'package:viziteaza_oradea/home.dart';
@@ -59,7 +60,7 @@ class CustomFooter extends StatelessWidget {
                         context,
                         selected: tab == FooterTab.events,
                         icon: Icons.event_outlined,
-                        label: "Evenimente",
+                        label: S.of('nav_events'),
                         onTap: () => _goToRoot(
                           context,
                           FooterBackInterceptor(child: EvenimentePage()),
@@ -70,7 +71,7 @@ class CustomFooter extends StatelessWidget {
                         context,
                         selected: tab == FooterTab.gallery,
                         icon: Icons.photo_library_outlined,
-                        label: "Galerie",
+                        label: S.of('nav_gallery'),
                         onTap: () => _goToRoot(
                           context,
                           FooterBackInterceptor(child: GaleriePage()),
@@ -81,14 +82,14 @@ class CustomFooter extends StatelessWidget {
                         context,
                         selected: tab == FooterTab.routes,
                         icon: Icons.route_outlined,
-                        label: "Trasee",
+                        label: S.of('nav_routes'),
                         onTap: () => _openTraseePremium(context),
                       ),
                       _tabItem(
                         context,
                         selected: tab == FooterTab.help,
                         icon: Icons.help_outline,
-                        label: "Ajutor",
+                        label: S.of('nav_help'),
                         onTap: () => _goToRoot(
                           context,
                           const FooterBackInterceptor(child: AjutorPage()),

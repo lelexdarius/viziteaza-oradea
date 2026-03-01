@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:ui'; // blur
+import 'package:viziteaza_oradea/services/app_state.dart';
 
 class OradeaModernaPage extends StatelessWidget {
   const OradeaModernaPage({Key? key}) : super(key: key);
@@ -16,12 +17,13 @@ class OradeaModernaPage extends StatelessWidget {
     required VoidCallback onTap,
     Color? iconColor,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
         child: Material(
-          color: Colors.white.withOpacity(0.55),
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.55),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(999),
@@ -30,7 +32,7 @@ class OradeaModernaPage extends StatelessWidget {
               height: 42,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
-                border: Border.all(color: Colors.white.withOpacity(0.60), width: 1),
+                border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.60), width: 1),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.06),
@@ -39,7 +41,7 @@ class OradeaModernaPage extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Icon(icon, color: iconColor ?? kBrand, size: 20),
+              child: Icon(icon, color: isDark ? Colors.white : (iconColor ?? kBrand), size: 20),
             ),
           ),
         ),
@@ -48,6 +50,7 @@ class OradeaModernaPage extends StatelessWidget {
   }
 
   Widget _titlePill(String text) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -55,9 +58,9 @@ class OradeaModernaPage extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.72),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.72),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.55), width: 1),
+            border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.55), width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -71,11 +74,11 @@ class OradeaModernaPage extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14.5,
               fontWeight: FontWeight.w900,
-              color: kBrand,
+              color: isDark ? Colors.white : kBrand,
             ),
           ),
         ),
@@ -317,7 +320,7 @@ class _SectiuneModerna {
 }
 
 // ===============================================================
-// FUNDAL (fin, discret) - blur + “glow” ușor
+// FUNDAL (fin, discret) - blur + "glow" ușor
 // ===============================================================
 class _FundalFin extends StatelessWidget {
   const _FundalFin();
@@ -382,7 +385,7 @@ class _PataBlur extends StatelessWidget {
 }
 
 // ===============================================================
-// EROU (imagine + etichete de tip “sticlă”)
+// EROU (imagine + etichete de tip "sticlă")
 // ===============================================================
 class _Erou extends StatelessWidget {
   final String imagine;
@@ -560,7 +563,7 @@ class _PastilaSticla extends StatelessWidget {
 }
 
 // ===============================================================
-// CARD “STICLĂ” (generic)
+// CARD "STICLĂ" (generic)
 // ===============================================================
 class _CardSticla extends StatelessWidget {
   final Widget child;

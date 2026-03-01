@@ -9,6 +9,8 @@ import 'services/favorite_service.dart';
 // ✅ footer standard din app
 import 'widgets/custom_footer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:viziteaza_oradea/services/app_state.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
 
 class TeatruDetaliiPage extends StatefulWidget {
   final String title;
@@ -116,12 +118,13 @@ class _TeatruDetaliiPageState extends State<TeatruDetaliiPage> {
     required IconData icon,
     required VoidCallback onTap,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Material(
-          color: Colors.white.withOpacity(0.55),
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.55),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(999),
@@ -131,7 +134,7 @@ class _TeatruDetaliiPageState extends State<TeatruDetaliiPage> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.60),
+                  color: isDark ? Colors.white : Colors.white.withOpacity(0.60),
                   width: 1,
                 ),
                 boxShadow: [
@@ -142,7 +145,7 @@ class _TeatruDetaliiPageState extends State<TeatruDetaliiPage> {
                   ),
                 ],
               ),
-              child: Icon(icon, color: kBrand, size: 20),
+              child: Icon(icon, color: isDark ? Colors.white : kBrand, size: 20),
             ),
           ),
         ),
@@ -151,6 +154,7 @@ class _TeatruDetaliiPageState extends State<TeatruDetaliiPage> {
   }
 
   Widget _titlePill(String text) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -158,9 +162,9 @@ class _TeatruDetaliiPageState extends State<TeatruDetaliiPage> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.70),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.70),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.55), width: 1),
+            border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.55), width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -174,11 +178,11 @@ class _TeatruDetaliiPageState extends State<TeatruDetaliiPage> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14.5,
               fontWeight: FontWeight.w900,
-              color: kBrand,
+              color: isDark ? Colors.white : kBrand,
             ),
           ),
         ),
@@ -191,7 +195,7 @@ class _TeatruDetaliiPageState extends State<TeatruDetaliiPage> {
       width: double.infinity,
       padding: padding ?? const EdgeInsets.fromLTRB(14, 14, 14, 14),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.92),
+        color: AppTheme.isDarkGlobal ? const Color(0xFF3A3A3C) : Colors.white.withOpacity(0.92),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: kBrand.withOpacity(0.10)),
         boxShadow: [
@@ -217,10 +221,10 @@ class _TeatruDetaliiPageState extends State<TeatruDetaliiPage> {
             width: 34,
             height: 34,
             decoration: BoxDecoration(
-              color: kBrand.withOpacity(0.10),
+              color: AppTheme.accentGlobal,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: kBrand, size: 18),
+            child: Icon(icon, color: Colors.white, size: 18),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -230,15 +234,15 @@ class _TeatruDetaliiPageState extends State<TeatruDetaliiPage> {
                   fontFamily: 'Poppins',
                   fontSize: 13.8,
                   height: 1.45,
-                  color: Colors.black.withOpacity(0.82),
+                  color: AppTheme.textPrimary(context),
                   fontWeight: FontWeight.w600,
                 ),
                 children: [
                   TextSpan(
                     text: "$title: ",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w900,
-                      color: kBrand,
+                      color: AppTheme.accentGlobal,
                     ),
                   ),
                   TextSpan(text: value),
@@ -297,11 +301,11 @@ class _TeatruDetaliiPageState extends State<TeatruDetaliiPage> {
     final footerSpace = 90 + bottomInset + 12;
 
     return Scaffold(
-      backgroundColor: kBg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       extendBody: true,
 
-      // ✅ “buline” + titlu pill (fără background AppBar)
+      // ✅ "buline" + titlu pill (fără background AppBar)
       appBar: _floatingPillsHeader(context),
 
       body: Stack(
@@ -352,11 +356,11 @@ class _TeatruDetaliiPageState extends State<TeatruDetaliiPage> {
                       children: [
                         Text(
                           widget.title,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 18.5,
                             fontWeight: FontWeight.w900,
-                            color: kBrand,
+                            color: AppTheme.accentGlobal,
                             height: 1.1,
                           ),
                         ),
@@ -388,23 +392,23 @@ class _TeatruDetaliiPageState extends State<TeatruDetaliiPage> {
                                   color: kBrand.withOpacity(0.12),
                                 ),
                               ),
-                              child: const Row(
+                              child: Row(
                                 children: [
                                   Icon(Icons.confirmation_number_outlined,
-                                      color: kBrand),
+                                      color: AppTheme.accentGlobal),
                                   SizedBox(width: 10),
                                   Expanded(
                                     child: Text(
                                       "Cumpără bilet",
                                       style: TextStyle(
                                         fontFamily: 'Poppins',
-                                        color: kBrand,
+                                        color: AppTheme.accentGlobal,
                                         fontWeight: FontWeight.w900,
                                         fontSize: 14.8,
                                       ),
                                     ),
                                   ),
-                                  Icon(Icons.open_in_new, color: kBrand),
+                                  Icon(Icons.open_in_new, color: AppTheme.accentGlobal),
                                 ],
                               ),
                             ),
@@ -427,19 +431,19 @@ class _TeatruDetaliiPageState extends State<TeatruDetaliiPage> {
                         fontSize: 14,
                         height: 1.55,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black.withOpacity(0.80),
+                        color: AppTheme.textPrimary(context),
                       ),
                     ),
                   ),
 
                   const SizedBox(height: 34),
-                  const Center(
+                  Center(
                     child: Text(
                       "— Tour Oradea © 2025 —",
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 12,
-                        color: Colors.grey,
+                        color: AppTheme.textSecondary(context),
                         fontWeight: FontWeight.w400,
                         letterSpacing: 0.5,
                       ),

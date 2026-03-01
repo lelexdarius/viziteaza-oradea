@@ -25,6 +25,7 @@ import 'muzee_page.dart';
 // FOOTER
 import 'widgets/custom_footer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
 
 class FavoritePage extends StatefulWidget {
   const FavoritePage({super.key});
@@ -151,9 +152,9 @@ class _FavoritePageState extends State<FavoritePage> {
     final footerSpace = 90 + bottomInset + 12;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFE8F1F4),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
-      // ✅ blur real în spatele footerului + fără “banda albă”
+      // ✅ blur real în spatele footerului + fără "banda albă"
       extendBodyBehindAppBar: true,
       extendBody: true,
 
@@ -163,18 +164,18 @@ class _FavoritePageState extends State<FavoritePage> {
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
             child: AppBar(
-              backgroundColor: Colors.white.withOpacity(0.18),
+              backgroundColor: AppTheme.isDarkGlobal ? Colors.black : Colors.white.withOpacity(0.18),
               elevation: 0,
               centerTitle: true,
-              title: const Text(
+              title: Text(
                 "Favorite",
                 style: TextStyle(
-                  color: Color(0xFF004E64),
+                  color: AppTheme.isDarkGlobal ? Colors.white : AppTheme.accent(context),
                   fontWeight: FontWeight.w900,
                   fontFamily: 'Poppins',
                 ),
               ),
-              leading: const BackButton(color: Color(0xFF004E64)),
+              leading: BackButton(color: AppTheme.isDarkGlobal ? Colors.white : AppTheme.accent(context)),
             ),
           ),
         ),
@@ -220,8 +221,8 @@ class _FavoritePageState extends State<FavoritePage> {
                                       const Color(0xFF004E64).withOpacity(0.10),
                                   borderRadius: BorderRadius.circular(14),
                                 ),
-                                child: const Icon(Icons.swipe_left_rounded,
-                                    color: Color(0xFF004E64)),
+                                child: Icon(Icons.swipe_left_rounded,
+                                    color: AppTheme.accent(context)),
                               ),
                               const SizedBox(width: 10),
                               Expanded(
@@ -230,7 +231,7 @@ class _FavoritePageState extends State<FavoritePage> {
                                   style: TextStyle(
                                     fontFamily: 'Poppins',
                                     fontWeight: FontWeight.w700,
-                                    color: Colors.black.withOpacity(0.60),
+                                    color: AppTheme.textSecondary(context),
                                   ),
                                 ),
                               ),
@@ -245,7 +246,7 @@ class _FavoritePageState extends State<FavoritePage> {
                             style: TextStyle(
                               fontFamily: 'Poppins',
                               fontSize: 12,
-                              color: Colors.grey.shade600,
+                              color: AppTheme.textSecondary(context),
                               fontWeight: FontWeight.w400,
                               letterSpacing: 0.5,
                             ),
@@ -275,7 +276,7 @@ class _FavoritePageState extends State<FavoritePage> {
         margin: const EdgeInsets.symmetric(horizontal: 10),
         padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.90),
+          color: Theme.of(context).cardColor.withOpacity(0.90),
           borderRadius: BorderRadius.circular(18),
           border: Border.all(color: const Color(0xFF004E64).withOpacity(0.10)),
           boxShadow: [
@@ -295,8 +296,8 @@ class _FavoritePageState extends State<FavoritePage> {
                 color: const Color(0xFF004E64).withOpacity(0.10),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Icon(Icons.favorite_border_rounded,
-                  color: Color(0xFF004E64)),
+              child: Icon(Icons.favorite_border_rounded,
+                  color: AppTheme.accent(context)),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -306,7 +307,7 @@ class _FavoritePageState extends State<FavoritePage> {
                   fontFamily: 'Poppins',
                   fontSize: 14.2,
                   fontWeight: FontWeight.w800,
-                  color: Colors.black.withOpacity(0.72),
+                  color: AppTheme.textPrimary(context),
                   height: 1.25,
                 ),
               ),
@@ -367,7 +368,7 @@ class _FavoritePageState extends State<FavoritePage> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.92),
+        color: Theme.of(context).cardColor.withOpacity(0.92),
         borderRadius: BorderRadius.circular(16),
         border:
             Border.all(color: const Color(0xFF004E64).withOpacity(0.10)),
@@ -443,6 +444,7 @@ class _FavoritePageState extends State<FavoritePage> {
                   builder: (_) => FilarmonicaDetaliiPage(
                     title: data["title"],
                     imageUrl: data["imageUrl"],
+                    descriere: data["descriere"] ?? "",
                     solist: data["solist"],
                     dataConcertului: data["data"],
                     ora: data["ora"],
@@ -575,11 +577,11 @@ class _FavoritePageState extends State<FavoritePage> {
                       (data["title"] ?? "").toString(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 16.5,
                         fontWeight: FontWeight.w900,
-                        color: Color(0xFF004E64),
+                        color: AppTheme.accent(context),
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -589,7 +591,7 @@ class _FavoritePageState extends State<FavoritePage> {
                         fontFamily: 'Poppins',
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
-                        color: Colors.black.withOpacity(0.55),
+                        color: AppTheme.textSecondary(context),
                       ),
                     ),
                   ],

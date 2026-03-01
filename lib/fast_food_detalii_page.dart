@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
+import 'package:viziteaza_oradea/services/app_state.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:io';
@@ -79,12 +81,13 @@ class _FastFoodDetaliiPageState extends State<FastFoodDetaliiPage> {
     required VoidCallback onTap,
     Color iconColor = kBrand,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Material(
-          color: Colors.white.withOpacity(0.55),
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.55),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(999),
@@ -94,7 +97,7 @@ class _FastFoodDetaliiPageState extends State<FastFoodDetaliiPage> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.60),
+                  color: isDark ? Colors.white : Colors.white.withOpacity(0.60),
                   width: 1,
                 ),
                 boxShadow: [
@@ -105,7 +108,7 @@ class _FastFoodDetaliiPageState extends State<FastFoodDetaliiPage> {
                   ),
                 ],
               ),
-              child: Icon(icon, color: iconColor, size: 20),
+              child: Icon(icon, color: isDark ? Colors.white : iconColor, size: 20),
             ),
           ),
         ),
@@ -114,6 +117,7 @@ class _FastFoodDetaliiPageState extends State<FastFoodDetaliiPage> {
   }
 
   Widget _titlePill(String text) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -121,9 +125,9 @@ class _FastFoodDetaliiPageState extends State<FastFoodDetaliiPage> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.70),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.70),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.55), width: 1),
+            border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.55), width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -137,11 +141,11 @@ class _FastFoodDetaliiPageState extends State<FastFoodDetaliiPage> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14.5,
               fontWeight: FontWeight.w900,
-              color: kBrand,
+              color: isDark ? Colors.white : kBrand,
             ),
           ),
         ),
@@ -224,7 +228,7 @@ class _FastFoodDetaliiPageState extends State<FastFoodDetaliiPage> {
     return Container(
       padding: padding,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.92),
+        color: AppTheme.isDarkGlobal ? const Color(0xFF3A3A3C) : Colors.white.withOpacity(0.92),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: kBrand.withOpacity(0.10)),
         boxShadow: [
@@ -240,6 +244,7 @@ class _FastFoodDetaliiPageState extends State<FastFoodDetaliiPage> {
   }
 
   Widget _infoRowCard(IconData icon, String label, String value) {
+    final ctx = context;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
@@ -249,10 +254,10 @@ class _FastFoodDetaliiPageState extends State<FastFoodDetaliiPage> {
             width: 38,
             height: 38,
             decoration: BoxDecoration(
-              color: kBrand.withOpacity(0.10),
+              color: AppTheme.accentGlobal,
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(icon, color: kBrand, size: 20),
+            child: Icon(icon, color: Colors.white, size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -261,11 +266,11 @@ class _FastFoodDetaliiPageState extends State<FastFoodDetaliiPage> {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 12.5,
                     fontWeight: FontWeight.w800,
-                    color: kBrand,
+                    color: AppTheme.accentGlobal,
                     height: 1.0,
                   ),
                 ),
@@ -276,7 +281,7 @@ class _FastFoodDetaliiPageState extends State<FastFoodDetaliiPage> {
                     fontFamily: 'Poppins',
                     fontSize: 14.5,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black.withOpacity(0.80),
+                    color: AppTheme.textPrimary(ctx),
                     height: 1.35,
                   ),
                 ),
@@ -391,11 +396,11 @@ class _FastFoodDetaliiPageState extends State<FastFoodDetaliiPage> {
     final footerSpace = 90 + bottomInset + 12;
 
     return Scaffold(
-      backgroundColor: kBg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       extendBody: true,
 
-      // ✅ header cu “buline” + titlu pill
+      // ✅ header cu "buline" + titlu pill
       appBar: _floatingPillsHeader(context, fastfood.title),
 
       body: Stack(
@@ -436,21 +441,21 @@ class _FastFoodDetaliiPageState extends State<FastFoodDetaliiPage> {
                                   color: kBrand.withOpacity(0.10),
                                   borderRadius: BorderRadius.circular(14),
                                 ),
-                                child: const Icon(Icons.location_on_outlined,
-                                    color: kBrand, size: 20),
+                                child: Icon(Icons.location_on_outlined,
+                                    color: AppTheme.accentGlobal, size: 20),
                               ),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       "Locații",
                                       style: TextStyle(
                                         fontFamily: 'Poppins',
                                         fontSize: 12.5,
                                         fontWeight: FontWeight.w800,
-                                        color: kBrand,
+                                        color: AppTheme.accentGlobal,
                                         height: 1.0,
                                       ),
                                     ),
@@ -461,7 +466,7 @@ class _FastFoodDetaliiPageState extends State<FastFoodDetaliiPage> {
                                         fontFamily: 'Poppins',
                                         fontSize: 14.5,
                                         fontWeight: FontWeight.w600,
-                                        color: Colors.black.withOpacity(0.80),
+                                        color: AppTheme.textPrimary(context),
                                         height: 1.35,
                                       ),
                                     ),
@@ -478,7 +483,7 @@ class _FastFoodDetaliiPageState extends State<FastFoodDetaliiPage> {
                             fontFamily: 'Poppins',
                             fontSize: 14.8,
                             fontWeight: FontWeight.w600,
-                            color: Colors.black.withOpacity(0.78),
+                            color: AppTheme.textPrimary(context),
                             height: 1.55,
                           ),
                         ),
@@ -503,13 +508,13 @@ class _FastFoodDetaliiPageState extends State<FastFoodDetaliiPage> {
 
                   const SizedBox(height: 18),
 
-                  const Text(
+                  Text(
                     "📍 Vezi locațiile pe hartă:",
                     style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 14.6,
                       fontWeight: FontWeight.w900,
-                      color: kBrand,
+                      color: AppTheme.accentGlobal,
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -544,6 +549,7 @@ class _FastFoodDetaliiPageState extends State<FastFoodDetaliiPage> {
                             mapType: MapType.normal,
                             onMapCreated: (controller) async {
                               _mapController = controller;
+                              AppTheme.applyMapStyle(controller);
                               await Future.delayed(
                                   const Duration(milliseconds: 100));
                               _fitAllMarkers(markers);
@@ -605,13 +611,13 @@ class _FastFoodDetaliiPageState extends State<FastFoodDetaliiPage> {
 
                   const SizedBox(height: 28),
 
-                  const Center(
+                  Center(
                     child: Text(
                       "— Tour Oradea © 2025 —",
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 12,
-                        color: Colors.grey,
+                        color: AppTheme.textSecondary(context),
                         fontWeight: FontWeight.w400,
                         letterSpacing: 0.5,
                       ),
@@ -659,6 +665,7 @@ class _FastFoodDetaliiPageState extends State<FastFoodDetaliiPage> {
                                 mapType: MapType.normal,
                                 onMapCreated: (controller) async {
                                   _mapController = controller;
+                                  AppTheme.applyMapStyle(controller);
                                   await Future.delayed(
                                       const Duration(milliseconds: 120));
                                   _fitAllMarkers(markers);

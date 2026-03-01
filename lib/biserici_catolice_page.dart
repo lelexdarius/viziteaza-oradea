@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:ui';
 import 'widgets/custom_footer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:viziteaza_oradea/services/app_state.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
 
 class BisericiCatolicePage extends StatelessWidget {
   const BisericiCatolicePage({Key? key}) : super(key: key);
@@ -11,18 +13,19 @@ class BisericiCatolicePage extends StatelessWidget {
   static const Color kBg = Color(0xFFE8F1F4);
 
   // -------------------------------------------------------------
-  // ✅ UI helpers (Apple 2025 - “buline” sus)
+  // ✅ UI helpers (Apple 2025 - "buline" sus)
   // -------------------------------------------------------------
   Widget _pillIconButton({
     required IconData icon,
     required VoidCallback onTap,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Material(
-          color: Colors.white.withOpacity(0.55),
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.55),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(999),
@@ -32,7 +35,7 @@ class BisericiCatolicePage extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.60),
+                  color: isDark ? Colors.white : Colors.white.withOpacity(0.60),
                   width: 1,
                 ),
                 boxShadow: [
@@ -43,7 +46,7 @@ class BisericiCatolicePage extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Icon(icon, color: kBrand, size: 20),
+              child: Icon(icon, color: isDark ? Colors.white : kBrand, size: 20),
             ),
           ),
         ),
@@ -52,6 +55,7 @@ class BisericiCatolicePage extends StatelessWidget {
   }
 
   Widget _titlePill(String text) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -59,9 +63,9 @@ class BisericiCatolicePage extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.70),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.70),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.55), width: 1),
+            border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.55), width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -75,11 +79,11 @@ class BisericiCatolicePage extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14.5,
               fontWeight: FontWeight.w900,
-              color: kBrand,
+              color: isDark ? Colors.white : kBrand,
             ),
           ),
         ),
@@ -134,11 +138,11 @@ class BisericiCatolicePage extends StatelessWidget {
     final footerSpace = 90 + bottomInset + 12;
 
     return Scaffold(
-      backgroundColor: kBg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       extendBody: true,
 
-      // ✅ “buline” sus
+      // ✅ "buline" sus
       appBar: _floatingPillsHeader(context, "Biserici Catolice"),
 
       body: Stack(
@@ -154,10 +158,10 @@ class BisericiCatolicePage extends StatelessWidget {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(
+                  return Center(
                     child: Text(
                       "Nu există biserici disponibile momentan.",
-                      style: TextStyle(fontSize: 16, color: Colors.black54),
+                      style: TextStyle(fontSize: 16, color: AppTheme.textSecondary(context)),
                     ),
                   );
                 }
@@ -191,15 +195,15 @@ class BisericiCatolicePage extends StatelessWidget {
                             imagePath: c['imagePath']!,
                           )),
                       const SizedBox(height: 34),
-                      const Padding(
-                        padding: EdgeInsets.only(top: 12, bottom: 6),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12, bottom: 6),
                         child: Center(
                           child: Text(
                             "— Tour Oradea © 2025 —",
                             style: TextStyle(
                               fontFamily: 'Poppins',
                               fontSize: 12,
-                              color: Colors.grey,
+                              color: AppTheme.textSecondary(context),
                               fontWeight: FontWeight.w400,
                               letterSpacing: 0.5,
                             ),
@@ -245,7 +249,7 @@ class _ChurchCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 18),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.92),
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: kBrand.withOpacity(0.10), width: 1),
         boxShadow: [
@@ -264,7 +268,7 @@ class _ChurchCard extends StatelessWidget {
             AspectRatio(
               aspectRatio: 16 / 9,
               child: imagePath.isNotEmpty
-                  ? CachedNetworkImage(imageUrl: 
+                  ? CachedNetworkImage(imageUrl:
                       imagePath,
                       fit: BoxFit.cover,
                       width: double.infinity,
@@ -291,11 +295,11 @@ class _ChurchCard extends StatelessWidget {
                     title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 17,
                       fontWeight: FontWeight.w800,
-                      color: Colors.black,
+                      color: AppTheme.textPrimary(context),
                       height: 1.15,
                     ),
                   ),
@@ -304,8 +308,8 @@ class _ChurchCard extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.location_on_outlined,
-                          color: kBrand, size: 18),
+                      Icon(Icons.location_on_outlined,
+                          color: AppTheme.accentGlobal, size: 18),
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
@@ -314,7 +318,7 @@ class _ChurchCard extends StatelessWidget {
                             fontFamily: 'Poppins',
                             fontSize: 13.5,
                             fontWeight: FontWeight.w600,
-                            color: Colors.black.withOpacity(0.62),
+                            color: AppTheme.textSecondary(context),
                             height: 1.35,
                           ),
                         ),
@@ -329,7 +333,9 @@ class _ChurchCard extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFEAF5F2),
+                      color: AppTheme.isDarkGlobal
+                          ? const Color(0xFF1B3A2A)
+                          : const Color(0xFFEAF5F2),
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
                         color: const Color(0xFF2E7D32).withOpacity(0.18),
@@ -339,7 +345,10 @@ class _ChurchCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Icon(Icons.access_time,
-                            size: 18, color: Colors.green[800]),
+                            size: 18,
+                            color: AppTheme.isDarkGlobal
+                                ? Colors.green[300]
+                                : Colors.green[800]),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -349,7 +358,9 @@ class _ChurchCard extends StatelessWidget {
                               fontFamily: 'Poppins',
                               fontSize: 13.2,
                               fontWeight: FontWeight.w800,
-                              color: Colors.green[800],
+                              color: AppTheme.isDarkGlobal
+                                  ? Colors.green[300]
+                                  : Colors.green[800],
                               height: 1.35,
                             ),
                           ),

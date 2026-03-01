@@ -3,6 +3,8 @@ import 'dart:ui';
 
 import 'widgets/custom_footer.dart';
 import 'home.dart';
+import 'package:viziteaza_oradea/services/app_state.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
 
 class TermeniPage extends StatelessWidget {
   const TermeniPage({Key? key}) : super(key: key);
@@ -38,12 +40,13 @@ class TermeniPage extends StatelessWidget {
     required VoidCallback onTap,
     Color? iconColor,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Material(
-          color: Colors.white.withOpacity(0.55),
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.55),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(999),
@@ -53,7 +56,7 @@ class TermeniPage extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.60),
+                  color: isDark ? Colors.white : Colors.white.withOpacity(0.60),
                   width: 1,
                 ),
                 boxShadow: [
@@ -64,7 +67,7 @@ class TermeniPage extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Icon(icon, color: iconColor ?? kBrand, size: 20),
+              child: Icon(icon, color: isDark ? Colors.white : (iconColor ?? kBrand), size: 20),
             ),
           ),
         ),
@@ -73,6 +76,7 @@ class TermeniPage extends StatelessWidget {
   }
 
   Widget _titlePill(String text) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -80,10 +84,10 @@ class TermeniPage extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.70),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.70),
             borderRadius: BorderRadius.circular(999),
             border: Border.all(
-              color: Colors.white.withOpacity(0.55),
+              color: isDark ? Colors.white : Colors.white.withOpacity(0.55),
               width: 1,
             ),
             boxShadow: [
@@ -99,11 +103,11 @@ class TermeniPage extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14.5,
               fontWeight: FontWeight.w900,
-              color: kBrand,
+              color: isDark ? Colors.white : kBrand,
             ),
           ),
         ),
@@ -153,11 +157,11 @@ class TermeniPage extends StatelessWidget {
   // -------------------------------------------------------------
   // UI blocks (rămân la fel)
   // -------------------------------------------------------------
-  Widget _heroHeader() {
+  Widget _heroHeader(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.88),
+        color: AppTheme.glassSurface(context),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: kBrand.withOpacity(0.10)),
         boxShadow: [
@@ -174,11 +178,11 @@ class TermeniPage extends StatelessWidget {
             width: 46,
             height: 46,
             decoration: BoxDecoration(
-              color: kBrand,
+              color: AppTheme.accentGlobal,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: kBrand.withOpacity(0.25),
+                  color: AppTheme.accentGlobal.withOpacity(0.25),
                   blurRadius: 14,
                   offset: const Offset(0, 8),
                 ),
@@ -198,7 +202,7 @@ class TermeniPage extends StatelessWidget {
                     fontFamily: 'Poppins',
                     fontSize: 16.5,
                     fontWeight: FontWeight.w900,
-                    color: Colors.black.withOpacity(0.86),
+                    color: AppTheme.textPrimary(context),
                     height: 1.1,
                   ),
                 ),
@@ -209,7 +213,7 @@ class TermeniPage extends StatelessWidget {
                     fontFamily: 'Poppins',
                     fontSize: 13.3,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black.withOpacity(0.62),
+                    color: AppTheme.textSecondary(context),
                     height: 1.28,
                   ),
                 ),
@@ -224,34 +228,34 @@ class TermeniPage extends StatelessWidget {
   Widget _sectionTitle(String text) {
     return Text(
       text,
-      style: const TextStyle(
+      style: TextStyle(
         fontFamily: 'Poppins',
         fontSize: 16,
         fontWeight: FontWeight.w900,
-        color: kBrand,
+        color: AppTheme.accentGlobal,
         height: 1.2,
       ),
     );
   }
 
-  Widget _paragraph(String text) {
+  Widget _paragraph(String text, BuildContext context) {
     return Text(
       text,
       style: TextStyle(
         fontFamily: 'Poppins',
         fontSize: 14.5,
         height: 1.6,
-        color: Colors.black.withOpacity(0.80),
+        color: AppTheme.textPrimary(context),
         fontWeight: FontWeight.w600,
       ),
     );
   }
 
-  Widget _card({required Widget child}) {
+  Widget _card(BuildContext context, {required Widget child}) {
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.92),
+        color: AppTheme.glassSurface(context),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: kBrand.withOpacity(0.10)),
         boxShadow: [
@@ -276,7 +280,7 @@ class TermeniPage extends StatelessWidget {
     final footerSpace = 90 + bottomInset + 12;
 
     return Scaffold(
-      backgroundColor: kBg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       extendBody: true,
 
@@ -298,10 +302,10 @@ class TermeniPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _heroHeader(),
+                    _heroHeader(context),
                     const SizedBox(height: 14),
 
-                    _card(
+                    _card(context,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -311,30 +315,32 @@ class TermeniPage extends StatelessWidget {
                             "Tour Oradea este un ghid turistic digital cu rol informativ. "
                             "Îți oferă recomandări și informații despre locuri, obiective, mâncare, cultură și activități din Oradea. "
                             "Aplicația nu este o agenție de turism și nu înlocuiește informațiile oficiale (program, tarife, reguli).",
+                            context,
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 12),
 
-                    _card(
+                    _card(context,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _sectionTitle("2) Cont, acces și utilizare"),
                           const SizedBox(height: 8),
-                          _paragraph("Poți folosi Tour Oradea pentru informare personală. "),
+                          _paragraph("Poți folosi Tour Oradea pentru informare personală. ", context),
                           const SizedBox(height: 10),
                           _paragraph(
                             "Dacă anumite funcții nu sunt disponibile temporar (de exemplu harta sau conținutul încărcat online), "
                             "motivul poate fi conexiunea la internet, mentenanța sau actualizările aplicației.",
+                            context,
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 12),
 
-                    _card(
+                    _card(context,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -343,28 +349,32 @@ class TermeniPage extends StatelessWidget {
                           _paragraph(
                             "Tour Oradea poate include acces Premium pentru funcții suplimentare (de exemplu: trasee pe mai multe zile, "
                             "hartă în traseu și salvarea progresului). Premium se achiziționează ca o singură plată (fără abonament).",
+                            context,
                           ),
                           const SizedBox(height: 10),
                           _paragraph(
                             "Plata se face prin magazinul platformei (App Store / Google Play), iar confirmarea plății și livrarea accesului "
                             "se realizează automat. Prețul afișat în aplicație poate varia în funcție de țară/monedă și setările magazinului.",
+                            context,
                           ),
                           const SizedBox(height: 10),
                           _paragraph(
-                            "Dacă schimbi telefonul sau reinstalezi aplicația, poți folosi opțiunea „Restaurare achiziție” pentru a recupera "
+                            "Dacă schimbi telefonul sau reinstalezi aplicația, poți folosi opțiunea „Restaurare achiziție\" pentru a recupera "
                             "accesul Premium pe același cont de magazin (Apple ID / Google).",
+                            context,
                           ),
                           const SizedBox(height: 10),
                           _paragraph(
                             "Pentru rambursări (returnarea banilor), te rugăm să folosești procedura magazinului (App Store / Google Play). "
                             "Tour Oradea nu procesează direct plățile, deci nu poate efectua rambursări manual în locul magazinului.",
+                            context,
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 12),
 
-                    _card(
+                    _card(context,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -374,18 +384,20 @@ class TermeniPage extends StatelessWidget {
                             "Tour Oradea afișează informații care pot include: program, prețuri, descrieri, imagini, locații pe hartă și linkuri "
                             "către site-uri externe sau aplicații de hărți. Unele informații se pot schimba fără preaviz (de exemplu: program special, "
                             "evenimente, lucrări, tarife).",
+                            context,
                           ),
                           const SizedBox(height: 10),
                           _paragraph(
                             "Când deschizi un link extern (de exemplu Google Maps / Apple Maps / site-ul unei locații), se aplică regulile și politica "
                             "acelui serviciu. Tour Oradea nu controlează conținutul extern.",
+                            context,
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 12),
 
-                    _card(
+                    _card(context,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -393,34 +405,37 @@ class TermeniPage extends StatelessWidget {
                           const SizedBox(height: 8),
                           _paragraph(
                             "Imaginile și materialele despre locații pot aparține autorilor originali și sunt folosite cu scop informativ. "
-                            "Dacă ești deținător de drepturi și consideri că un conținut trebuie actualizat sau eliminat, te rugăm să ne contactezi din „Ajutor”.",
+                            "Dacă ești deținător de drepturi și consideri că un conținut trebuie actualizat sau eliminat, te rugăm să ne contactezi din „Ajutor\".",
+                            context,
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 12),
 
-                    _card(
+                    _card(context,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _sectionTitle("6) Confidențialitate și date"),
                           const SizedBox(height: 8),
                           _paragraph(
-                            "Respectăm confidențialitatea ta. Dacă ne trimiți un mesaj din „Ajutor”, poți introduce nume și email pentru a primi răspuns. "
+                            "Respectăm confidențialitatea ta. Dacă ne trimiți un mesaj din „Ajutor\", poți introduce nume și email pentru a primi răspuns. "
                             "Folosim aceste date doar pentru a răspunde solicitării tale.",
+                            context,
                           ),
                           const SizedBox(height: 10),
                           _paragraph(
                             "Aplicația poate salva local anumite preferințe (de exemplu progresul din trasee). "
                             "Acestea sunt folosite ca să îți ofere o experiență mai bună și nu sunt vândute către terți.",
+                            context,
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 12),
 
-                    _card(
+                    _card(context,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -429,13 +444,14 @@ class TermeniPage extends StatelessWidget {
                           _paragraph(
                             "Tour Oradea depune eforturi pentru a păstra informațiile actuale, însă nu poate garanta că toate detaliile sunt perfecte în orice moment. "
                             "Utilizarea informațiilor din aplicație se face pe propria răspundere (de exemplu: verifică programul oficial înainte de a porni la drum).",
+                            context,
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 12),
 
-                    _card(
+                    _card(context,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -444,21 +460,23 @@ class TermeniPage extends StatelessWidget {
                           _paragraph(
                             "Putem actualiza aplicația și acești termeni pentru a îmbunătăți experiența și pentru a ține pasul cu funcțiile noi. "
                             "Dacă folosești în continuare aplicația după o actualizare, înseamnă că ești de acord cu versiunea actualizată a termenilor.",
+                            context,
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 12),
 
-                    _card(
+                    _card(context,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _sectionTitle("9) Contact"),
                           const SizedBox(height: 8),
                           _paragraph(
-                            "Pentru întrebări, sugestii, corecții sau probleme legate de Premium, scrie-ne din pagina „Ajutor”. "
+                            "Pentru întrebări, sugestii, corecții sau probleme legate de Premium, scrie-ne din pagina „Ajutor\". "
                             "Îți răspundem de obicei în cel mult 24 de ore.",
+                            context,
                           ),
                         ],
                       ),
@@ -471,7 +489,7 @@ class TermeniPage extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 12,
-                          color: Colors.grey.shade600,
+                          color: AppTheme.textSecondary(context),
                           fontWeight: FontWeight.w400,
                           letterSpacing: 0.5,
                         ),

@@ -6,6 +6,8 @@ import 'widgets/custom_footer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:viziteaza_oradea/widgets/category_map_preview.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
+import 'package:viziteaza_oradea/services/app_state.dart';
 
 class StranduriPage extends StatelessWidget {
   const StranduriPage({super.key});
@@ -14,18 +16,19 @@ class StranduriPage extends StatelessWidget {
   static const Color kBg = Color(0xFFE8F1F4);
 
   // -------------------------------------------------------------
-  // ✅ UI helpers (Apple 2025 - “buline”)
+  // ✅ UI helpers (Apple 2025 - "buline")
   // -------------------------------------------------------------
   Widget _pillIconButton({
     required IconData icon,
     required VoidCallback onTap,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Material(
-          color: Colors.white.withOpacity(0.55),
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.55),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(999),
@@ -35,7 +38,7 @@ class StranduriPage extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.60),
+                  color: isDark ? Colors.white : Colors.white.withOpacity(0.60),
                   width: 1,
                 ),
                 boxShadow: [
@@ -46,7 +49,7 @@ class StranduriPage extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Icon(icon, color: kBrand, size: 20),
+              child: Icon(icon, color: isDark ? Colors.white : kBrand, size: 20),
             ),
           ),
         ),
@@ -55,6 +58,7 @@ class StranduriPage extends StatelessWidget {
   }
 
   Widget _titlePill(String text) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -62,9 +66,9 @@ class StranduriPage extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.70),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.70),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.55), width: 1),
+            border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.55), width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -78,11 +82,11 @@ class StranduriPage extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14.5,
               fontWeight: FontWeight.w900,
-              color: kBrand,
+              color: isDark ? Colors.white : kBrand,
             ),
           ),
         ),
@@ -139,12 +143,12 @@ class StranduriPage extends StatelessWidget {
     final footerSpace = 90 + bottomInset + 12;
 
     return Scaffold(
-      backgroundColor: kBg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
       extendBodyBehindAppBar: true,
       extendBody: true,
 
-      // ✅ AppBar cu “buline” (ca la celelalte pagini)
+      // ✅ AppBar cu "buline" (ca la celelalte pagini)
       appBar: _floatingPillsHeader(context),
 
       // 🔹 Conținut + footer floating
@@ -152,16 +156,19 @@ class StranduriPage extends StatelessWidget {
         children: [
           Positioned.fill(
             child: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFFB2EBF2),
-                    Color(0xFFE0F7FA),
-                    Color(0xFFFFFFFF),
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
+              decoration: BoxDecoration(
+                gradient: AppTheme.isDarkGlobal
+                    ? null
+                    : const LinearGradient(
+                        colors: [
+                          Color(0xFFB2EBF2),
+                          Color(0xFFE0F7FA),
+                          Color(0xFFFFFFFF),
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                color: AppTheme.isDarkGlobal ? Colors.black : null,
               ),
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
@@ -174,10 +181,10 @@ class StranduriPage extends StatelessWidget {
                   }
 
                   if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return const Center(
+                    return Center(
                       child: Text(
                         "Nu există ștranduri disponibile momentan.",
-                        style: TextStyle(fontSize: 16, color: Colors.black54),
+                        style: TextStyle(fontSize: 16, color: AppTheme.textSecondary(context)),
                       ),
                     );
                   }
@@ -231,15 +238,15 @@ class StranduriPage extends StatelessWidget {
                         final data = stranduri[index - 1].data() as Map<String, dynamic>;
                         return _buildImprovedCard(context, data);
                       } else {
-                        return const Padding(
-                          padding: EdgeInsets.only(top: 10, bottom: 20),
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 10, bottom: 20),
                           child: Center(
                             child: Text(
                               "— Tour Oradea © 2025 —",
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontSize: 12,
-                                color: Colors.grey,
+                                color: AppTheme.textSecondary(context),
                                 fontWeight: FontWeight.w400,
                                 letterSpacing: 0.5,
                               ),
@@ -254,7 +261,7 @@ class StranduriPage extends StatelessWidget {
             ),
           ),
 
-          // ✅ Footer fix “deasupra” conținutului (fără bandă albă)
+          // ✅ Footer fix "deasupra" conținutului (fără bandă albă)
           const Align(
             alignment: Alignment.bottomCenter,
             child: CustomFooter(isHome: true),
@@ -273,7 +280,7 @@ class StranduriPage extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
@@ -321,10 +328,10 @@ class StranduriPage extends StatelessWidget {
                     children: [
                       Text(
                         data["title"] ?? "Ștrand",
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.bold,
-                          color: kBrand,
+                          color: AppTheme.accentGlobal,
                         ),
                       ),
                       const SizedBox(height: 6),
@@ -332,9 +339,9 @@ class StranduriPage extends StatelessWidget {
                         data["description"] ?? "Detalii indisponibile momentan.",
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13.5,
-                          color: Colors.black87,
+                          color: AppTheme.textPrimary(context),
                           height: 1.3,
                         ),
                       ),
@@ -355,12 +362,12 @@ class StranduriPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _infoRow(
+                      _infoRow(context,
                         Icons.location_on_outlined,
                         data["address"] ?? "-",
                       ),
-                      _infoRow(Icons.access_time, data["schedule"] ?? "-"),
-                      _infoRow(Icons.attach_money, data["price"] ?? "-"),
+                      _infoRow(context, Icons.access_time, data["schedule"] ?? "-"),
+                      _infoRow(context, Icons.attach_money, data["price"] ?? "-"),
                     ],
                   ),
                 ),
@@ -392,7 +399,7 @@ class StranduriPage extends StatelessWidget {
                   icon: const Icon(Icons.info_outline, size: 18),
                   label: const Text("Detalii"),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: kBrand,
+                    backgroundColor: AppTheme.accentGlobal,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 14,
@@ -412,7 +419,7 @@ class StranduriPage extends StatelessWidget {
   }
 
   // ---------- INFO ROW (cu verde pentru prețuri) ----------
-  Widget _infoRow(IconData icon, String text) {
+  Widget _infoRow(BuildContext context, IconData icon, String text) {
     final bool isMoney = icon == Icons.attach_money;
 
     return Padding(
@@ -421,7 +428,7 @@ class StranduriPage extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: isMoney ? Colors.green[700] : kBrand,
+            color: isMoney ? Colors.green[700] : AppTheme.accentGlobal,
             size: 18,
           ),
           const SizedBox(width: 6),
@@ -430,7 +437,7 @@ class StranduriPage extends StatelessWidget {
               text,
               style: TextStyle(
                 fontSize: 13.5,
-                color: isMoney ? Colors.green[800] : Colors.black87,
+                color: isMoney ? Colors.green[800] : AppTheme.textPrimary(context),
                 fontWeight: isMoney ? FontWeight.w600 : FontWeight.normal,
               ),
             ),

@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:viziteaza_oradea/home.dart';
 import 'package:viziteaza_oradea/premium_unlock_page.dart';
 import 'services/iap_service.dart';
+import 'package:viziteaza_oradea/services/app_state.dart';
 import 'package:viziteaza_oradea/traseu_multiday_page.dart';
 
 class TraseePage extends StatefulWidget {
@@ -20,7 +21,7 @@ class _TraseePageState extends State<TraseePage> {
     final bool premiumUnlocked = IAPService.instance.premiumUnlocked;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppState.instance.isDarkMode ? Colors.black : Colors.white,
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
@@ -98,9 +99,9 @@ class _TraseePageState extends State<TraseePage> {
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(22, 30, 22, 30),
       constraints: const BoxConstraints(minHeight: 350), // 🔥 FĂRĂ height FIX
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
+      decoration: BoxDecoration(
+        color: AppState.instance.isDarkMode ? const Color(0xFF1C1C1E) : Colors.white,
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(34),
           topRight: Radius.circular(34),
         ),
@@ -108,12 +109,12 @@ class _TraseePageState extends State<TraseePage> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
+          Text(
             "Alege durata traseului",
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w700,
-              color: Colors.black87,
+              color: AppState.instance.isDarkMode ? Colors.white : Colors.black87,
             ),
           ),
 
@@ -175,15 +176,20 @@ class _TraseePageState extends State<TraseePage> {
   // CARD ZI
   // ============================================================
   Widget _dayCard(int zi, bool locked) {
+    final isDark = AppState.instance.isDarkMode;
     return Stack(
       children: [
         AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           decoration: BoxDecoration(
-            color: locked ? const Color(0xFFE8E3DC) : const Color(0xFFF6F6F6),
+            color: isDark
+                ? (locked ? const Color(0xFF2C2C2E) : const Color(0xFF1C1C1E))
+                : (locked ? const Color(0xFFE8E3DC) : const Color(0xFFF6F6F6)),
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
-              color: locked ? const Color(0xFFC7BFB6) : const Color(0xFFDDDDDD),
+              color: isDark
+                  ? const Color(0xFF3A3A3C)
+                  : (locked ? const Color(0xFFC7BFB6) : const Color(0xFFDDDDDD)),
               width: 1.3,
             ),
             boxShadow: [
@@ -199,8 +205,9 @@ class _TraseePageState extends State<TraseePage> {
                 const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
             leading: CircleAvatar(
               radius: 22,
-              backgroundColor:
-                  locked ? const Color(0xFF6A5F52) : Colors.black87,
+              backgroundColor: locked
+                  ? const Color(0xFF6A5F52)
+                  : (isDark ? const Color(0xFF004E64) : Colors.black87),
               child: locked
                   ? const Icon(Icons.lock, color: Colors.white, size: 20)
                   : Text(
@@ -217,7 +224,9 @@ class _TraseePageState extends State<TraseePage> {
               style: TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.w600,
-                color: locked ? const Color(0xFF443C34) : Colors.black87,
+                color: isDark
+                    ? Colors.white
+                    : (locked ? const Color(0xFF443C34) : Colors.black87),
               ),
             ),
             subtitle: Text(
@@ -226,13 +235,17 @@ class _TraseePageState extends State<TraseePage> {
                   : "Disponibil — Descoperă orașul",
               style: TextStyle(
                 fontSize: 13,
-                color: locked ? const Color(0xFF6D6257) : Colors.black54,
+                color: isDark
+                    ? Colors.white60
+                    : (locked ? const Color(0xFF6D6257) : Colors.black54),
               ),
             ),
             trailing: Icon(
               Icons.arrow_forward_ios,
               size: 18,
-              color: locked ? const Color(0xFF776B5E) : Colors.grey.shade700,
+              color: isDark
+                  ? Colors.white38
+                  : (locked ? const Color(0xFF776B5E) : Colors.grey.shade700),
             ),
           ),
         ),

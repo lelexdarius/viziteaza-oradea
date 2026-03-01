@@ -8,6 +8,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:viziteaza_oradea/home.dart';
 import 'widgets/custom_footer.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
+import 'package:viziteaza_oradea/services/app_state.dart';
 
 class GaleriePage extends StatelessWidget {
   const GaleriePage({Key? key}) : super(key: key);
@@ -37,12 +39,13 @@ class GaleriePage extends StatelessWidget {
   }
 
   // -------------------------------------------------------------
-  // “Glass” DOAR pe elemente (buton / titlu), NU pe fundal
+  // "Glass" DOAR pe elemente (buton / titlu), NU pe fundal
   // -------------------------------------------------------------
   Widget _glassPill({
     required Widget child,
     EdgeInsets padding = const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -51,9 +54,9 @@ class GaleriePage extends StatelessWidget {
         child: Container(
           padding: padding,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.75),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.75),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.70), width: 1),
+            border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.70), width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -72,6 +75,7 @@ class GaleriePage extends StatelessWidget {
     required IconData icon,
     required VoidCallback onTap,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -79,7 +83,7 @@ class GaleriePage extends StatelessWidget {
         borderRadius: BorderRadius.circular(999),
         child: _glassPill(
           padding: const EdgeInsets.all(10),
-          child: Icon(icon, color: kBrand, size: 20),
+          child: Icon(icon, color: isDark ? Colors.white : AppTheme.accentGlobal, size: 20),
         ),
       ),
     );
@@ -97,7 +101,7 @@ class GaleriePage extends StatelessWidget {
       floating: false,
       snap: false,
       elevation: 0,
-      backgroundColor: kBg, // fundal solid => nu se vede nimic în spate
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor, // fundal solid => nu se vede nimic în spate
       automaticallyImplyLeading: false,
       toolbarHeight: kToolbarHeight,
       titleSpacing: 12,
@@ -112,7 +116,7 @@ class GaleriePage extends StatelessWidget {
             child: Center(
               child: _glassPill(
                 padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                child: const Text(
+                child: Text(
                   "Galerie foto",
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -121,7 +125,7 @@ class GaleriePage extends StatelessWidget {
                     fontFamily: 'Poppins',
                     fontSize: 14.5,
                     fontWeight: FontWeight.w900,
-                    color: kBrand,
+                    color: AppState.instance.isDarkMode ? Colors.white : AppTheme.accentGlobal,
                   ),
                 ),
               ),
@@ -138,7 +142,7 @@ class GaleriePage extends StatelessWidget {
   // Credit card (SCROLLEAZĂ cu conținutul)
   // Ca să fie mai aproape de AppBar, l-am urcat puțin cu Transform.translate
   // -------------------------------------------------------------
-  Widget _creditCard() {
+  Widget _creditCard(BuildContext context) {
     return Transform.translate(
       offset: const Offset(0, 0), // <- ajustează -6 / -10 dacă vrei
       child: Padding(
@@ -151,7 +155,7 @@ class GaleriePage extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.88),
+                color: Theme.of(context).cardColor.withOpacity(0.88),
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(color: kBrand.withOpacity(0.10)),
                 boxShadow: [
@@ -167,21 +171,21 @@ class GaleriePage extends StatelessWidget {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 spacing: 6,
                 children: [
-                  const Text(
+                  Text(
                     "Fotografiile sunt realizate de ",
                     style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 14,
-                      color: Colors.black87,
+                      color: AppTheme.textPrimary(context),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const Text(
+                  Text(
                     "Ghiuro Flaviu",
                     style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 14,
-                      color: kBrand,
+                      color: AppTheme.accent(context),
                       fontWeight: FontWeight.w900,
                     ),
                   ),
@@ -212,7 +216,7 @@ class GaleriePage extends StatelessWidget {
 
     return FooterBackInterceptor(
       child: Scaffold(
-        backgroundColor: kBg,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         extendBody: true,
         body: Stack(
           children: [
@@ -220,8 +224,8 @@ class GaleriePage extends StatelessWidget {
               stream: FirebaseFirestore.instance.collection('galerie').snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: kBrand),
+                  return Center(
+                    child: CircularProgressIndicator(color: AppTheme.accentGlobal),
                   );
                 }
 
@@ -229,15 +233,17 @@ class GaleriePage extends StatelessWidget {
                   return CustomScrollView(
                     slivers: [
                       _sliverAppBar(context),
-                      SliverToBoxAdapter(child: _creditCard()),
-                      const SliverFillRemaining(
+                      SliverToBoxAdapter(child: _creditCard(context)),
+                      SliverFillRemaining(
                         hasScrollBody: false,
                         child: Center(
-                          child: Text(
-                            "Nicio imagine disponibilă momentan.",
-                            style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 16,
+                          child: Builder(
+                            builder: (ctx) => Text(
+                              "Nicio imagine disponibilă momentan.",
+                              style: TextStyle(
+                                color: AppTheme.textSecondary(ctx),
+                                fontSize: 16,
+                              ),
                             ),
                           ),
                         ),
@@ -251,7 +257,7 @@ class GaleriePage extends StatelessWidget {
                 return CustomScrollView(
                   slivers: [
                     _sliverAppBar(context),
-                    SliverToBoxAdapter(child: _creditCard()),
+                    SliverToBoxAdapter(child: _creditCard(context)),
                     SliverPadding(
                       padding: EdgeInsets.fromLTRB(12, 6, 12, footerSpace),
                       sliver: SliverMasonryGrid.count(

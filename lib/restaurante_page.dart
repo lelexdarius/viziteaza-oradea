@@ -9,6 +9,8 @@ import 'widgets/custom_footer.dart';
 import 'package:viziteaza_oradea/widgets/app_cached_image.dart';
 import 'package:viziteaza_oradea/widgets/category_map_preview.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:viziteaza_oradea/utils/app_theme.dart';
+import 'package:viziteaza_oradea/services/app_state.dart';
 
 class RestaurantePage extends StatefulWidget {
   const RestaurantePage({Key? key}) : super(key: key);
@@ -75,19 +77,20 @@ class RestaurantePage extends StatefulWidget {
   }
 
   // -------------------------------------------------------------
-  // ✅ HEADER FLOATING CU “BULINE”
+  // ✅ HEADER FLOATING CU "BULINE"
   // -------------------------------------------------------------
   Widget _pillIconButton({
     required IconData icon,
     required VoidCallback onTap,
     Color iconColor = kBrand,
   }) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Material(
-          color: Colors.white.withOpacity(0.55),
+          color: isDark ? Colors.black : Colors.white.withOpacity(0.55),
           child: InkWell(
             onTap: onTap,
             borderRadius: BorderRadius.circular(999),
@@ -97,7 +100,7 @@ class RestaurantePage extends StatefulWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(999),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.60),
+                  color: isDark ? Colors.white : Colors.white.withOpacity(0.60),
                   width: 1,
                 ),
                 boxShadow: [
@@ -108,7 +111,7 @@ class RestaurantePage extends StatefulWidget {
                   ),
                 ],
               ),
-              child: Icon(icon, color: iconColor, size: 20),
+              child: Icon(icon, color: isDark ? Colors.white : iconColor, size: 20),
             ),
           ),
         ),
@@ -117,6 +120,7 @@ class RestaurantePage extends StatefulWidget {
   }
 
   Widget _titlePill(String text) {
+    final isDark = AppState.instance.isDarkMode;
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
@@ -124,9 +128,9 @@ class RestaurantePage extends StatefulWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.70),
+            color: isDark ? Colors.black : Colors.white.withOpacity(0.70),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withOpacity(0.55), width: 1),
+            border: Border.all(color: isDark ? Colors.white : Colors.white.withOpacity(0.55), width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -140,11 +144,11 @@ class RestaurantePage extends StatefulWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 14.5,
               fontWeight: FontWeight.w900,
-              color: kBrand,
+              color: isDark ? Colors.white : kBrand,
             ),
           ),
         ),
@@ -191,7 +195,7 @@ class RestaurantePage extends StatefulWidget {
     );
   }
 
-  Widget _emptyState(double topPadding) {
+  Widget _emptyState(BuildContext context, double topPadding) {
     return Padding(
       padding: EdgeInsets.only(top: topPadding),
       child: Center(
@@ -199,7 +203,7 @@ class RestaurantePage extends StatefulWidget {
           margin: const EdgeInsets.symmetric(horizontal: 16),
           padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.88),
+            color: Theme.of(context).cardColor.withOpacity(0.88),
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: kBrand.withOpacity(0.10)),
             boxShadow: [
@@ -219,7 +223,7 @@ class RestaurantePage extends StatefulWidget {
                   color: kBrand.withOpacity(0.10),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(Icons.restaurant_rounded, color: kBrand),
+                child: Icon(Icons.restaurant_rounded, color: AppTheme.accent(context)),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -229,7 +233,7 @@ class RestaurantePage extends StatefulWidget {
                     fontFamily: 'Poppins',
                     fontSize: 14.2,
                     fontWeight: FontWeight.w700,
-                    color: Colors.black.withOpacity(0.72),
+                    color: AppTheme.textPrimary(context),
                     height: 1.25,
                   ),
                 ),
@@ -241,11 +245,11 @@ class RestaurantePage extends StatefulWidget {
     );
   }
 
-  Widget _contactCard() {
+  Widget _contactCard(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.92),
+        color: Theme.of(context).cardColor.withOpacity(0.92),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: kBrand.withOpacity(0.10)),
         boxShadow: [
@@ -257,25 +261,25 @@ class RestaurantePage extends StatefulWidget {
         ],
       ),
       child: Column(
-        children: const [
+        children: [
           Text(
             "Dacă dorești ca restaurantul tău să apară în această listă, contactează-ne la:",
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'Poppins',
               fontSize: 13,
-              color: Colors.black87,
+              color: AppTheme.textPrimary(context),
               height: 1.4,
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             "touroradea@gmail.com",
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: 'Poppins',
-              color: kBrand,
+              color: AppTheme.accentGlobal,
               fontWeight: FontWeight.w900,
               fontSize: 12.5,
               letterSpacing: 0.2,
@@ -295,8 +299,8 @@ class RestaurantePage extends StatefulWidget {
     required VoidCallback onTap,
     required IconData icon,
   }) {
-    final bg = selected ? kBrand.withOpacity(0.12) : Colors.transparent;
-    final textColor = selected ? kBrand : kBrand.withOpacity(0.70);
+    final bg = selected ? const Color(0xFF004E64).withOpacity(0.12) : Colors.transparent;
+    const textColor = Color(0xFF004E64);
 
     return Material(
       color: Colors.transparent,
@@ -309,7 +313,7 @@ class RestaurantePage extends StatefulWidget {
             color: bg,
             borderRadius: BorderRadius.circular(999),
             border: Border.all(
-              color: selected ? kBrand.withOpacity(0.18) : Colors.transparent,
+              color: selected ? const Color(0xFF004E64).withOpacity(0.18) : Colors.transparent,
             ),
           ),
           child: Row(
@@ -602,7 +606,7 @@ class _RestaurantePageState extends State<RestaurantePage> {
     final double footerSpace = 18 + 90 + (bottomInset > 0 ? bottomInset : 0);
 
     return Scaffold(
-      backgroundColor: RestaurantePage.kBg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       extendBody: true,
       appBar: widget._floatingPillsHeader(context),
@@ -620,7 +624,7 @@ class _RestaurantePageState extends State<RestaurantePage> {
                 }
 
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return widget._emptyState(topPadding);
+                  return widget._emptyState(context, topPadding);
                 }
 
                 final all = snapshot.data!.docs
@@ -676,7 +680,7 @@ class _RestaurantePageState extends State<RestaurantePage> {
                           Container(
                             padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.88),
+                              color: Theme.of(context).cardColor.withOpacity(0.88),
                               borderRadius: BorderRadius.circular(18),
                               border: Border.all(
                                 color: RestaurantePage.kBrand.withOpacity(0.10),
@@ -698,9 +702,9 @@ class _RestaurantePageState extends State<RestaurantePage> {
                                     color: RestaurantePage.kBrand.withOpacity(0.10),
                                     borderRadius: BorderRadius.circular(14),
                                   ),
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.star_outline_rounded,
-                                    color: RestaurantePage.kBrand,
+                                    color: AppTheme.accent(context),
                                   ),
                                 ),
                                 const SizedBox(width: 12),
@@ -711,7 +715,7 @@ class _RestaurantePageState extends State<RestaurantePage> {
                                       fontFamily: 'Poppins',
                                       fontSize: 14.2,
                                       fontWeight: FontWeight.w700,
-                                      color: Colors.black.withOpacity(0.72),
+                                      color: AppTheme.textPrimary(context),
                                       height: 1.25,
                                     ),
                                   ),
@@ -720,7 +724,7 @@ class _RestaurantePageState extends State<RestaurantePage> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          widget._contactCard(),
+                          widget._contactCard(context),
                           const SizedBox(height: 22),
                         ] else ...[
                           GridView.builder(
@@ -742,7 +746,7 @@ class _RestaurantePageState extends State<RestaurantePage> {
                             },
                           ),
                           const SizedBox(height: 16),
-                          widget._contactCard(),
+                          widget._contactCard(context),
                           const SizedBox(height: 22),
                         ],
 
@@ -752,7 +756,7 @@ class _RestaurantePageState extends State<RestaurantePage> {
                             style: TextStyle(
                               fontFamily: 'Poppins',
                               fontSize: 12,
-                              color: Colors.grey.shade600,
+                              color: AppTheme.textSecondary(context),
                               fontWeight: FontWeight.w400,
                               letterSpacing: 0.5,
                             ),
